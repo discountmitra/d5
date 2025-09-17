@@ -19,6 +19,7 @@ export default function HospitalDetailScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const hospitalId = (params.id as string) || "";
+  const headerImage = typeof params.image === 'string' ? (params.image as string) : "";
   const [patientName, setPatientName] = useState("");
   const [patientPhone, setPatientPhone] = useState("");
   const [patientAge, setPatientAge] = useState("");
@@ -215,7 +216,7 @@ export default function HospitalDetailScreen() {
         {/* Hero */}
         <View style={styles.heroCard}>
           <Image
-            source={require("../assets/default.png")}
+            source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require("../assets/default.png")}
             style={styles.heroImage}
           />
           <View style={styles.heroBody}>

@@ -30,6 +30,7 @@ export default function EventDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { eventId } = params;
+  const headerImage = typeof params.image === 'string' ? (params.image as string) : '';
   
   const [userType, setUserType] = useState<UserType>('normal');
   const [customerName, setCustomerName] = useState('');
@@ -234,7 +235,7 @@ export default function EventDetailScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Hero */}
         <View style={styles.heroCard}>
-          <Image source={require('../assets/default.png')} style={styles.heroImage} />
+          <Image source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require('../assets/default.png')} style={styles.heroImage} />
           <View style={styles.heroBody}>
             <View style={styles.heroHeader}>
               <Text style={styles.eventName}>{event.name}</Text>

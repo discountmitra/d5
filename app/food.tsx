@@ -87,7 +87,7 @@ export default function FoodScreen() {
             style={styles.card}
             onPress={() => router.push({
               pathname: '/restaurant-detail',
-              params: { restaurantId: item.id }
+              params: { restaurantId: item.id, image: item.image || '' }
             })}
           >
             <View style={{ position: "relative" }}>

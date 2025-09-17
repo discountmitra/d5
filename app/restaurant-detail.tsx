@@ -8,6 +8,7 @@ export default function RestaurantDetailScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const params = useLocalSearchParams();
+  const headerImage = typeof params.image === 'string' ? (params.image as string) : '';
   const [selectedGalleryTab, setSelectedGalleryTab] = useState('All');
   const [isLiked, setIsLiked] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -139,7 +140,7 @@ export default function RestaurantDetailScreen() {
         {/* Hero Section with Background */}
         <View style={styles.heroSection}>
           <Image 
-            source={require("../assets/default.png")} 
+            source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require("../assets/default.png")} 
             style={styles.heroBackgroundImage}
             resizeMode="cover"
           />

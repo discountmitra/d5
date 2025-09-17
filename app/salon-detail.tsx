@@ -37,6 +37,7 @@ export default function SalonDetailScreen() {
     address: (params.address as string) || "Near Gandhi Nagar, Subash Nagar Road, Sircilla",
     rating: parseFloat((params.rating as string) || "4.8"),
     reviews: parseInt((params.reviews as string) || "234"),
+    image: typeof params.image === 'string' ? (params.image as string) : "",
   }), [params]);
 
   const [userName, setUserName] = useState("");
@@ -243,7 +244,7 @@ export default function SalonDetailScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Hero */}
         <View style={styles.heroCard}>
-          <Image source={require("../assets/default.png")} style={styles.heroImage} />
+          <Image source={salon.image && /^https?:\/\//.test(salon.image) ? { uri: salon.image } : require("../assets/default.png")} style={styles.heroImage} />
           <View style={styles.heroBody}>
             <View style={styles.heroHeader}>
               <Text style={styles.salonName}>{salon.name}</Text>

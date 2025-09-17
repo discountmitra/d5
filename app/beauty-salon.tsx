@@ -157,7 +157,7 @@ export default function BeautySalonScreen() {
         }}
         scrollEventThrottle={16}
         renderItem={({ item }) => (
-          <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={() => router.push({ pathname: "/salon-detail", params: { id: item.locationId, name: item.locationName, address: item.address, rating: item.rating.toString(), reviews: item.reviews.toString() } })}>
+          <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={() => router.push({ pathname: "/salon-detail", params: { id: item.locationId, name: item.locationName, address: item.address, rating: item.rating.toString(), reviews: item.reviews.toString(), image: item.image || '' } })}>
             <View style={{ position: "relative" }}>
               <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
               <View style={styles.discountRibbon}>

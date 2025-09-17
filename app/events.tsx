@@ -376,7 +376,7 @@ export default function EventsScreen() {
             style={styles.card}
             onPress={() => {
               const eventId = item.name.toLowerCase().replace(/\s+/g, '-');
-              router.push(`/event-detail?eventId=${eventId}`);
+              router.push({ pathname: "/event-detail", params: { eventId, image: item.image || "" } });
             }}
           >
             <View style={{ position: "relative" }}>

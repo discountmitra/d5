@@ -13,6 +13,7 @@ export default function HomeServiceDetailScreen() {
     category: (params.category as string) || "",
     price: (params.price as string) || "",
     discount: (params.discount as string) || "",
+    image: typeof params.image === 'string' ? (params.image as string) : "",
   }), [params]);
 
   const [userName, setUserName] = useState("");
@@ -91,7 +92,7 @@ export default function HomeServiceDetailScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Hero */}
         <View style={styles.heroCard}>
-          <Image source={require("../assets/default.png")} style={styles.heroImage} />
+          <Image source={service.image && /^https?:\/\//.test(service.image) ? { uri: service.image } : require("../assets/default.png")} style={styles.heroImage} />
           <View style={styles.heroBody}>
             <View style={styles.heroHeader}>
               <Text style={styles.serviceName}>{service.name}</Text>

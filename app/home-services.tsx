@@ -264,7 +264,7 @@ export default function HomeServicesScreen() {
         }}
         scrollEventThrottle={16}
         renderItem={({ item }) => (
-          <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={() => router.push({ pathname: "/home-service-detail", params: { id: item.id, name: item.name, desc: item.description, category: item.category, price: item.price, discount: item.discount } })}>
+          <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={() => router.push({ pathname: "/home-service-detail", params: { id: item.id, name: item.name, desc: item.description, category: item.category, price: item.price, discount: item.discount, image: item.image || "" } })}>
             <View style={{ position: "relative" }}>
               <Image
                 source={
