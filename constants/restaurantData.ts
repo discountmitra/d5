@@ -11,6 +11,7 @@ export type Restaurant = {
   id: string;
   name: string;
   category: string;
+  image: string;
   specialist: string[];
   menu: MenuCategory | MenuItem[] | any;
   discounts: {
@@ -43,6 +44,7 @@ export const restaurantData: Restaurant[] = [
     id: "1",
     name: "ICE HOUSE",
     category: "Food",
+    image: "https://images.unsplash.com/photo-1729001195966-6ca581448b4e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cmVzdHJhdW50fGVufDB8fDB8fHww",
     specialist: ["Pizza", "Burger", "Ice Creams", "French Fries", "Mocktails", "Thickshakes"],
     menu: {
       "pizzas": [
@@ -136,6 +138,7 @@ export const restaurantData: Restaurant[] = [
   {
     id: "2",
     name: "Shankar Chat",
+    image: "https://images.unsplash.com/photo-1596522869169-95231d2b6864?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGFuaSUyMHB1cml8ZW58MHx8MHx8fDA%3D",
     category: "Food",
     specialist: ["Pani Puri", "Chaat"],
     menu: [
@@ -171,6 +174,7 @@ export const restaurantData: Restaurant[] = [
     id: "3",
     name: "Indian Fast Food",
     category: "Food",
+    image: "https://images.unsplash.com/photo-1594179047519-f347310d3322?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGZhc3QlMjBmb29kfGVufDB8fDB8fHww",
     specialist: ["Rice", "Noodles", "Manchurian (Veg, Non-Veg & Egg)"],
     menu: {
       "rice": [

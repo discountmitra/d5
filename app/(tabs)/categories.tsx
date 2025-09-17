@@ -73,21 +73,22 @@ export default function CategoriesScreen() {
             } else if (item.title === "Home Services") {
               router.push("/home-services");
             } else if (item.title === "Automobiles") {
-              router.push("/automobiles");
+              // router.push("/automobiles");
+              router.push("/coming-soon");
             } else if (item.title === "Travel") {
               router.push("/coming-soon");
             } else if (item.title === "Events") {
               router.push("/events");
             } else if (item.title === "Financial Services") {
-              router.push("/financial-services");
+              // router.push("/financial-services");
+              router.push("/coming-soon");
             } else if (item.title === "Education") {
               // router.push("/education");
               router.push("/coming-soon");
             } else if (item.title === "Beauty & Salon") {
               router.push("/beauty-salon");
             } else if (item.title === "Construction") {
-              // router.push("/construction");
-              router.push("/coming-soon");
+              router.push("/construction");
             } else if (item.title === "Bar" || item.title === "Electronics" || item.title === "Clothing") {
               router.push("/coming-soon");
             }

@@ -15,6 +15,7 @@ type Hospital = {
   specialOffers: string[];
   phone: string;
   category: CategoryKey;
+  image?: string;
 };
 
 export default function HealthcareScreen() {
@@ -46,6 +47,7 @@ export default function HealthcareScreen() {
         specialOffers: ["Lab & IP Services – 15% Discount"],
         phone: "9876543210",
         category: "Hospitals",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/healthcare/amrutha-kids-hospital/2.jpg",
       },
       {
         id: "lulu-children",
@@ -56,6 +58,7 @@ export default function HealthcareScreen() {
         specialOffers: ["Lab & IP Services – 15% Discount", "Pharmacy – 10% Discount"],
         phone: "8876543210",
         category: "Hospitals",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/healthcare/lulu-kidshospital/1.jpeg",
       },
       {
         id: "life-hospital",
@@ -66,6 +69,7 @@ export default function HealthcareScreen() {
         specialOffers: ["Lab & IP Services – 10% Discount"],
         phone: "9705021177",
         category: "Hospitals",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/healthcare/life-hospital/1.jpeg",
       },
       {
         id: "vasavi-general",
@@ -76,6 +80,7 @@ export default function HealthcareScreen() {
         specialOffers: ["Lab & IP Services – 15% Discount", "Pharmacy – 10% Discount"],
         phone: "7876543210",
         category: "Hospitals",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/healthcare/vasavi-general-hsptl/1.jpg",
       },
       {
         id: "siddivinayaka-ent",
@@ -86,6 +91,7 @@ export default function HealthcareScreen() {
         specialOffers: ["Lab & IP Services – 10% Discount", "Pharmacy – 10% Discount"],
         phone: "6876543210",
         category: "ENT",
+        image: "default.png",
       },
       {
         id: "shiva-sai-opticals",
@@ -96,6 +102,7 @@ export default function HealthcareScreen() {
         specialOffers: ["Spectacles starting from just ₹699"],
         phone: "5876543210",
         category: "Eye",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/healthcare/shivasai-opticals/1.jpeg",
       },
       {
         id: "aditya-neuro",
@@ -110,6 +117,7 @@ export default function HealthcareScreen() {
         ],
         phone: "8247556370",
         category: "Clinics",
+        image: "default.png",
       },
       {
         id: "chandana-chest",
@@ -123,6 +131,7 @@ export default function HealthcareScreen() {
         ],
         phone: "7799663223",
         category: "Hospitals",
+        image: "default.png",
       },
       {
         id: "vihana-dental",
@@ -137,6 +146,7 @@ export default function HealthcareScreen() {
         ],
         phone: "4876543210",
         category: "Dental",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/healthcare/vihaana-dental/1.webp",
       },
     ],
     []
@@ -221,7 +231,15 @@ export default function HealthcareScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={() => router.push({ pathname: "/hospital-detail", params: { id: item.id } })}>
             <View style={{ position: "relative" }}>
-              <Image source={require("../assets/default.png")} style={styles.image} resizeMode="cover" />
+              <Image
+                source={
+                  item.image && /^https?:\/\//.test(item.image)
+                    ? { uri: item.image }
+                    : require("../assets/default.png")
+                }
+                style={styles.image}
+                resizeMode="cover"
+              />
               <View style={styles.saveRibbon}><Text style={styles.saveText}>Book OP</Text></View>
             </View>
             <View style={styles.cardBody}>

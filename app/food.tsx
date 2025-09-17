@@ -91,7 +91,15 @@ export default function FoodScreen() {
             })}
           >
             <View style={{ position: "relative" }}>
-              <Image source={require("../assets/default.png")} style={styles.image} resizeMode="cover" />
+              <Image
+                source={
+                  item.image && /^https?:\/\//.test(item.image)
+                    ? { uri: item.image }
+                    : require("../assets/default.png")
+                }
+                style={styles.image}
+                resizeMode="cover"
+              />
               {typeof item.savePercent === "number" && (
                 <View style={styles.saveRibbon}>
                   <Text style={styles.saveText}>Save</Text>

@@ -19,6 +19,7 @@ type EventService = {
   rating: number;
   reviews: number;
   availability: string;
+  image?: string;
 };
 
 export default function EventsScreen() {
@@ -52,6 +53,7 @@ export default function EventsScreen() {
         rating: 4.8,
         reviews: 1200,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/bdy/1.jpg",
       },
       {
         id: "haldi-decoration",
@@ -64,6 +66,7 @@ export default function EventsScreen() {
         rating: 4.7,
         reviews: 980,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/haldi/1.jpg",
       },
       {
         id: "wedding-decoration",
@@ -76,6 +79,7 @@ export default function EventsScreen() {
         rating: 4.9,
         reviews: 1500,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/4.jpg",
       },
       {
         id: "reception-decoration",
@@ -88,6 +92,7 @@ export default function EventsScreen() {
         rating: 4.6,
         reviews: 750,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1676734627786-a3662ff6a243?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       },
       {
         id: "premium-decorations",
@@ -100,6 +105,7 @@ export default function EventsScreen() {
         rating: 4.8,
         reviews: 1100,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/2.jpg",
       },
       // Tent House
       {
@@ -113,6 +119,7 @@ export default function EventsScreen() {
         rating: 4.7,
         reviews: 890,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1655409735952-cb5220efca54?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       },
       // DJ & Lighting
       {
@@ -126,6 +133,7 @@ export default function EventsScreen() {
         rating: 4.8,
         reviews: 1300,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/dj-lighting/dj/1.jpeg",
       },
       {
         id: "lighting-services",
@@ -138,6 +146,7 @@ export default function EventsScreen() {
         rating: 4.6,
         reviews: 720,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/dj-lighting/lighting/2.jpg",
       },
       // Thadakala Pandiri
       {
@@ -151,6 +160,8 @@ export default function EventsScreen() {
         rating: 4.9,
         reviews: 950,
         availability: "Available Now",
+        image: "https://5.imimg.com/data5/ANDROID/Default/2020/12/AK/ID/JL/31748740/product-jpeg-500x500.jpg",
+
       },
       // Function Halls
       {
@@ -165,6 +176,7 @@ export default function EventsScreen() {
         rating: 4.8,
         reviews: 1200,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/function-halls/vasavi-kalyana-mandapam-a-c/2.webp",
       },
       {
         id: "padmashali-kalyana-mandapam",
@@ -178,6 +190,8 @@ export default function EventsScreen() {
         rating: 4.7,
         reviews: 980,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/function-halls/vasavi-kalyana-mandapam-a-c/1.webp",
+
       },
       {
         id: "sai-manikanta-gardens",
@@ -191,6 +205,7 @@ export default function EventsScreen() {
         rating: 4.9,
         reviews: 1500,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/function-halls/lahari-function-hall/3.webp",
       },
       {
         id: "lahari-grand-function-hall",
@@ -204,6 +219,7 @@ export default function EventsScreen() {
         rating: 4.8,
         reviews: 1100,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/function-halls/lahari-function-hall/2.webp",
       },
       {
         id: "k-convention-hall",
@@ -217,6 +233,7 @@ export default function EventsScreen() {
         rating: 4.6,
         reviews: 750,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/function-halls/k-function-hall/1.webp",
       },
       {
         id: "maanya-banquet-hall",
@@ -230,6 +247,7 @@ export default function EventsScreen() {
         rating: 4.7,
         reviews: 890,
         availability: "Available Now",
+        image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/function-halls/maanya-a-c-banquet-hall/2.jpg",
       },
       // Catering
       {
@@ -243,6 +261,7 @@ export default function EventsScreen() {
         rating: 4.8,
         reviews: 1800,
         availability: "Available Now",
+        image: "https://plus.unsplash.com/premium_photo-1686239357900-febfb958f33c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Y2F0ZXJpbmd8ZW58MHx8MHx8fDA%3D",
       },
       {
         id: "catering-staff-service",
@@ -255,6 +274,7 @@ export default function EventsScreen() {
         rating: 4.6,
         reviews: 650,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1518619745898-93e765966dcd?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2F0ZXJpbmd8ZW58MHx8MHx8fDA%3D",
       },
       // Mehendi Art
       {
@@ -268,6 +288,7 @@ export default function EventsScreen() {
         rating: 4.7,
         reviews: 950,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1505932794465-147d1f1b2c97?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVoZW5kaXxlbnwwfHwwfHx8MA%3D%3D",
       },
     ],
     []
@@ -359,7 +380,15 @@ export default function EventsScreen() {
             }}
           >
             <View style={{ position: "relative" }}>
-              <Image source={require("../assets/default.png")} style={styles.image} resizeMode="cover" />
+              <Image
+                source={
+                  item.image && /^https?:\/\//.test(item.image)
+                    ? { uri: item.image }
+                    : require("../assets/default.png")
+                }
+                style={styles.image}
+                resizeMode="cover"
+              />
               <View style={styles.discountRibbon}>
                 <Text style={styles.discountText}>Lowest Price</Text>
               </View>

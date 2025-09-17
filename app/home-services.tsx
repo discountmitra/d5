@@ -4,7 +4,7 @@ import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, router } from "expo-router";
 
-type CategoryKey = "Repairs & Maintenance" | "Cleaning & Pest Control" | "Painting & Interior" | "Security & Surveillance";
+type CategoryKey = "Repairs & Maintenance" | "Cleaning & Pest Control" | "Security & Surveillance";
 
 type Service = {
   id: string;
@@ -17,6 +17,7 @@ type Service = {
   rating: number;
   reviews: number;
   availability: string;
+  image?: string;
 };
 
 export default function HomeServicesScreen() {
@@ -28,8 +29,7 @@ export default function HomeServicesScreen() {
 
   const categories: CategoryKey[] = [
     "Repairs & Maintenance",
-    "Cleaning & Pest Control", 
-    "Painting & Interior",
+    "Cleaning & Pest Control",
     "Security & Surveillance",
   ];
 
@@ -47,6 +47,7 @@ export default function HomeServicesScreen() {
         rating: 4.8,
         reviews: 1200,
         availability: "Available Now",
+        image: "https://plus.unsplash.com/premium_photo-1683141410787-c4dbd2220487?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGx1bWJpbmd8ZW58MHx8MHx8fDA%3D",
       },
       {
         id: "electrician-services",
@@ -59,6 +60,7 @@ export default function HomeServicesScreen() {
         rating: 4.7,
         reviews: 980,
         availability: "Available Now",
+        image: "https://plus.unsplash.com/premium_photo-1661911309991-cc81afcce97d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZWxlY3RyaWNpYW58ZW58MHx8MHx8fDA%3D",
       },
       {
         id: "ac-fridge-repair",
@@ -71,6 +73,7 @@ export default function HomeServicesScreen() {
         rating: 4.6,
         reviews: 750,
         availability: "Available Now",
+        image: "https://plus.unsplash.com/premium_photo-1682126012378-859ca7a9f4cf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8QUMlMjByZXBhaXJ8ZW58MHx8MHx8fDA%3D",
       },
       {
         id: "ro-water-purifier",
@@ -83,6 +86,7 @@ export default function HomeServicesScreen() {
         rating: 4.5,
         reviews: 650,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1662647343354-5a03bbbd1d45?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Uk8lMjB3YXRlciUyMHB1cmlmaWVyfGVufDB8fDB8fHww",
       },
       {
         id: "tv-installation",
@@ -95,6 +99,7 @@ export default function HomeServicesScreen() {
         rating: 4.7,
         reviews: 890,
         availability: "Available Now",
+        image: "https://plus.unsplash.com/premium_photo-1723701630582-b2d418fd7e4b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fFRWJTIwcmVhcGFpcnxlbnwwfHwwfHx8MA%3D%3D",
       },
       {
         id: "washing-machine-repair",
@@ -107,6 +112,7 @@ export default function HomeServicesScreen() {
         rating: 4.6,
         reviews: 720,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8V2FzaGluZyUyMG1hY2hpbmV8ZW58MHx8MHx8fDA%3D",
       },
       {
         id: "microwave-oven-repair",
@@ -119,19 +125,9 @@ export default function HomeServicesScreen() {
         rating: 4.5,
         reviews: 580,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1565357253897-79d691886a73?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8T3ZlbnxlbnwwfHwwfHx8MA%3D%3D",
       },
-      {
-        id: "water-heater-installation",
-        name: "Water Heater (Geyser) Installation",
-        description: "Hot Water System Setup, Gas & Electric",
-        category: "Repairs & Maintenance",
-        icon: "flame",
-        price: "₹799",
-        discount: "Save 20%",
-        rating: 4.8,
-        reviews: 1100,
-        availability: "Available Now",
-      },
+
       // Cleaning & Pest Control
       {
         id: "home-deep-cleaning",
@@ -144,6 +140,7 @@ export default function HomeServicesScreen() {
         rating: 4.9,
         reviews: 1500,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8SG9tZSUyMGNsZWFuaW5nfGVufDB8fDB8fHww",
       },
       {
         id: "sofa-carpet-cleaning",
@@ -156,18 +153,7 @@ export default function HomeServicesScreen() {
         rating: 4.7,
         reviews: 950,
         availability: "Available Now",
-      },
-      {
-        id: "bathroom-kitchen-cleaning",
-        name: "Bathroom & Kitchen Cleaning",
-        description: "Specialized Area Cleaning, Tile Grout",
-        category: "Cleaning & Pest Control",
-        icon: "water",
-        price: "₹699",
-        discount: "Save 25%",
-        rating: 4.6,
-        reviews: 820,
-        availability: "Available Now",
+        image: "https://plus.unsplash.com/premium_photo-1677683510968-718b68269897?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8SG9tZSUyMGNsZWFuaW5nfGVufDB8fDB8fHww",
       },
       {
         id: "pest-control",
@@ -180,56 +166,9 @@ export default function HomeServicesScreen() {
         rating: 4.8,
         reviews: 1300,
         availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1581578017093-cd30fce4eeb7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVzdCUyMGNvbnRyb2x8ZW58MHx8MHx8fDA%3D",
       },
-      // Painting & Interior
-      {
-        id: "house-painting",
-        name: "House Painting",
-        description: "Interior & Exterior, Premium Paints",
-        category: "Painting & Interior",
-        icon: "brush",
-        price: "₹15/sq ft",
-        discount: "Save 20%",
-        rating: 4.7,
-        reviews: 1100,
-        availability: "Available Now",
-      },
-      {
-        id: "false-ceiling-pop",
-        name: "False Ceiling & POP Work",
-        description: "Ceiling Installation & Design, Gypsum",
-        category: "Painting & Interior",
-        icon: "home",
-        price: "₹45/sq ft",
-        discount: "Save 15%",
-        rating: 4.6,
-        reviews: 780,
-        availability: "Available Now",
-      },
-      {
-        id: "wallpaper-texture",
-        name: "Wallpaper & Texture Painting",
-        description: "Wall Design & Decoration, Custom Patterns",
-        category: "Painting & Interior",
-        icon: "brush",
-        price: "₹25/sq ft",
-        discount: "Save 25%",
-        rating: 4.5,
-        reviews: 650,
-        availability: "Available Now",
-      },
-      {
-        id: "modular-kitchen",
-        name: "Modular Kitchen Setup",
-        description: "Kitchen Design & Installation, Custom Cabinets",
-        category: "Painting & Interior",
-        icon: "restaurant",
-        price: "₹1200/sq ft",
-        discount: "Save 18%",
-        rating: 4.8,
-        reviews: 950,
-        availability: "Available Now",
-      },
+
       // Security & Surveillance
       {
         id: "cctv-installation",
@@ -242,6 +181,7 @@ export default function HomeServicesScreen() {
         rating: 4.9,
         reviews: 1800,
         availability: "Available Now",
+        image: "https://plus.unsplash.com/premium_photo-1675016457613-2291390d1bf6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Q0NUVnxlbnwwfHwwfHx8MA%3D%3D",
       },
     ],
     []
@@ -326,7 +266,15 @@ export default function HomeServicesScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={() => router.push({ pathname: "/home-service-detail", params: { id: item.id, name: item.name, desc: item.description, category: item.category, price: item.price, discount: item.discount } })}>
             <View style={{ position: "relative" }}>
-              <Image source={require("../assets/default.png")} style={styles.image} resizeMode="cover" />
+              <Image
+                source={
+                  item.image && /^https?:\/\//.test(item.image)
+                    ? { uri: item.image }
+                    : require("../assets/default.png")
+                }
+                style={styles.image}
+                resizeMode="cover"
+              />
               <View style={styles.discountRibbon}>
                 <Text style={styles.discountText}>{item.discount}</Text>
               </View>
