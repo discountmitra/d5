@@ -58,9 +58,6 @@ export default function FoodScreen() {
               onChangeText={setQuery}
             />
           </View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.filterButton}>
-            <Ionicons name="filter" size={18} color="#fff" />
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -95,10 +92,6 @@ export default function FoodScreen() {
           >
             <View style={{ position: "relative" }}>
               <Image source={require("../assets/default.png")} style={styles.image} resizeMode="cover" />
-              <View style={styles.homeDeliveryPill}>
-                <Ionicons name="bicycle-outline" size={14} color="#111827" />
-                <Text style={styles.homeDeliveryText}>home delivery</Text>
-              </View>
               {typeof item.savePercent === "number" && (
                 <View style={styles.saveRibbon}>
                   <Text style={styles.saveText}>Save</Text>

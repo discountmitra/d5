@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
   successButton: { paddingVertical: 14, borderRadius: 10, backgroundColor: '#10b981', alignItems: 'center' },
   successButtonText: { fontSize: 15, fontWeight: '700', color: '#ffffff' },
   
-  // Calendar Modal (aligned with Healthcare)
+  // Calendar Modal (aligned with Automobile theme)
   calendarContainer: { backgroundColor: '#ffffff', borderRadius: 16, padding: 20, width: '100%', maxWidth: 340, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 },
   calendarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   navButton: { padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' },
@@ -621,11 +621,11 @@ const styles = StyleSheet.create({
   calendarGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 20 },
   calendarDay: { width: '14.285%', height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 8 },
   emptyDay: { backgroundColor: 'transparent' },
-  todayDay: { backgroundColor: '#fef2f2' },
-  selectedDay: { backgroundColor: '#ef4444' },
+  todayDay: { backgroundColor: '#f0fdf4' },
+  selectedDay: { backgroundColor: '#059669' },
   pastDay: { opacity: 0.3 },
   calendarDayText: { fontSize: 14, fontWeight: '500', color: '#111827' },
-  todayText: { color: '#ef4444', fontWeight: '700' },
+  todayText: { color: '#059669', fontWeight: '700' },
   selectedText: { color: '#ffffff', fontWeight: '700' },
   pastText: { color: '#9ca3af' },
   closeCalendarButton: { marginTop: 20, paddingVertical: 12, backgroundColor: '#f3f4f6', borderRadius: 8, alignItems: 'center' },
@@ -635,6 +635,6 @@ const styles = StyleSheet.create({
   calendarButtonContainer: { flexDirection: 'row', gap: 10, marginTop: 20 },
   calendarCancelButton: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: '#f3f4f6', alignItems: 'center' },
   calendarCancelText: { fontSize: 15, fontWeight: '600', color: '#6b7280' },
-  calendarConfirmButton: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: '#ef4444', alignItems: 'center' },
+  calendarConfirmButton: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: '#059669', alignItems: 'center' },
   calendarConfirmText: { fontSize: 15, fontWeight: '700', color: '#ffffff' },
 });

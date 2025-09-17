@@ -298,7 +298,7 @@ export default function FinancialDetailScreen() {
           <View style={styles.detailsCard}>
             <Text style={styles.sectionTitle}>Service Details</Text>
             <View style={styles.specialistContainer}>
-              <Ionicons name="checkmark-circle" size={16} color="#059669" />
+              <Ionicons name="checkmark-circle" size={16} color="#1e40af" />
               <Text style={styles.specialistText}>{service.specialist}</Text>
             </View>
           </View>
@@ -456,7 +456,7 @@ export default function FinancialDetailScreen() {
       <Modal visible={showConfirmModal} transparent animationType="fade" onRequestClose={() => setShowConfirmModal(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.confirmModalCard}>
-            <View style={styles.modalIconContainer}><View style={styles.modalIconCircle}><Ionicons name="help-circle" size={32} color="#059669" /></View></View>
+            <View style={styles.modalIconContainer}><View style={styles.modalIconCircle}><Ionicons name="help-circle" size={32} color="#16A085" /></View></View>
             <Text style={styles.modalTitle}>Confirm Request</Text>
             <Text style={styles.modalSubtitle}>Please confirm your details before submitting</Text>
             <View style={styles.bookingDetailsCard}>
@@ -467,7 +467,7 @@ export default function FinancialDetailScreen() {
             </View>
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity style={styles.modalButtonSecondary} onPress={() => setShowConfirmModal(false)} activeOpacity={0.8}><Text style={styles.modalButtonSecondaryText}>Edit</Text></TouchableOpacity>
-              <TouchableOpacity style={[styles.modalButtonPrimary, { backgroundColor: '#059669' }]} onPress={confirmSubmit} activeOpacity={0.8}>
+              <TouchableOpacity style={[styles.modalButtonPrimary, { backgroundColor: '#16A085' }]} onPress={confirmSubmit} activeOpacity={0.8}>
                 <Ionicons name="checkmark-circle" size={18} color="#ffffff" />
                 <Text style={styles.modalButtonPrimaryText}>Confirm</Text>
               </TouchableOpacity>
@@ -480,7 +480,7 @@ export default function FinancialDetailScreen() {
       <Modal visible={isLoading} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.loadingModalCard}>
-            <ActivityIndicator size="large" color="#059669" />
+            <ActivityIndicator size="large" color="#16A085" />
             <Text style={styles.loadingText}>Submitting your request...</Text>
             <Text style={styles.loadingSubtext}>Please wait a moment</Text>
           </View>
@@ -500,7 +500,7 @@ export default function FinancialDetailScreen() {
                 <Text style={styles.bookingCodeNote}>Our advisor will contact you within 24 hours</Text>
               </View>
             </View>
-            <TouchableOpacity style={[styles.successButton, { backgroundColor: '#059669' }]} onPress={closeSuccess} activeOpacity={0.8}><Text style={styles.successButtonText}>Done</Text></TouchableOpacity>
+            <TouchableOpacity style={[styles.successButton, { backgroundColor: '#16A085' }]} onPress={closeSuccess} activeOpacity={0.8}><Text style={styles.successButtonText}>Done</Text></TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   headerInfo: { flex: 1 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: '#111827' },
   headerActions: { marginLeft: 16 },
-  headerTag: { backgroundColor: '#059669', color: '#ffffff', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, fontSize: 12, fontWeight: '600' },
+  headerTag: { backgroundColor: '#1e40af', color: '#ffffff', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, fontSize: 12, fontWeight: '600' },
   content: { flex: 1 },
   heroCard: { backgroundColor: '#ffffff', margin: 20, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: '#e5e7eb' },
   heroImage: { width: '100%', height: 200 },
@@ -543,13 +543,13 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 12, fontSize: 16, color: '#111827', backgroundColor: '#ffffff' },
   textArea: { height: 80, paddingTop: 12, textAlignVertical: 'top' },
   errorText: { fontSize: 12, color: '#dc2626', marginTop: 4 },
-  requestButton: { marginTop: 8, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: '#059669' },
+  requestButton: { marginTop: 8, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1e40af' },
   requestButtonText: { fontSize: 16, fontWeight: '700', color: '#ffffff' },
   // Modals (borrowed from healthcare styling)
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.4)', justifyContent: 'center', alignItems: 'center', padding: 16 },
   confirmModalCard: { backgroundColor: '#ffffff', borderRadius: 16, padding: 20, width: '100%', maxWidth: 360, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 },
   modalIconContainer: { alignItems: 'center', marginBottom: 16 },
-  modalIconCircle: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#ecfdf5', alignItems: 'center', justifyContent: 'center' },
+  modalIconCircle: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#f0fdf4', alignItems: 'center', justifyContent: 'center' },
   modalTitle: { fontSize: 20, fontWeight: '700', color: '#111827', textAlign: 'center', marginBottom: 6 },
   modalSubtitle: { fontSize: 14, color: '#6b7280', textAlign: 'center', marginBottom: 20 },
   bookingDetailsCard: { backgroundColor: '#f8fafc', borderRadius: 10, padding: 16, marginBottom: 20 },
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   successDetailsCard: { backgroundColor: '#f8fafc', borderRadius: 12, padding: 16, marginBottom: 20 },
   bookingCodeContainer: { alignItems: 'center', marginBottom: 4 },
   bookingCodeLabel: { fontSize: 13, color: '#6b7280', marginBottom: 6, fontWeight: '600' },
-  bookingCodeValue: { fontSize: 24, fontWeight: '700', color: '#059669', letterSpacing: 1, marginBottom: 6 },
+  bookingCodeValue: { fontSize: 24, fontWeight: '700', color: '#16A085', letterSpacing: 1, marginBottom: 6 },
   bookingCodeNote: { fontSize: 11, color: '#9ca3af', textAlign: 'center' },
   successButton: { paddingVertical: 14, borderRadius: 10, alignItems: 'center', backgroundColor: '#10b981' },
   successButtonText: { fontSize: 15, fontWeight: '700', color: '#ffffff' },
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
   processCard: { backgroundColor: '#ffffff', marginHorizontal: 20, marginBottom: 20, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#e5e7eb' },
   processList: { gap: 16 },
   processStep: { flexDirection: 'row', alignItems: 'flex-start' },
-  stepNumber: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#059669', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  stepNumber: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#1e40af', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   stepNumberText: { fontSize: 14, fontWeight: '700', color: '#ffffff' },
   stepContent: { flex: 1 },
   stepTitle: { fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 4 },

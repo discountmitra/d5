@@ -121,9 +121,6 @@ export default function BeautySalonScreen() {
               onChangeText={setQuery}
             />
           </View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.filterButton}>
-            <Ionicons name="options-outline" size={18} color="#fff" />
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -234,7 +231,7 @@ export default function BeautySalonScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f1f5f9" },
-  headerGradient: { backgroundColor: "#111827", paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16 },
+  headerGradient: { backgroundColor: "#b53471", paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16 },
   headerRow: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
   backButton: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.2)", marginRight: 12 },
   headerTitle: { color: "#fff", fontSize: 18, fontWeight: "600" },

@@ -464,7 +464,7 @@ export default function EventDetailScreen() {
         animationType="fade"
         onRequestClose={() => setShowDatePicker(false)}
       >
-        <View style={styles.calendarOverlay}>
+        <View style={styles.modalOverlay}>
           <View style={styles.calendarContainer}>
             <View style={styles.calendarHeader}>
               <TouchableOpacity onPress={() => navigateMonth('prev')} style={styles.navButton}>
@@ -579,22 +579,21 @@ const styles = StyleSheet.create({
   dateInputContainer: { position: 'relative', flexDirection: 'row', alignItems: 'center' },
   dateInput: { flex: 1, borderWidth: 1, borderColor: '#d1d5db', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 12, fontSize: 16, color: '#111827', backgroundColor: '#ffffff', paddingRight: 45 },
   calendarIcon: { position: 'absolute', right: 12 },
-  calendarOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'center', alignItems: 'center' },
-  calendarContainer: { backgroundColor: '#ffffff', borderRadius: 16, margin: 20, padding: 20, maxWidth: 350, width: '90%' },
+  calendarContainer: { backgroundColor: '#ffffff', borderRadius: 16, padding: 20, width: '100%', maxWidth: 340, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 },
   calendarHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   navButton: { padding: 8, borderRadius: 8, backgroundColor: '#f3f4f6' },
-  monthYear: { fontSize: 18, fontWeight: '600', color: '#111827' },
+  monthYear: { fontSize: 18, fontWeight: '700', color: '#111827' },
   weekDays: { flexDirection: 'row', marginBottom: 10 },
   weekDayText: { flex: 1, textAlign: 'center', fontSize: 12, fontWeight: '600', color: '#6b7280', paddingVertical: 8 },
-  calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
-  calendarDay: { width: '14.28%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 8, margin: 1 },
+  calendarGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 20 },
+  calendarDay: { width: '14.285%', height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 8 },
   emptyDay: { backgroundColor: 'transparent' },
-  todayDay: { backgroundColor: '#dbeafe', borderWidth: 1, borderColor: '#3b82f6' },
+  todayDay: { backgroundColor: '#fef2f2' },
   selectedDay: { backgroundColor: '#e91e63' },
   pastDay: { opacity: 0.3 },
   calendarDayText: { fontSize: 14, fontWeight: '500', color: '#374151' },
-  todayText: { color: '#3b82f6', fontWeight: '600' },
-  selectedText: { color: '#ffffff', fontWeight: '600' },
+  todayText: { color: '#e91e63', fontWeight: '700' },
+  selectedText: { color: '#ffffff', fontWeight: '700' },
   pastText: { color: '#9ca3af' },
   closeCalendarButton: { marginTop: 20, paddingVertical: 12, backgroundColor: '#f3f4f6', borderRadius: 8, alignItems: 'center' },
   closeCalendarText: { fontSize: 16, fontWeight: '600', color: '#374151' },

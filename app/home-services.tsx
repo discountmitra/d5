@@ -287,9 +287,6 @@ export default function HomeServicesScreen() {
               onChangeText={setQuery}
             />
           </View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.filterButton}>
-            <Ionicons name="options-outline" size={18} color="#fff" />
-          </TouchableOpacity>
         </View>
       </View>
 

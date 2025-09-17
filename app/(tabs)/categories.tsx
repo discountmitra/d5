@@ -81,11 +81,13 @@ export default function CategoriesScreen() {
             } else if (item.title === "Financial Services") {
               router.push("/financial-services");
             } else if (item.title === "Education") {
-              router.push("/education");
+              // router.push("/education");
+              router.push("/coming-soon");
             } else if (item.title === "Beauty & Salon") {
               router.push("/beauty-salon");
             } else if (item.title === "Construction") {
-              router.push("/construction");
+              // router.push("/construction");
+              router.push("/coming-soon");
             } else if (item.title === "Bar" || item.title === "Electronics" || item.title === "Clothing") {
               router.push("/coming-soon");
             }

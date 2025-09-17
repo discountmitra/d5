@@ -6,33 +6,21 @@ const { width } = Dimensions.get("window");
 
 type Deal = {
   id: number;
-  title: string;
-  subtitle: string;
-  offer: string;
   image: ImageSourcePropType;
 };
 
 const deals: Deal[] = [
   {
     id: 1,
-    title: "Masala Dosa from ₹89",
-    subtitle: "Crispy South Indian crepe with spiced filling",
-    offer: "Limited time offer!",
-    image: require("../../assets/deal.png"),
+    image: require("../../assets/c1.png"),
   },
   {
     id: 2,
-    title: "Pizza Combo from ₹199",
-    subtitle: "Family meal with coke & garlic bread",
-    offer: "Weekend special!",
-    image: require("../../assets/deal.png"),
+    image: require("../../assets/c2.jpg"),
   },
   {
     id: 3,
-    title: "Burger Blast from ₹149",
-    subtitle: "Cheesy double-layered burger + fries",
-    offer: "Flat 20% off",
-    image: require("../../assets/deal.png"),
+    image: require("../../assets/c3.jpg"),
   },
 ];
 
@@ -43,18 +31,13 @@ export default function DealCard() {
       <Carousel
         loop
         width={width - Spacing.lg}
-        height={140}
+        height={180}
         autoPlay
         autoPlayInterval={3000}
         data={deals}
         scrollAnimationDuration={800}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <View style={styles.textContainer}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.subtitle}>{item.subtitle}</Text>
-              <Text style={styles.offer}>{item.offer}</Text>
-            </View>
             <Image source={item.image} style={styles.image} />
           </View>
         )}
@@ -75,36 +58,22 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   card: {
-    flexDirection: "row",
-    backgroundColor: "#FFF7ED",
+    backgroundColor: "#ffffff",
     borderRadius: 12,
-    padding: Spacing.md,
     marginBottom: Spacing.md,
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  textContainer: {
-    flex: 1,
-    marginRight: Spacing.md,
-  },
-  title: {
-    fontSize: FontSizes.subtitle,
-    fontWeight: "700",
-    color: Colors.primary,
-    marginBottom: Spacing.xs,
-  },
-  subtitle: {
-    fontSize: FontSizes.input,
-    color: Colors.secondary,
-    marginBottom: Spacing.xs,
-  },
-  offer: {
-    color: "green",
-    fontWeight: "600",
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   image: {
-    width: 70,
-    height: 70,
-    resizeMode: "contain",
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
 });

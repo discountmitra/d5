@@ -200,7 +200,7 @@ export default function HomeServiceDetailScreen() {
           <View style={styles.confirmModalCard}>
             <View style={styles.modalIconContainer}>
               <View style={styles.modalIconCircle}>
-                <Ionicons name="help-circle" size={32} color="#ef4444" />
+                <Ionicons name="help-circle" size={32} color="#3b82f6" />
               </View>
             </View>
             <Text style={styles.modalTitle}>Confirm Request</Text>
@@ -228,7 +228,7 @@ export default function HomeServiceDetailScreen() {
       <Modal visible={showProcessing} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.loadingModalCard}>
-            <ActivityIndicator size="large" color="#ef4444" />
+            <ActivityIndicator size="large" color="#3b82f6" />
             <Text style={styles.loadingText}>Submitting your request...</Text>
             <Text style={styles.loadingSubtext}>Please wait a moment</Text>
           </View>
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
   // Confirmation Modal - Simplified
   confirmModalCard: { backgroundColor: '#ffffff', borderRadius: 16, padding: 20, width: '100%', maxWidth: 360, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 },
   modalIconContainer: { alignItems: 'center', marginBottom: 16 },
-  modalIconCircle: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#fef2f2', alignItems: 'center', justifyContent: 'center' },
+  modalIconCircle: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#eff6ff', alignItems: 'center', justifyContent: 'center' },
   modalTitle: { fontSize: 20, fontWeight: '700', color: '#111827', textAlign: 'center', marginBottom: 6 },
   modalSubtitle: { fontSize: 14, color: '#6b7280', textAlign: 'center', marginBottom: 20 },
   bookingDetailsCard: { backgroundColor: '#f8fafc', borderRadius: 10, padding: 16, marginBottom: 20 },
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   modalButtonContainer: { flexDirection: 'row', gap: 10 },
   modalButtonSecondary: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: '#f3f4f6', alignItems: 'center' },
   modalButtonSecondaryText: { fontSize: 15, fontWeight: '600', color: '#6b7280' },
-  modalButtonPrimary: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: '#ef4444', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 6 },
+  modalButtonPrimary: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: '#3b82f6', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 6 },
   modalButtonPrimaryText: { fontSize: 15, fontWeight: '700', color: '#ffffff' },
   
   // Loading Modal - Simplified
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
   successDetailsCard: { backgroundColor: '#f8fafc', borderRadius: 12, padding: 16, marginBottom: 20 },
   bookingCodeContainer: { alignItems: 'center', marginBottom: 16, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#e5e7eb' },
   bookingCodeLabel: { fontSize: 13, color: '#6b7280', marginBottom: 6, fontWeight: '600' },
-  bookingCodeValue: { fontSize: 24, fontWeight: '700', color: '#ef4444', letterSpacing: 1, marginBottom: 6 },
+  bookingCodeValue: { fontSize: 24, fontWeight: '700', color: '#3b82f6', letterSpacing: 1, marginBottom: 6 },
   bookingCodeNote: { fontSize: 11, color: '#9ca3af', textAlign: 'center' },
   contactInfoCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f0fdf4', padding: 12, borderRadius: 10 },
   contactInfoText: { fontSize: 13, color: '#15803d', marginLeft: 10, flex: 1, fontWeight: '500' },
