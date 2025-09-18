@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TextInput, FlatList, Image, TouchableOpacity, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "expo-router";
+import { useNavigation, router } from "expo-router";
 
 type CategoryKey = "Cement" | "Steel" | "Bricks" | "Paints" | "RMC" | "Tiles & Stone" | "Interior Services" | "Machinery";
 
@@ -312,7 +312,12 @@ export default function ConstructionScreen() {
         }}
         scrollEventThrottle={16}
         renderItem={({ item }) => (
-          <TouchableOpacity activeOpacity={0.9} style={styles.card}>
+          <TouchableOpacity activeOpacity={0.9} style={styles.card}
+            onPress={() => {
+              const constructionId = item.name.toLowerCase().replace(/\s+/g, '-');
+              router.push({ pathname: "/construction-detail", params: { constructionId, image: item.image || "" } });
+            }}
+          >
             <View style={{ position: "relative" }}>
               <Image
                 source={
@@ -367,10 +372,10 @@ export default function ConstructionScreen() {
                 <Text style={styles.availabilityText}>{item.availability}</Text>
               </View>
 
-              <View style={styles.actionsRow}>
-                <TouchableOpacity activeOpacity={0.9} onPress={() => {}} style={styles.requestNowBtn}>
-                  <Text style={styles.requestNowText}>Request Now</Text>
-                </TouchableOpacity>
+              {/* Simple text CTA instead of button */}
+              <View style={styles.ctaContainer}>
+                <Text style={styles.ctaText}>View details</Text>
+                <Ionicons name="arrow-forward" size={16} color="#f97316" />
               </View>
             </View>
           </TouchableOpacity>
@@ -393,18 +398,18 @@ export default function ConstructionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f1f5f9" },
-  headerGradient: { backgroundColor: "#111827", paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16 },
+  headerGradient: { backgroundColor: "#f97316", paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16 },
   headerRow: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
-  backButton: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.12)", marginRight: 12 },
+  backButton: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "rgba(255,255,255,0.2)", marginRight: 12 },
   headerTitle: { color: "#fff", fontSize: 18, fontWeight: "600" },
   searchRow: { flexDirection: "row", alignItems: "center" },
   searchBar: { flex: 1, flexDirection: "row", alignItems: "center", backgroundColor: "#ffffff", borderRadius: 999, paddingHorizontal: 16, height: 48 },
   searchInput: { flex: 1, fontSize: 16, color: "#111827" },
-  filterButton: { width: 48, height: 48, borderRadius: 24, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.3)", marginLeft: 12 },
+  filterButton: { width: 48, height: 48, borderRadius: 24, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(255,255,255,0.35)", marginLeft: 12 },
   categoryChipsContainer: { backgroundColor: "#ffffff", borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },
   categoryChipsOuter: { paddingHorizontal: 16, paddingVertical: 12 },
   catChip: { borderWidth: 1, borderColor: "#e5e7eb", backgroundColor: "#ffffff", paddingHorizontal: 14, height: 40, borderRadius: 20, marginRight: 12, alignItems: "center", justifyContent: "center" },
-  catChipActive: { backgroundColor: "#111827", borderColor: "#111827" },
+  catChipActive: { backgroundColor: "#f97316", borderColor: "#f97316" },
   catChipText: { fontWeight: "700", color: "#111827", fontSize: 12 },
   catChipTextActive: { color: "#ffffff" },
   list: { paddingHorizontal: 20, paddingTop: 12, paddingBottom: 36 },
@@ -426,15 +431,14 @@ const styles = StyleSheet.create({
   ratingText: { fontSize: 12, fontWeight: "700", color: "#111827", marginRight: 4 },
   reviewsText: { fontSize: 12, color: "#6b7280" },
   priceRow: { marginTop: 8, marginBottom: 8 },
-  priceText: { fontSize: 14, fontWeight: "700", color: "#e91e63" },
+  priceText: { fontSize: 14, fontWeight: "700", color: "#f97316" },
   detailsText: { fontSize: 11, color: "#6b7280", marginTop: 2 },
   availabilityRow: { flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12 },
   availabilityDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#10b981", marginRight: 6 },
   availabilityText: { fontSize: 12, color: "#10b981", fontWeight: "600" },
-  actionsRow: { flexDirection: "row", alignItems: "center", marginTop: 12 },
-  requestNowBtn: { flex: 1, height: 44, borderRadius: 12, alignItems: "center", justifyContent: "center", flexDirection: "row", backgroundColor: "#111827" },
-  requestNowText: { fontWeight: "700", color: "#ffffff", fontSize: 14 },
-  scrollTopFab: { position: "absolute", right: 16, bottom: 72, width: 44, height: 44, borderRadius: 22, backgroundColor: "#111827", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.12, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
+  scrollTopFab: { position: "absolute", right: 16, bottom: 72, width: 44, height: 44, borderRadius: 22, backgroundColor: "#f97316", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.12, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
+  ctaContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 12 },
+  ctaText: { fontSize: 14, fontWeight: '700', color: '#f97316', marginRight: 6 },
 });
 
 

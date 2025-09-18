@@ -39,6 +39,26 @@ export default function HospitalDetailScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+
+  const faqData = [
+    {
+      question: "How do I book an OP appointment?",
+      answer: "Fill in your details, choose a preferred date, and tap Confirm Booking. You'll receive a unique booking code and our team will contact you to confirm the time.",
+    },
+    {
+      question: "What should I bring to the hospital?",
+      answer: "Carry a valid ID, previous medical reports/prescriptions, and your booking code shown on the success screen.",
+    },
+    {
+      question: "Can I reschedule my appointment?",
+      answer: "Yes. You can contact the hospital reception using the number provided, and reschedule at least 6 hours before the appointment time.",
+    },
+  ];
+
+  const toggleFAQ = (index: number) => {
+    setExpandedFAQ(expandedFAQ === index ? null : index);
+  };
 
   const hospital = useMemo(() => getHospitalById(hospitalId), [hospitalId]);
 
@@ -415,6 +435,34 @@ export default function HospitalDetailScreen() {
           <Text style={styles.noteText}>
             A unique booking code will be generated after confirmation.
           </Text>
+        </View>
+
+        {/* FAQ Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
+          <View style={styles.faqList}>
+            {faqData.map((faq, index) => (
+              <View key={index} style={styles.faqItem}>
+                <TouchableOpacity
+                  style={styles.faqHeader}
+                  onPress={() => toggleFAQ(index)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.faqQuestion}>{faq.question}</Text>
+                  <Ionicons
+                    name={expandedFAQ === index ? "chevron-up" : "chevron-down"}
+                    size={20}
+                    color="#6b7280"
+                  />
+                </TouchableOpacity>
+                {expandedFAQ === index && (
+                  <View style={styles.faqAnswerContainer}>
+                    <Text style={styles.faqAnswer}>{faq.answer}</Text>
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
         </View>
 
         <View style={{ height: 24 }} />
@@ -984,6 +1032,12 @@ const styles = StyleSheet.create({
   },
   bookBtnText: { color: "#fff", fontWeight: "800", marginLeft: 8 },
   noteText: { marginTop: 10, fontSize: 12, color: "#6b7280" },
+  faqList: { gap: 12 },
+  faqItem: { borderBottomWidth: 1, borderBottomColor: "#f3f4f6", paddingBottom: 12, marginBottom: 12 },
+  faqHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 4 },
+  faqQuestion: { fontSize: 16, fontWeight: "600", color: "#111827", flex: 1, marginRight: 12 },
+  faqAnswerContainer: { paddingTop: 12, paddingLeft: 4 },
+  faqAnswer: { fontSize: 14, color: "#6b7280", lineHeight: 20 },
 
   infoCard: {
     backgroundColor: "#fff",
