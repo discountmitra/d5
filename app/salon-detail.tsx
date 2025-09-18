@@ -240,19 +240,19 @@ export default function SalonDetailScreen() {
           <View style={styles.stickyHeaderContent}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color="#111827" />
-            </TouchableOpacity>
+          </TouchableOpacity>
             <View style={styles.stickyHeaderInfo}>
               <Text style={styles.stickyHeaderTitle} numberOfLines={1}>{salon.name}</Text>
               <View style={styles.stickyHeaderDetails}>
                 <Text style={styles.stickyHeaderRating}>Beauty & Salon</Text>
                 <Text style={styles.stickyHeaderPrice}>⭐ {salon.rating}</Text>
-              </View>
-            </View>
+          </View>
+          </View>
             <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
                 <Ionicons name="call" size={20} color="#111827" />
               </TouchableOpacity>
-          </View>
         </View>
+      </View>
       )}
 
       <ScrollView 
@@ -303,7 +303,7 @@ export default function SalonDetailScreen() {
                 <Ionicons name="cut" size={24} color="#b53471" />
               </View>
               <View style={styles.salonInfoMain}>
-                <Text style={styles.salonName}>{salon.name}</Text>
+              <Text style={styles.salonName}>{salon.name}</Text>
                 <View style={styles.salonLocation}>
                   <Ionicons name="location" size={12} color="#ef4444" />
                   <Text style={styles.salonLocationText}>{salon.address}</Text>
@@ -318,16 +318,16 @@ export default function SalonDetailScreen() {
                 <View style={styles.salonRating}>
                   <View style={styles.ratingBadge}>
                     <Ionicons name="star" size={12} color="#fbbf24" />
-                    <Text style={styles.ratingText}>{salon.rating}</Text>
+                <Text style={styles.ratingText}>{salon.rating}</Text>
                     <Text style={styles.reviewsText}>({salon.reviews})</Text>
-                  </View>
+              </View>
                   <View style={styles.budgetTag}>
                     <Text style={styles.budgetTagText}>Beauty & Salon</Text>
-                  </View>
-                </View>
-              </View>
+            </View>
+            </View>
             </View>
           </View>
+        </View>
 
         {/* User Type Selection */}
         <View style={styles.section}>

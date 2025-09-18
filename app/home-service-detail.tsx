@@ -98,9 +98,9 @@ export default function HomeServiceDetailScreen() {
             </View>
             <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
                 <Ionicons name="call" size={20} color="#111827" />
-              </TouchableOpacity>
+          </TouchableOpacity>
           </View>
-        </View>
+          </View>
       )}
 
       <ScrollView 
@@ -138,10 +138,10 @@ export default function HomeServiceDetailScreen() {
                   color="#fff" 
                 />
               </TouchableOpacity>
-            </View>
           </View>
         </View>
-          
+      </View>
+
         {/* Main Content Container */}
         <View style={styles.mainContent}>
           {/* Service Info Card */}
@@ -151,7 +151,7 @@ export default function HomeServiceDetailScreen() {
                 <Ionicons name="construct" size={24} color="#3b82f6" />
               </View>
               <View style={styles.serviceInfoMain}>
-                <Text style={styles.serviceName}>{service.name}</Text>
+              <Text style={styles.serviceName}>{service.name}</Text>
                 <View style={styles.serviceLocation}>
                   <Ionicons name="location" size={12} color="#ef4444" />
                   <Text style={styles.serviceLocationText}>Home Services</Text>
@@ -171,11 +171,11 @@ export default function HomeServiceDetailScreen() {
                   </View>
                   <View style={styles.budgetTag}>
                     <Text style={styles.budgetTagText}>Home Services</Text>
-                  </View>
-                </View>
-              </View>
+            </View>
+            </View>
             </View>
           </View>
+        </View>
 
         {/* Services Carousel */}
         <View style={styles.section}>

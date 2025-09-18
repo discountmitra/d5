@@ -91,7 +91,7 @@ export default function HealthcareScreen() {
         specialOffers: ["Lab & IP Services – 10% Discount", "Pharmacy – 10% Discount"],
         phone: "6876543210",
         category: "ENT",
-        image: "default.png",
+        image: "https://images.unsplash.com/photo-1717497932377-7758b8d5b45e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fEVOVCUyMGhvc3BpdGFsfGVufDB8fDB8fHww",
       },
       {
         id: "shiva-sai-opticals",
@@ -117,7 +117,7 @@ export default function HealthcareScreen() {
         ],
         phone: "8247556370",
         category: "Clinics",
-        image: "default.png",
+        image: "https://plus.unsplash.com/premium_photo-1661373766140-91267929f644?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fG5ldXJvJTIwaG9zcGl0YWx8ZW58MHx8MHx8fDA%3D",
       },
       {
         id: "chandana-chest",
@@ -131,7 +131,7 @@ export default function HealthcareScreen() {
         ],
         phone: "7799663223",
         category: "Hospitals",
-        image: "default.png",
+        image: "https://images.unsplash.com/photo-1619070284836-e850273d69ac?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGNoZXN0JTIwaG9zcGl0YWx8ZW58MHx8MHx8fDA%3D",
       },
       {
         id: "vihana-dental",
