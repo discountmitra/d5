@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 
 type UserType = 'normal' | 'vip';
 
@@ -28,6 +28,7 @@ interface EventData {
 
 export default function EventDetailScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const params = useLocalSearchParams();
   const { eventId } = params;
   const headerImage = typeof params.image === 'string' ? (params.image as string) : '';
@@ -48,6 +49,7 @@ export default function EventDetailScreen() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [bookingId, setBookingId] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
 
   const faqData = [
     {
@@ -180,6 +182,11 @@ export default function EventDetailScreen() {
     setSelectedDate(newDate);
   };
 
+  const onScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    setShowStickyHeader(offsetY > 100);
+  };
+
   const generateCalendarDays = () => {
     const today = new Date();
     const currentMonth = selectedDate.getMonth();
@@ -218,50 +225,103 @@ export default function EventDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={22} color="#111827" />
-          </TouchableOpacity>
-          <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle} numberOfLines={1}>{event.name}</Text>
-          </View>
-          <View style={styles.headerActions}>
-            <Text style={styles.headerTag}>Events</Text>
+      {/* Sticky Header */}
+      {showStickyHeader && (
+        <View style={styles.stickyHeader}>
+          <View style={styles.stickyHeaderContent}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color="#111827" />
+            </TouchableOpacity>
+            <View style={styles.stickyHeaderInfo}>
+              <Text style={styles.stickyHeaderTitle} numberOfLines={1}>{event.name}</Text>
+              <View style={styles.stickyHeaderDetails}>
+                <Text style={styles.stickyHeaderRating}>⭐ {event.rating}</Text>
+                <Text style={styles.stickyHeaderPrice}>Events</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
+                <Ionicons name="call" size={20} color="#111827" />
+              </TouchableOpacity>
           </View>
         </View>
-      </View>
+      )}
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Hero */}
-        <View style={styles.heroCard}>
-          <Image source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require('../assets/default.png')} style={styles.heroImage} />
-          <View style={styles.heroBody}>
-            <View style={styles.heroHeader}>
-              <Text style={styles.eventName}>{event.name}</Text>
-              <View style={styles.ratingPill}>
-                <Ionicons name="star" size={14} color="#fbbf24" />
-                <Text style={styles.ratingText}>{event.rating}</Text>
-              </View>
+      <ScrollView 
+        style={styles.scrollView}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section with Background */}
+        <View style={styles.heroSection}>
+          <Image 
+            source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require('../assets/default.png')} 
+            style={styles.heroBackgroundImage}
+            resizeMode="cover"
+          />
+          <View style={styles.heroOverlay} />
+          
+          {/* Top Action Buttons */}
+          <View style={styles.heroTopActions}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.heroBackButton}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            
+            <View style={styles.heroRightActions}>
+              <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
+                <Ionicons name="call" size={20} color="#111827" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.heroLikeButton}
+                onPress={() => {}}
+              >
+                <Ionicons 
+                  name="heart-outline" 
+                  size={24} 
+                  color="#fff" 
+                />
+              </TouchableOpacity>
             </View>
-            <View style={styles.metaRow}>
-              <Ionicons name="apps" size={14} color="#6b7280" />
-              <Text style={styles.metaText}>{event.category}</Text>
-            </View>
-            <View style={styles.metaRow}>
-              <Ionicons name="people" size={14} color="#6b7280" />
-              <Text style={styles.metaText}>{event.reviews} reviews</Text>
-            </View>
-            {event.description && (
-              <View style={styles.descriptionContainer}>
-                <Text style={styles.descriptionText}>{event.description}</Text>
-              </View>
-            )}
           </View>
         </View>
+          
+        {/* Main Content Container */}
+        <View style={styles.mainContent}>
+          {/* Event Info Card */}
+          <View style={styles.eventInfoCard}>
+            <View style={styles.eventInfoHeader}>
+              <View style={styles.eventIcon}>
+                <Ionicons name="calendar" size={24} color="#e91e63" />
+              </View>
+              <View style={styles.eventInfoMain}>
+                <Text style={styles.eventName}>{event.name}</Text>
+                <View style={styles.eventLocation}>
+                  <Ionicons name="location" size={12} color="#ef4444" />
+                  <Text style={styles.eventLocationText}>{event.category}</Text>
+                </View>
+                <View style={styles.eventMeta}>
+                  <Text style={styles.eventPrice}>Events</Text>
+                  <View style={styles.eventStatus}>
+                    <Text style={styles.eventStatusText}>Available Now</Text>
+                    <Ionicons name="chevron-down" size={14} color="#6b7280" />
+                  </View>
+                </View>
+                <View style={styles.eventRating}>
+                  <View style={styles.ratingBadge}>
+                    <Ionicons name="star" size={12} color="#fbbf24" />
+                    <Text style={styles.ratingText}>{event.rating}</Text>
+                    <Text style={styles.reviewsText}>({event.reviews})</Text>
+                  </View>
+                  <View style={styles.budgetTag}>
+                    <Text style={styles.budgetTagText}>Events</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
 
         {/* User Type Selection */}
-        <View style={styles.userTypeCard}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Select Plan</Text>
           <View style={styles.userTypeButtons}>
             <TouchableOpacity 
@@ -282,7 +342,7 @@ export default function EventDetailScreen() {
         </View>
 
         {/* Booking Form */}
-        <View style={styles.bookingCard}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Book Your Event</Text>
           
           <View style={styles.formRow}>
@@ -385,7 +445,7 @@ export default function EventDetailScreen() {
         </View>
 
         {/* FAQ Section */}
-        <View style={styles.faqCard}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
           <View style={styles.faqList}>
             {faqData.map((faq, index) => (
@@ -413,7 +473,7 @@ export default function EventDetailScreen() {
         </View>
 
         <View style={{ height: 24 }} />
-
+        </View>
       </ScrollView>
 
       {/* Confirmation Modal */}
@@ -533,27 +593,254 @@ export default function EventDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8fafc' },
-  headerContainer: { backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb' },
-  headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingTop: 56, paddingBottom: 16 },
-  backButton: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f3f4f6', marginRight: 16 },
-  headerInfo: { flex: 1 },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: '#111827' },
-  headerActions: { marginLeft: 16 },
-  headerTag: { backgroundColor: '#e91e63', color: '#ffffff', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, fontSize: 12, fontWeight: '600' },
-  content: { flex: 1 },
-  heroCard: { backgroundColor: '#ffffff', margin: 20, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: '#e5e7eb' },
-  heroImage: { width: '100%', height: 200 },
-  heroBody: { padding: 20 },
-  heroHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  eventName: { flex: 1, fontSize: 20, fontWeight: '700', color: '#111827', marginRight: 12 },
-  ratingPill: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fef3c7', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  ratingText: { marginLeft: 4, fontSize: 14, fontWeight: '600', color: '#d97706' },
-  metaRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  metaText: { marginLeft: 8, fontSize: 14, color: '#6b7280' },
-  descriptionContainer: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#e5e7eb' },
-  descriptionText: { fontSize: 14, color: '#6b7280', lineHeight: 20 },
-  userTypeCard: { backgroundColor: '#ffffff', marginHorizontal: 20, marginBottom: 20, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#e5e7eb' },
+  container: {
+    flex: 1,
+    backgroundColor: '#f8fafc',
+  },
+  stickyHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    backgroundColor: '#fff',
+    paddingTop: 50,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  stickyHeaderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  stickyHeaderInfo: {
+    flex: 1,
+    marginHorizontal: 16,
+  },
+  stickyHeaderTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  stickyHeaderDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  stickyHeaderRating: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginRight: 12,
+  },
+  stickyHeaderPrice: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f8fafc',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  heroSection: {
+    height: 300,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  heroBackgroundImage: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  heroOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  heroTopActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    zIndex: 10,
+  },
+  heroBackButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  heroCallButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroLikeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mainContent: {
+    backgroundColor: '#f8fafc',
+    marginTop: -100, // Overlap with hero section
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+    zIndex: 5,
+  },
+  eventInfoCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 4,
+    marginTop: -25,
+  },
+  eventInfoHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  eventIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#fef3c7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  eventInfoMain: {
+    flex: 1,
+  },
+  eventName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  eventLocation: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  eventLocationText: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginLeft: 4,
+  },
+  eventMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  eventPrice: {
+    fontSize: 14,
+    color: '#111827',
+    fontWeight: '600',
+  },
+  eventStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  eventStatusText: {
+    fontSize: 14,
+    color: '#111827',
+    fontWeight: '600',
+  },
+  eventRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0fdf4',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  ratingText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  reviewsText: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  budgetTag: {
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  budgetTagText: {
+    fontSize: 12,
+    color: '#6b7280',
+    fontWeight: '600',
+  },
+  purchaseHistory: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  purchaseText: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  purchaseCount: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#6b7280',
+  },
+  section: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 2,
+  },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: '#111827', marginBottom: 16 },
   userTypeButtons: { flexDirection: 'row', gap: 12 },
   userTypeButton: { flex: 1, paddingVertical: 16, paddingHorizontal: 16, borderRadius: 12, borderWidth: 2, borderColor: '#e5e7eb', alignItems: 'center' },
@@ -562,7 +849,6 @@ const styles = StyleSheet.create({
   userTypeTextActive: { color: '#ffffff' },
   discountText: { fontSize: 11, color: '#059669', fontWeight: '700', textAlign: 'center', lineHeight: 14 },
   discountTextActive: { color: '#ffffff', opacity: 0.9 },
-  bookingCard: { backgroundColor: '#ffffff', marginHorizontal: 20, marginBottom: 40, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#e5e7eb' },
   formRow: { marginBottom: 16 },
   inputLabel: { fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 },
   input: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 12, fontSize: 16, color: '#111827', backgroundColor: '#ffffff' },
@@ -570,7 +856,6 @@ const styles = StyleSheet.create({
   errorText: { fontSize: 12, color: '#dc2626', marginTop: 4 },
   bookButton: { marginTop: 8, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e91e63' },
   bookButtonText: { fontSize: 16, fontWeight: '700', color: '#ffffff' },
-  faqCard: { backgroundColor: '#ffffff', marginHorizontal: 20, marginBottom: 20, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#e5e7eb' },
   faqList: { gap: 12 },
   faqItem: { borderBottomWidth: 1, borderBottomColor: '#f3f4f6', paddingBottom: 12, marginBottom: 12 },
   faqHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 4 },

@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Modal, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 
 export default function HomeServiceDetailScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
+  const navigation = useNavigation();
   const service = useMemo(() => ({
     id: (params.id as string) || "",
     name: (params.name as string) || "Service",
@@ -27,6 +28,7 @@ export default function HomeServiceDetailScreen() {
   const [showDone, setShowDone] = useState(false);
   const [reqId, setReqId] = useState("");
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
 
     const faqData = [
     {
@@ -73,44 +75,110 @@ export default function HomeServiceDetailScreen() {
     setExpandedFAQ(expandedFAQ === index ? null : index);
   };
 
+  const onScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    setShowStickyHeader(offsetY > 100);
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={22} color="#111827" />
-          </TouchableOpacity>
-          <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle} numberOfLines={1}>{service.name}</Text>
-          </View>
-          <View style={styles.headerActions}>
-            <Text style={styles.headerTag}>Home Services</Text>
+      {/* Sticky Header */}
+      {showStickyHeader && (
+        <View style={styles.stickyHeader}>
+          <View style={styles.stickyHeaderContent}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color="#111827" />
+            </TouchableOpacity>
+            <View style={styles.stickyHeaderInfo}>
+              <Text style={styles.stickyHeaderTitle} numberOfLines={1}>{service.name}</Text>
+              <View style={styles.stickyHeaderDetails}>
+                <Text style={styles.stickyHeaderRating}>Home Services</Text>
+                <Text style={styles.stickyHeaderPrice}>{service.price}</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
+                <Ionicons name="call" size={20} color="#111827" />
+              </TouchableOpacity>
           </View>
         </View>
-      </View>
+      )}
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Hero */}
-        <View style={styles.heroCard}>
-          <Image source={service.image && /^https?:\/\//.test(service.image) ? { uri: service.image } : require("../assets/default.png")} style={styles.heroImage} />
-          <View style={styles.heroBody}>
-            <View style={styles.heroHeader}>
-              <Text style={styles.serviceName}>{service.name}</Text>
-              <View style={styles.pricePill}><Text style={styles.priceText}>{service.price}</Text></View>
-            </View>
-            <View style={styles.metaRow}>
-              <Ionicons name="pricetag" size={14} color="#10b981" />
-              <Text style={styles.metaText}>{service.discount} • {service.category}</Text>
-            </View>
-            <View style={styles.metaRow}>
-              <Ionicons name="time" size={14} color="#6b7280" />
-              <Text style={styles.metaText}>On-time verified professionals</Text>
+      <ScrollView 
+        style={styles.scrollView}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section with Background */}
+        <View style={styles.heroSection}>
+          <Image 
+            source={service.image && /^https?:\/\//.test(service.image) ? { uri: service.image } : require("../assets/default.png")} 
+            style={styles.heroBackgroundImage}
+            resizeMode="cover"
+          />
+          <View style={styles.heroOverlay} />
+          
+          {/* Top Action Buttons */}
+          <View style={styles.heroTopActions}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.heroBackButton}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            
+            <View style={styles.heroRightActions}>
+              <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
+                <Ionicons name="call" size={20} color="#111827" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.heroLikeButton}
+                onPress={() => {}}
+              >
+                <Ionicons 
+                  name="heart-outline" 
+                  size={24} 
+                  color="#fff" 
+                />
+              </TouchableOpacity>
             </View>
           </View>
         </View>
+          
+        {/* Main Content Container */}
+        <View style={styles.mainContent}>
+          {/* Service Info Card */}
+          <View style={styles.serviceInfoCard}>
+            <View style={styles.serviceInfoHeader}>
+              <View style={styles.serviceIcon}>
+                <Ionicons name="construct" size={24} color="#3b82f6" />
+              </View>
+              <View style={styles.serviceInfoMain}>
+                <Text style={styles.serviceName}>{service.name}</Text>
+                <View style={styles.serviceLocation}>
+                  <Ionicons name="location" size={12} color="#ef4444" />
+                  <Text style={styles.serviceLocationText}>Home Services</Text>
+                </View>
+                <View style={styles.serviceMeta}>
+                  <Text style={styles.servicePrice}>{service.price}</Text>
+                  <View style={styles.serviceStatus}>
+                    <Text style={styles.serviceStatusText}>Available Now</Text>
+                    <Ionicons name="chevron-down" size={14} color="#6b7280" />
+                  </View>
+                </View>
+                <View style={styles.serviceRating}>
+                  <View style={styles.ratingBadge}>
+                    <Ionicons name="star" size={12} color="#fbbf24" />
+                    <Text style={styles.ratingText}>4.8</Text>
+                    <Text style={styles.reviewsText}>(234)</Text>
+                  </View>
+                  <View style={styles.budgetTag}>
+                    <Text style={styles.budgetTagText}>Home Services</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
 
         {/* Services Carousel */}
-        <View style={styles.carouselCard}>
+        <View style={styles.section}>
           <View style={styles.carouselHeader}>
             <Text style={styles.sectionTitle}>Services Offered</Text>
             <Text style={styles.carouselHint}>Swipe to explore</Text>
@@ -129,7 +197,7 @@ export default function HomeServiceDetailScreen() {
         </View>
 
         {/* Request Form */}
-        <View style={styles.requestCard}>
+        <View style={styles.section}>
           <View style={styles.requestHeader}>
             <Text style={styles.sectionTitle}>Request This Service</Text>
             <View style={styles.badge}><Text style={styles.badgeText}>Lowest Price Guarantee</Text></View>
@@ -165,7 +233,7 @@ export default function HomeServiceDetailScreen() {
           <Text style={styles.noteText}>You will receive a confirmation with a request ID after submission.</Text>
         </View>
 
-                <View style={styles.faqCard}>
+                <View style={styles.section}>
           <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
           <View style={styles.faqList}>
             {faqData.map((faq, index) => (
@@ -193,6 +261,7 @@ export default function HomeServiceDetailScreen() {
         </View>
 
         <View style={{ height: 24 }} />
+        </View>
       </ScrollView>
 
       {/* Two-step modals - match Healthcare styling, use Home Service data */}
@@ -374,27 +443,267 @@ function getSlidesFor(id: string, name: string): Array<{ title: string; text: st
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
-  headerContainer: { backgroundColor: "#fff", paddingTop: 50, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },
-  headerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 16 },
-  backButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: "#f8fafc", alignItems: "center", justifyContent: "center" },
-  headerInfo: { flex: 1, marginHorizontal: 16 },
-  headerTitle: { color: "#111827", fontSize: 18, fontWeight: "700" },
-  headerActions: { flexDirection: "row", alignItems: "center" },
-  headerTag: { fontSize: 12, color: "#6b7280", fontWeight: "600" },
-  content: { flex: 1 },
+  container: {
+    flex: 1,
+    backgroundColor: "#f8fafc",
+  },
+  stickyHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    paddingTop: 50,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+    zIndex: 1000,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  stickyHeaderContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+  stickyHeaderInfo: {
+    flex: 1,
+    marginHorizontal: 16,
+  },
+  stickyHeaderTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  stickyHeaderDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stickyHeaderRating: {
+    fontSize: 12,
+    color: "#6b7280",
+    marginRight: 12,
+  },
+  stickyHeaderPrice: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f8fafc",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  likeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f8fafc",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  heroSection: {
+    height: 300,
+    position: "relative",
+    overflow: "hidden",
+  },
+  heroBackgroundImage: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  heroOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  heroTopActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    zIndex: 10,
+  },
+  heroRightActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  heroBackButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroCallButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroLikeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  serviceInfoCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 4,
+    marginTop: -25,
+  },
+  serviceInfoHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  serviceIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#eff6ff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  serviceInfoMain: {
+    flex: 1,
+  },
+  serviceName: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  serviceLocation: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  serviceLocationText: {
+    fontSize: 14,
+    color: "#6b7280",
+    marginLeft: 4,
+  },
+  serviceMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  servicePrice: {
+    fontSize: 14,
+    color: "#111827",
+    fontWeight: "600",
+  },
+  serviceStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  serviceStatusText: {
+    fontSize: 14,
+    color: "#111827",
+    fontWeight: "600",
+  },
+  serviceRating: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 8,
+  },
+  ratingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0fdf4",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  ratingText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  reviewsText: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  budgetTag: {
+    backgroundColor: "#f3f4f6",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  budgetTagText: {
+    fontSize: 12,
+    color: "#6b7280",
+    fontWeight: "600",
+  },
+  purchaseHistory: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  purchaseText: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  purchaseCount: {
+    fontSize: 12,
+    color: "#6b7280",
+    fontWeight: "600",
+  },
+  mainContent: {
+    backgroundColor: "#f8fafc",
+    marginTop: -100, // Overlap with hero section
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+    zIndex: 5,
+  },
 
-  heroCard: { margin: 16, backgroundColor: "#fff", borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "#e5e7eb" },
-  heroImage: { width: "100%", height: 160 },
-  heroBody: { padding: 16 },
-  heroHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 },
-  serviceName: { fontSize: 18, fontWeight: "700", color: "#111827", flex: 1, paddingRight: 12 },
-  pricePill: { paddingHorizontal: 10, paddingVertical: 6, backgroundColor: "#111827", borderRadius: 12 },
-  priceText: { color: "#fff", fontWeight: "800", fontSize: 12 },
-  metaRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
-  metaText: { marginLeft: 6, fontSize: 12, color: "#6b7280" },
-
-  carouselCard: { backgroundColor: "#fff", marginHorizontal: 0, borderTopWidth: 1, borderBottomWidth: 1, borderColor: "#e5e7eb", paddingVertical: 12, marginBottom: 8 },
+  section: {
+    backgroundColor: "#fff",
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 2,
+  },
   carouselHeader: { paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 },
   carouselHint: { fontSize: 12, color: '#6b7280', fontWeight: '600' },
   slideCard: { width: 220, marginRight: 12, backgroundColor: '#ffffff', borderRadius: 14, borderWidth: 1, borderColor: '#e5e7eb', padding: 14, shadowColor: '#000', shadowOpacity: 0.06, shadowOffset: { width: 0, height: 4 }, shadowRadius: 8, elevation: 2 },
@@ -407,8 +716,6 @@ const styles = StyleSheet.create({
   benefitItem: { flexDirection: "row", alignItems: "center", width: "48%", marginBottom: 8 },
   benefitText: { marginLeft: 6, color: "#374151", fontSize: 12, fontWeight: "600" },
 
-  // Request form styles
-  requestCard: { backgroundColor: "#fff", marginHorizontal: 16, marginTop: 8, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#e5e7eb" },
   requestHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   badge: { backgroundColor: "#f3f4f6", borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: "#e5e7eb" },
   badgeText: { fontSize: 12, fontWeight: "700", color: "#111827" },
@@ -431,7 +738,6 @@ const styles = StyleSheet.create({
   // modalPrimary: { flex: 1, paddingVertical: 10, borderRadius: 10, backgroundColor: '#3b82f6', alignItems: 'center' },
   // modalPrimaryText: { fontSize: 14, fontWeight: '700', color: '#fff' },
 
-   faqCard: { backgroundColor: '#ffffff', marginHorizontal: 20, marginBottom: 20, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#e5e7eb' },
   faqList: { gap: 12 },
   faqItem: { borderBottomWidth: 1, borderBottomColor: '#f3f4f6', paddingBottom: 12, marginBottom: 12 },
   faqHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 4 },

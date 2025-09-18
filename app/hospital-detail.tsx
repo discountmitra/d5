@@ -11,13 +11,14 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { getHospitalById } from "../constants/hospitalData";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 
 export default function HospitalDetailScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
+  const navigation = useNavigation();
   const hospitalId = (params.id as string) || "";
   const headerImage = typeof params.image === 'string' ? (params.image as string) : "";
   const [patientName, setPatientName] = useState("");
@@ -37,6 +38,7 @@ export default function HospitalDetailScreen() {
   const [bookingCode, setBookingCode] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
 
   const hospital = useMemo(() => getHospitalById(hospitalId), [hospitalId]);
 
@@ -190,60 +192,115 @@ export default function HospitalDetailScreen() {
     setSelectedDate(newDate);
   };
 
+  const onScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    setShowStickyHeader(offsetY > 100);
+  };
+
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerTop}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Ionicons name="arrow-back" size={22} color="#111827" />
-          </TouchableOpacity>
-          <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle} numberOfLines={1}>
-              {hospital.name}
-            </Text>
-          </View>
-          <View style={styles.headerActions}>
-            <Text style={styles.headerTag}>Healthcare</Text>
+      {/* Sticky Header */}
+      {showStickyHeader && (
+        <View style={styles.stickyHeader}>
+          <View style={styles.stickyHeaderContent}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color="#111827" />
+            </TouchableOpacity>
+            <View style={styles.stickyHeaderInfo}>
+              <Text style={styles.stickyHeaderTitle} numberOfLines={1}>{hospital.name}</Text>
+              <View style={styles.stickyHeaderDetails}>
+                <Text style={styles.stickyHeaderRating}>Healthcare</Text>
+                <Text style={styles.stickyHeaderPrice}>{hospital.specialist}</Text>
+              </View>
+            </View>
+            <TouchableOpacity 
+              style={styles.likeButton}
+              onPress={handleCall}
+            >
+              <Ionicons 
+                name="call" 
+                size={24} 
+                color="#111827" 
+              />
+            </TouchableOpacity>
           </View>
         </View>
-      </View>
+      )}
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Hero */}
-        <View style={styles.heroCard}>
-          <Image
-            source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require("../assets/default.png")}
-            style={styles.heroImage}
+      <ScrollView 
+        style={styles.scrollView}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section with Background */}
+        <View style={styles.heroSection}>
+          <Image 
+            source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require("../assets/default.png")} 
+            style={styles.heroBackgroundImage}
+            resizeMode="cover"
           />
-          <View style={styles.heroBody}>
-            <View style={styles.heroHeader}>
-              <Text style={styles.hospitalName} numberOfLines={2}>
-                {hospital.name}
-              </Text>
-              <TouchableOpacity style={styles.callBtn} onPress={handleCall}>
-                <Ionicons name="call" size={14} color="#fff" />
-                <Text style={styles.callBtnText}>Call</Text>
+          <View style={styles.heroOverlay} />
+          
+          {/* Top Action Buttons */}
+          <View style={styles.heroTopActions}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.heroBackButton}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            
+            <View style={styles.heroRightActions}>
+              <TouchableOpacity style={styles.heroCallButton} onPress={handleCall}>
+                <Ionicons name="call" size={20} color="#111827" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.heroLikeButton}
+                onPress={handleCall}
+              >
+                <Ionicons 
+                  name="heart-outline" 
+                  size={24} 
+                  color="#fff" 
+                />
               </TouchableOpacity>
             </View>
-            <View style={styles.metaRow}>
-              <Ionicons name="medkit" size={14} color="#6b7280" />
-              <Text style={styles.metaText}>{hospital.specialist}</Text>
-            </View>
-            <View style={styles.metaRow}>
-              <Ionicons name="location" size={14} color="#ef4444" />
-              <Text style={styles.metaText}>
-                {hospital.description.split("\n")[1] || ""}
-              </Text>
-            </View>
           </View>
         </View>
+          
+        {/* Main Content Container */}
+        <View style={styles.mainContent}>
+          {/* Hospital Info Card */}
+          <View style={styles.hospitalInfoCard}>
+            <View style={styles.hospitalInfoHeader}>
+              <View style={styles.hospitalIcon}>
+                <Ionicons name="medkit" size={24} color="#ef4444" />
+              </View>
+              <View style={styles.hospitalInfoMain}>
+                <Text style={styles.hospitalName}>{hospital.name}</Text>
+                <View style={styles.hospitalLocation}>
+                  <Ionicons name="location" size={12} color="#ef4444" />
+                  <Text style={styles.hospitalLocationText}>
+                    {hospital.description.split("\n")[1] || ""}
+                  </Text>
+                </View>
+                <View style={styles.hospitalMeta}>
+                  <Text style={styles.hospitalPrice}>{hospital.specialist}</Text>
+                </View>
+                <View style={styles.hospitalRating}>
+                  <View style={styles.ratingBadge}>
+                    <Ionicons name="star" size={12} color="#fbbf24" />
+                    <Text style={styles.ratingText}>4.5</Text>
+                    <Text style={styles.reviewsText}>(250)</Text>
+                  </View>
+                  <View style={styles.budgetTag}>
+                    <Text style={styles.budgetTagText}>Healthcare</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
 
         {/* About / Specialty */}
-        <View style={styles.aboutCard}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>About & Services</Text>
           <Text style={styles.infoText}>
             {hospital.specialist} – Expert care and patient-first approach.
@@ -254,10 +311,8 @@ export default function HospitalDetailScreen() {
         </View>
 
         {/* Offers */}
-        <View style={styles.offersCard}>
-          <View style={styles.offersHeader}>
-            <Text style={styles.sectionTitle}>Offers & Benefits</Text>
-          </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Offers & Benefits</Text>
           <View style={styles.offerBody}>
             {hospital.normalUserOffer.split("\n").map((line, i) => (
               <View key={i} style={styles.offerRow}>
@@ -269,7 +324,7 @@ export default function HospitalDetailScreen() {
         </View>
 
         {/* Booking */}
-        <View style={styles.bookingCard}>
+        <View style={styles.section}>
           <View style={styles.bookingHeader}>
             <Text style={styles.sectionTitle}>Book OP</Text>
             <View style={styles.modeBadge}>
@@ -363,6 +418,7 @@ export default function HospitalDetailScreen() {
         </View>
 
         <View style={{ height: 24 }} />
+        </View>
       </ScrollView>
 
       {/* Confirmation Modal */}
@@ -588,19 +644,54 @@ export default function HospitalDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
-  headerContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: "#f8fafc",
+  },
+  stickyHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     backgroundColor: "#fff",
     paddingTop: 50,
-    paddingBottom: 16,
+    paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#e5e7eb",
+    zIndex: 1000,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
   },
-  headerTop: {
+  stickyHeaderContent: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
+  },
+  stickyHeaderInfo: {
+    flex: 1,
+    marginHorizontal: 16,
+  },
+  stickyHeaderTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  stickyHeaderDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stickyHeaderRating: {
+    fontSize: 12,
+    color: "#6b7280",
+    marginRight: 12,
+  },
+  stickyHeaderPrice: {
+    fontSize: 12,
+    color: "#6b7280",
   },
   backButton: {
     width: 40,
@@ -610,88 +701,216 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerInfo: { flex: 1, marginHorizontal: 16 },
-  headerTitle: { color: "#111827", fontSize: 18, fontWeight: "700" },
-  headerActions: { flexDirection: "row", alignItems: "center" },
-  headerTag: { fontSize: 12, color: "#6b7280", fontWeight: "600" },
-  content: { flex: 1 },
-
-  heroCard: {
-    margin: 16,
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-  },
-  heroImage: { width: "100%", height: 160 },
-  heroBody: { padding: 16 },
-  hospitalName: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#111827",
-    flex: 1,
-    paddingRight: 12,
-  },
-  heroHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 6,
-  },
-  metaRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
-  metaText: { marginLeft: 6, fontSize: 12, color: "#6b7280" },
-  heroActions: { flexDirection: "row", marginTop: 12 },
-  callBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#111827",
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  callBtnText: {
-    marginLeft: 6,
-    color: "#fff",
-    fontWeight: "800",
-    fontSize: 12,
-  },
-
-  toggleRow: {
-    flexDirection: "row",
-    marginHorizontal: 16,
-    marginTop: 4,
-    marginBottom: 12,
-  },
-  togglePill: {
-    flex: 1,
+  likeButton: {
+    width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
+    backgroundColor: "#f8fafc",
     alignItems: "center",
     justifyContent: "center",
   },
-  togglePillActive: { backgroundColor: "#111827", borderColor: "#111827" },
-  toggleText: { fontSize: 13, color: "#111827", fontWeight: "700" },
-  toggleTextActive: { color: "#fff" },
-
-  offersCard: {
-    backgroundColor: "#fff",
-    marginHorizontal: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    padding: 16,
+  scrollView: {
+    flex: 1,
   },
-  offersHeader: {
+  heroSection: {
+    height: 300,
+    position: "relative",
+    overflow: "hidden",
+  },
+  heroBackgroundImage: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  heroOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  heroTopActions: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    zIndex: 10,
+  },
+  heroRightActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  heroBackButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroCallButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroLikeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  hospitalInfoCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 4,
+    marginTop: -25,
+  },
+  hospitalInfoHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  hospitalIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#fef2f2",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  hospitalInfoMain: {
+    flex: 1,
+  },
+  hospitalName: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  hospitalLocation: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 8,
   },
-  sectionTitle: { fontSize: 16, fontWeight: "700", color: "#111827" },
+  hospitalLocationText: {
+    fontSize: 14,
+    color: "#6b7280",
+    marginLeft: 4,
+  },
+  hospitalMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  hospitalPrice: {
+    fontSize: 14,
+    color: "#111827",
+    fontWeight: "600",
+  },
+  hospitalStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  hospitalStatusText: {
+    fontSize: 14,
+    color: "#111827",
+    fontWeight: "600",
+  },
+  hospitalRating: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 8,
+  },
+  ratingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0fdf4",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  ratingText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  reviewsText: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  budgetTag: {
+    backgroundColor: "#f3f4f6",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  budgetTagText: {
+    fontSize: 12,
+    color: "#6b7280",
+    fontWeight: "600",
+  },
+  purchaseHistory: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  purchaseText: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  purchaseCount: {
+    fontSize: 12,
+    color: "#6b7280",
+    fontWeight: "600",
+  },
+  mainContent: {
+    backgroundColor: "#f8fafc",
+    marginTop: -100, // Overlap with hero section
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+    zIndex: 5,
+  },
+
+  section: {
+    backgroundColor: "#fff",
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 16,
+  },
   offerBody: { marginTop: 8 },
   offerRow: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
   bullet: {
@@ -702,16 +921,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   offerText: { fontSize: 13, color: "#374151", lineHeight: 18 },
+  infoText: { fontSize: 13, color: "#374151", marginTop: 6, lineHeight: 18 },
 
-  bookingCard: {
-    backgroundColor: "#ffffff",
-    marginHorizontal: 16,
-    marginTop: 16,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-  },
   bookingHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -783,7 +994,6 @@ const styles = StyleSheet.create({
     borderColor: "#e5e7eb",
     padding: 16,
   },
-  infoText: { fontSize: 13, color: "#374151", marginTop: 6, lineHeight: 18 },
   infoNote: {
     flexDirection: "row",
     alignItems: "center",
@@ -799,16 +1009,6 @@ const styles = StyleSheet.create({
     color: "#075985",
     fontSize: 12,
     fontWeight: "600",
-  },
-  aboutCard: {
-    backgroundColor: "#fff",
-    marginHorizontal: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    padding: 16,
-    marginTop: 4,
-    marginBottom: 12,
   },
   errorText: {
     color: "#ef4444",

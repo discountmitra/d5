@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Modal, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 
 type UserType = 'normal' | 'vip';
 
@@ -31,6 +31,7 @@ const serviceCategories = {
 export default function SalonDetailScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
+  const navigation = useNavigation();
   const salon = useMemo(() => ({
     id: (params.id as string) || "",
     name: (params.name as string) || "Hair Zone Makeover",
@@ -54,6 +55,7 @@ export default function SalonDetailScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [bookingCode, setBookingCode] = useState("");
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
 
   const faqData = [
     {
@@ -166,6 +168,11 @@ export default function SalonDetailScreen() {
     setSelectedDate(newDate);
   };
 
+  const onScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    setShowStickyHeader(offsetY > 100);
+  };
+
   const generateCalendarDays = () => {
     const today = new Date();
     const currentMonth = selectedDate.getMonth();
@@ -194,7 +201,7 @@ export default function SalonDetailScreen() {
   };
 
   const renderServiceCategory = (title: string, icon: string, services: any[]) => (
-    <View key={title} style={styles.categoryCard}>
+    <View key={title} style={styles.section}>
       <View style={styles.categoryHeader}>
         <Ionicons name={icon as any} size={20} color="#111827" />
         <Text style={styles.categoryTitle}>{title}</Text>
@@ -227,45 +234,103 @@ export default function SalonDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.headerTop}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={22} color="#111827" />
-          </TouchableOpacity>
-          <View style={styles.headerInfo}>
-            <Text style={styles.headerTitle} numberOfLines={1}>{salon.name}</Text>
-          </View>
-          <View style={styles.headerActions}>
-            <Text style={styles.headerTag}>Beauty & Salon</Text>
-          </View>
-        </View>
-      </View>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Hero */}
-        <View style={styles.heroCard}>
-          <Image source={salon.image && /^https?:\/\//.test(salon.image) ? { uri: salon.image } : require("../assets/default.png")} style={styles.heroImage} />
-          <View style={styles.heroBody}>
-            <View style={styles.heroHeader}>
-              <Text style={styles.salonName}>{salon.name}</Text>
-              <View style={styles.ratingPill}>
-                <Ionicons name="star" size={14} color="#fbbf24" />
-                <Text style={styles.ratingText}>{salon.rating}</Text>
+      {/* Sticky Header */}
+      {showStickyHeader && (
+        <View style={styles.stickyHeader}>
+          <View style={styles.stickyHeaderContent}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color="#111827" />
+            </TouchableOpacity>
+            <View style={styles.stickyHeaderInfo}>
+              <Text style={styles.stickyHeaderTitle} numberOfLines={1}>{salon.name}</Text>
+              <View style={styles.stickyHeaderDetails}>
+                <Text style={styles.stickyHeaderRating}>Beauty & Salon</Text>
+                <Text style={styles.stickyHeaderPrice}>⭐ {salon.rating}</Text>
               </View>
             </View>
-            <View style={styles.metaRow}>
-              <Ionicons name="location" size={14} color="#6b7280" />
-              <Text style={styles.metaText}>{salon.address}</Text>
-            </View>
-            <View style={styles.metaRow}>
-              <Ionicons name="people" size={14} color="#6b7280" />
-              <Text style={styles.metaText}>{salon.reviews} reviews</Text>
+            <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
+                <Ionicons name="call" size={20} color="#111827" />
+              </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      <ScrollView 
+        style={styles.scrollView}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section with Background */}
+        <View style={styles.heroSection}>
+          <Image 
+            source={salon.image && /^https?:\/\//.test(salon.image) ? { uri: salon.image } : require("../assets/default.png")} 
+            style={styles.heroBackgroundImage}
+            resizeMode="cover"
+          />
+          <View style={styles.heroOverlay} />
+          
+          {/* Top Action Buttons */}
+          <View style={styles.heroTopActions}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.heroBackButton}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            
+            <View style={styles.heroRightActions}>
+              <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
+                <Ionicons name="call" size={20} color="#111827" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.heroLikeButton}
+                onPress={() => {}}
+              >
+                <Ionicons 
+                  name="heart-outline" 
+                  size={24} 
+                  color="#fff" 
+                />
+              </TouchableOpacity>
             </View>
           </View>
         </View>
+          
+        {/* Main Content Container */}
+        <View style={styles.mainContent}>
+          {/* Salon Info Card */}
+          <View style={styles.salonInfoCard}>
+            <View style={styles.salonInfoHeader}>
+              <View style={styles.salonIcon}>
+                <Ionicons name="cut" size={24} color="#b53471" />
+              </View>
+              <View style={styles.salonInfoMain}>
+                <Text style={styles.salonName}>{salon.name}</Text>
+                <View style={styles.salonLocation}>
+                  <Ionicons name="location" size={12} color="#ef4444" />
+                  <Text style={styles.salonLocationText}>{salon.address}</Text>
+                </View>
+                <View style={styles.salonMeta}>
+                  <Text style={styles.salonPrice}>Beauty & Salon</Text>
+                  <View style={styles.salonStatus}>
+                    <Text style={styles.salonStatusText}>Open Now</Text>
+                    <Ionicons name="chevron-down" size={14} color="#6b7280" />
+                  </View>
+                </View>
+                <View style={styles.salonRating}>
+                  <View style={styles.ratingBadge}>
+                    <Ionicons name="star" size={12} color="#fbbf24" />
+                    <Text style={styles.ratingText}>{salon.rating}</Text>
+                    <Text style={styles.reviewsText}>({salon.reviews})</Text>
+                  </View>
+                  <View style={styles.budgetTag}>
+                    <Text style={styles.budgetTagText}>Beauty & Salon</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
 
         {/* User Type Selection */}
-        <View style={styles.userTypeCard}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Select Plan</Text>
           <View style={styles.userTypeButtons}>
             <TouchableOpacity 
@@ -289,7 +354,7 @@ export default function SalonDetailScreen() {
         {renderServiceCategory("Tattoo", "brush", serviceCategories.tattoo)}
 
         {/* Booking Form */}
-        <View style={styles.bookingCard}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Book Your Appointment</Text>
           
           <View style={styles.formRow}>
@@ -364,7 +429,7 @@ export default function SalonDetailScreen() {
         </View>
 
         {/* FAQ Section */}
-        <View style={styles.faqCard}>
+        <View style={styles.section}>
           <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
           <View style={styles.faqList}>
             {faqData.map((faq, index) => (
@@ -392,6 +457,7 @@ export default function SalonDetailScreen() {
         </View>
 
         <View style={{ height: 24 }} />
+        </View>
       </ScrollView>
       
       {/* Calendar Modal */}
@@ -603,32 +669,272 @@ export default function SalonDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
-  headerContainer: { backgroundColor: "#ffffff", borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },
-  headerTop: { flexDirection: "row", alignItems: "center", paddingHorizontal: 20, paddingTop: 56, paddingBottom: 16 },
-  backButton: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "#f3f4f6", marginRight: 16 },
-  headerInfo: { flex: 1 },
-  headerTitle: { fontSize: 18, fontWeight: "700", color: "#111827" },
-  headerActions: { marginLeft: 16 },
-  headerTag: { backgroundColor: "#b53471", color: "#ffffff", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, fontSize: 12, fontWeight: "600" },
-  content: { flex: 1 },
-  heroCard: { backgroundColor: "#ffffff", margin: 20, borderRadius: 16, overflow: "hidden", borderWidth: 1, borderColor: "#e5e7eb" },
-  heroImage: { width: "100%", height: 200 },
-  heroBody: { padding: 20 },
-  heroHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 12 },
-  salonName: { flex: 1, fontSize: 20, fontWeight: "700", color: "#111827", marginRight: 12 },
-  ratingPill: { flexDirection: "row", alignItems: "center", backgroundColor: "#fef3c7", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  ratingText: { marginLeft: 4, fontSize: 14, fontWeight: "600", color: "#d97706" },
-  metaRow: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
-  metaText: { marginLeft: 8, fontSize: 14, color: "#6b7280" },
-  userTypeCard: { backgroundColor: "#ffffff", marginHorizontal: 20, marginBottom: 20, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: "#e5e7eb" },
+  container: {
+    flex: 1,
+    backgroundColor: "#f8fafc",
+  },
+  stickyHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    paddingTop: 50,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+    zIndex: 1000,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  stickyHeaderContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+  },
+  stickyHeaderInfo: {
+    flex: 1,
+    marginHorizontal: 16,
+  },
+  stickyHeaderTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  stickyHeaderDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stickyHeaderRating: {
+    fontSize: 12,
+    color: "#6b7280",
+    marginRight: 12,
+  },
+  stickyHeaderPrice: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f8fafc",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  likeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f8fafc",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  heroSection: {
+    height: 300,
+    position: "relative",
+    overflow: "hidden",
+  },
+  heroBackgroundImage: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  heroOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  heroTopActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 50,
+    zIndex: 10,
+  },
+  heroRightActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  heroBackButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroCallButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroLikeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  salonInfoCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 4,
+    marginTop: -25,
+  },
+  salonInfoHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 12,
+  },
+  salonIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#fdf2f8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  salonInfoMain: {
+    flex: 1,
+  },
+  salonName: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  salonLocation: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  salonLocationText: {
+    fontSize: 14,
+    color: "#6b7280",
+    marginLeft: 4,
+  },
+  salonMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  salonPrice: {
+    fontSize: 14,
+    color: "#111827",
+    fontWeight: "600",
+  },
+  salonStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  salonStatusText: {
+    fontSize: 14,
+    color: "#111827",
+    fontWeight: "600",
+  },
+  salonRating: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 8,
+  },
+  ratingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0fdf4",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  ratingText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#111827",
+  },
+  reviewsText: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  budgetTag: {
+    backgroundColor: "#f3f4f6",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  budgetTagText: {
+    fontSize: 12,
+    color: "#6b7280",
+    fontWeight: "600",
+  },
+  purchaseHistory: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  purchaseText: {
+    fontSize: 12,
+    color: "#6b7280",
+  },
+  purchaseCount: {
+    fontSize: 12,
+    color: "#6b7280",
+    fontWeight: "600",
+  },
+  mainContent: {
+    backgroundColor: "#f8fafc",
+    marginTop: -100, // Overlap with hero section
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+    zIndex: 5,
+  },
+  section: {
+    backgroundColor: "#fff",
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 2,
+  },
   sectionTitle: { fontSize: 18, fontWeight: "700", color: "#111827", marginBottom: 16 },
   userTypeButtons: { flexDirection: "row", gap: 12 },
   userTypeButton: { flex: 1, paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12, borderWidth: 2, borderColor: "#e5e7eb", alignItems: "center" },
   userTypeButtonActive: { borderColor: "#b53471", backgroundColor: "#b53471" },
   userTypeText: { fontSize: 14, fontWeight: "600", color: "#6b7280" },
   userTypeTextActive: { color: "#ffffff" },
-  categoryCard: { backgroundColor: "#ffffff", marginHorizontal: 20, marginBottom: 20, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: "#e5e7eb" },
   categoryHeader: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
   categoryTitle: { marginLeft: 12, fontSize: 18, fontWeight: "700", color: "#111827" },
   serviceItem: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12, marginBottom: 8, borderWidth: 1, borderColor: "#e5e7eb" },
@@ -643,7 +949,6 @@ const styles = StyleSheet.create({
   savings: { fontSize: 12, color: "#16a34a", fontWeight: "600" },
   checkbox: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: "#e5e7eb", alignItems: "center", justifyContent: "center" },
   checkboxSelected: { borderColor: "#b53471", backgroundColor: "#b53471" },
-  bookingCard: { backgroundColor: "#ffffff", marginHorizontal: 20, marginBottom: 40, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: "#e5e7eb" },
   formRow: { marginBottom: 16 },
   inputLabel: { fontSize: 14, fontWeight: "600", color: "#374151", marginBottom: 8 },
   input: { borderWidth: 1, borderColor: "#d1d5db", borderRadius: 8, paddingHorizontal: 16, paddingVertical: 12, fontSize: 16, color: "#111827", backgroundColor: "#ffffff" },
@@ -657,7 +962,6 @@ const styles = StyleSheet.create({
   bookButton: { marginTop: 8, height: 52, borderRadius: 12, alignItems: "center", justifyContent: "center", backgroundColor: "#b53471" },
   bookButtonDisabled: { backgroundColor: "#d1d5db" },
   bookButtonText: { fontSize: 16, fontWeight: "700", color: "#ffffff" },
-  faqCard: { backgroundColor: '#ffffff', marginHorizontal: 20, marginBottom: 20, borderRadius: 16, padding: 20, borderWidth: 1, borderColor: '#e5e7eb' },
   faqList: { gap: 12 },
   faqItem: { borderBottomWidth: 1, borderBottomColor: '#f3f4f6', paddingBottom: 12, marginBottom: 12 },
   faqHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 4 },

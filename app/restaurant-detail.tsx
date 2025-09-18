@@ -117,16 +117,9 @@ export default function RestaurantDetailScreen() {
                 <Text style={styles.stickyHeaderPrice}>{restaurant.priceForTwo}</Text>
               </View>
             </View>
-            <TouchableOpacity 
-              style={styles.likeButton}
-              onPress={handleLike}
-            >
-              <Ionicons 
-                name={isLiked ? "heart" : "heart-outline"} 
-                size={24} 
-                color={isLiked ? "#ef4444" : "#111827"} 
-              />
-            </TouchableOpacity>
+            <TouchableOpacity style={styles.heroCallButton} onPress={handleCall}>
+                <Ionicons name="call" size={20} color="#111827" />
+              </TouchableOpacity>
           </View>
         </View>
       )}
