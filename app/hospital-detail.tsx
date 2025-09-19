@@ -106,8 +106,11 @@ export default function HospitalDetailScreen() {
     if (!/^\d{10}$/.test(patientPhone.trim()))
       newErrors.phone = "Enter valid 10-digit phone";
     if (!/^\d{1,3}$/.test(patientAge.trim())) newErrors.age = "Enter valid age";
-    if (!/^\d{2}-\d{2}-\d{4}$/.test(preferredDate.trim()))
-      newErrors.date = "Use DD-MM-YYYY";
+    const isPharmacy = hospital.category === 'Pharmacy';
+    if (!isPharmacy) {
+      if (!/^\d{2}-\d{2}-\d{4}$/.test(preferredDate.trim()))
+        newErrors.date = "Use DD-MM-YYYY";
+    }
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
@@ -346,7 +349,7 @@ export default function HospitalDetailScreen() {
         {/* Booking */}
         <View style={styles.section}>
           <View style={styles.bookingHeader}>
-            <Text style={styles.sectionTitle}>Book OP</Text>
+            <Text style={styles.sectionTitle}>{hospital.category === 'Pharmacy' ? 'Request Items' : 'Book OP'}</Text>
             <View style={styles.modeBadge}>
               <Text style={styles.modeBadgeText}>Normal</Text>
             </View>
@@ -395,28 +398,30 @@ export default function HospitalDetailScreen() {
               <Text style={styles.errorText}>{errors.age}</Text>
             ) : null}
           </View>
-          <View style={styles.formRow}>
-            <Text style={styles.inputLabel}>Preferred Date</Text>
-            <TouchableOpacity onPress={openDatePicker} activeOpacity={0.8} style={styles.dateInputContainer}>
-              <TextInput
-                value={preferredDate}
-                placeholder="Select date"
-                placeholderTextColor="#9ca3af"
-                style={styles.dateInput}
-                editable={false}
-                pointerEvents="none"
-              />
-              <Ionicons
-                name="calendar-outline"
-                size={20}
-                color="#6b7280"
-                style={styles.calendarIcon}
-              />
-            </TouchableOpacity>
-            {errors.date ? (
-              <Text style={styles.errorText}>{errors.date}</Text>
-            ) : null}
-          </View>
+          {hospital.category !== 'Pharmacy' && (
+            <View style={styles.formRow}>
+              <Text style={styles.inputLabel}>Preferred Date</Text>
+              <TouchableOpacity onPress={openDatePicker} activeOpacity={0.8} style={styles.dateInputContainer}>
+                <TextInput
+                  value={preferredDate}
+                  placeholder="Select date"
+                  placeholderTextColor="#9ca3af"
+                  style={styles.dateInput}
+                  editable={false}
+                  pointerEvents="none"
+                />
+                <Ionicons
+                  name="calendar-outline"
+                  size={20}
+                  color="#6b7280"
+                  style={styles.calendarIcon}
+                />
+              </TouchableOpacity>
+              {errors.date ? (
+                <Text style={styles.errorText}>{errors.date}</Text>
+              ) : null}
+            </View>
+          )}
           <View style={styles.formRow}>
             <Text style={styles.inputLabel}>Notes (Problem/Details)</Text>
             <TextInput
@@ -429,11 +434,11 @@ export default function HospitalDetailScreen() {
             />
           </View>
           <TouchableOpacity style={styles.bookBtn} onPress={handleBook}>
-            <Ionicons name="calendar" size={16} color="#fff" />
-            <Text style={styles.bookBtnText}>Confirm Booking</Text>
+            <Ionicons name={hospital.category === 'Pharmacy' ? 'cart' : 'calendar'} size={16} color="#fff" />
+            <Text style={styles.bookBtnText}>{hospital.category === 'Pharmacy' ? 'Send Request' : 'Confirm Booking'}</Text>
           </TouchableOpacity>
           <Text style={styles.noteText}>
-            A unique booking code will be generated after confirmation.
+            {hospital.category === 'Pharmacy' ? 'Your request will be sent to the pharmacy team. We will contact you shortly.' : 'A unique booking code will be generated after confirmation.'}
           </Text>
         </View>
 
@@ -484,15 +489,15 @@ export default function HospitalDetailScreen() {
               </View>
             </View>
 
-            <Text style={styles.modalTitle}>Confirm Booking</Text>
+            <Text style={styles.modalTitle}>{hospital.category === 'Pharmacy' ? 'Send Request' : 'Confirm Booking'}</Text>
             <Text style={styles.modalSubtitle}>
-              Are you sure you want to book this appointment?
+              {hospital.category === 'Pharmacy' ? 'We will forward your request to the pharmacy team.' : 'Are you sure you want to book this appointment?'}
             </Text>
 
             <View style={styles.bookingDetailsCard}>
               <View style={styles.detailRow}>
                 <Ionicons name="business" size={16} color="#6b7280" />
-                <Text style={styles.detailLabel}>Hospital:</Text>
+                <Text style={styles.detailLabel}>{hospital.category === 'Pharmacy' ? 'Pharmacy:' : 'Hospital:'}</Text>
                 <Text style={styles.detailValue}>{hospital.name}</Text>
               </View>
               <View style={styles.detailRow}>
@@ -505,11 +510,13 @@ export default function HospitalDetailScreen() {
                 <Text style={styles.detailLabel}>Phone:</Text>
                 <Text style={styles.detailValue}>{patientPhone}</Text>
               </View>
-              <View style={styles.detailRow}>
-                <Ionicons name="calendar" size={16} color="#6b7280" />
-                <Text style={styles.detailLabel}>Date:</Text>
-                <Text style={styles.detailValue}>{preferredDate}</Text>
-              </View>
+              {hospital.category !== 'Pharmacy' && (
+                <View style={styles.detailRow}>
+                  <Ionicons name="calendar" size={16} color="#6b7280" />
+                  <Text style={styles.detailLabel}>Date:</Text>
+                  <Text style={styles.detailValue}>{preferredDate}</Text>
+                </View>
+              )}
             </View>
 
             <View style={styles.modalButtonContainer}>
@@ -526,8 +533,8 @@ export default function HospitalDetailScreen() {
                 onPress={confirmBooking}
                 activeOpacity={0.8}
               >
-                <Ionicons name="checkmark-circle" size={18} color="#ffffff" />
-                <Text style={styles.modalButtonPrimaryText}>Yes, Book Now</Text>
+                <Ionicons name={hospital.category === 'Pharmacy' ? 'send' : 'checkmark-circle'} size={18} color="#ffffff" />
+                <Text style={styles.modalButtonPrimaryText}>{hospital.category === 'Pharmacy' ? 'Send Request' : 'Yes, Book Now'}</Text>
               </TouchableOpacity>
             </View>
           </View>

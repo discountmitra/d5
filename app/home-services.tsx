@@ -2,7 +2,8 @@ import { useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TextInput, FlatList, Image, TouchableOpacity, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, router } from "expo-router";
+import { useNavigation, router, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 
 type CategoryKey = "Repairs & Maintenance" | "Cleaning & Pest Control" | "Security & Surveillance";
 
@@ -22,6 +23,7 @@ type Service = {
 
 export default function HomeServicesScreen() {
   const navigation = useNavigation();
+  const params = useLocalSearchParams();
   const listRef = useRef<FlatList<any>>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey>("Repairs & Maintenance");
@@ -32,6 +34,20 @@ export default function HomeServicesScreen() {
     "Cleaning & Pest Control",
     "Security & Surveillance",
   ];
+
+  useEffect(() => {
+    const pre = params.preselect as string | undefined;
+    if (pre && categories.includes(pre as any)) {
+      setSelectedCategory(pre as any);
+    }
+  }, [params.preselect]);
+
+  // Redirect to types tab if no type preselected
+  useEffect(() => {
+    if (!params.preselect) {
+      router.replace({ pathname: '/category-types', params: { category: 'home-services' } });
+    }
+  }, []);
 
   const data = useMemo<Service[]>(
     () => [
@@ -214,7 +230,7 @@ export default function HomeServicesScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.8} style={styles.backButton}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Home Services</Text>
+          <Text style={styles.headerTitle}>{selectedCategory}</Text>
         </View>
         <View style={styles.searchRow}>
           <View style={styles.searchBar}>
@@ -231,17 +247,7 @@ export default function HomeServicesScreen() {
       </View>
 
       {/* Category chips outside of the header */}
-      <View style={styles.categoryChipsContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryChipsOuter}>
-          {categories.map(cat => (
-            <TouchableOpacity key={cat} onPress={() => setSelectedCategory(cat)} activeOpacity={0.9}>
-              <View style={[styles.catChip, selectedCategory === cat && styles.catChipActive]}>
-                <Text style={[styles.catChipText, selectedCategory === cat && styles.catChipTextActive]}>{cat}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      {/* Types are now shown in a dedicated tab; horizontal chips removed */}
 
       <FlatList
         ref={listRef}

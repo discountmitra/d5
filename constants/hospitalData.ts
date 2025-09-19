@@ -123,7 +123,7 @@ export const hospitalDetails: HospitalDetail[] = [
     photos: [],
   },
   {
-    id: "siddi-vinayaka-medical",
+    id: "sri-siddi-vinayaka-medical",
     category: "Pharmacy",
     subCategory: null,
     name: "Sri Siddi Vinayaka Medical",

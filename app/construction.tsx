@@ -2,7 +2,8 @@ import { useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TextInput, FlatList, Image, TouchableOpacity, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, router } from "expo-router";
+import { useNavigation, router, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 
 type CategoryKey = "Cement" | "Steel" | "Bricks" | "Paints" | "RMC" | "Tiles & Stone" | "Interior Services" | "Machinery";
 
@@ -22,6 +23,7 @@ type ConstructionItem = {
 
 export default function ConstructionScreen() {
   const navigation = useNavigation();
+  const params = useLocalSearchParams();
   const listRef = useRef<FlatList<any>>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey>("Cement");
@@ -37,6 +39,13 @@ export default function ConstructionScreen() {
     "Interior Services",
     "Machinery",
   ];
+
+  useEffect(() => {
+    const pre = (params.preselect as string) as CategoryKey | undefined;
+    if (pre && (categories as string[]).includes(pre)) {
+      setSelectedCategory(pre as CategoryKey);
+    }
+  }, [params.preselect]);
 
   const data = useMemo<ConstructionItem[]>(
     () => [
@@ -253,6 +262,13 @@ export default function ConstructionScreen() {
     return byCategory.filter(s => matchesOrdered(query, s.name, s.description));
   }, [data, selectedCategory, query]);
 
+  // Redirect to types tab if no type preselected
+  useEffect(() => {
+    if (!params.preselect) {
+      router.replace({ pathname: '/category-types', params: { category: 'construction' } });
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerGradient}>
@@ -260,7 +276,7 @@ export default function ConstructionScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.8} style={styles.backButton}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Construction</Text>
+          <Text style={styles.headerTitle}>{selectedCategory}</Text>
         </View>
         <View style={styles.searchRow}>
           <View style={styles.searchBar}>
@@ -273,23 +289,10 @@ export default function ConstructionScreen() {
               onChangeText={setQuery}
             />
           </View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.filterButton}>
-            <Ionicons name="options-outline" size={18} color="#fff" />
-          </TouchableOpacity>
         </View>
       </View>
 
-      <View style={styles.categoryChipsContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryChipsOuter}>
-          {categories.map(cat => (
-            <TouchableOpacity key={cat} onPress={() => setSelectedCategory(cat)} activeOpacity={0.9}>
-              <View style={[styles.catChip, selectedCategory === cat && styles.catChipActive]}>
-                <Text style={[styles.catChipText, selectedCategory === cat && styles.catChipTextActive]}>{cat}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      {/* Types are now shown in a dedicated tab; horizontal chips removed */}
 
       <FlatList
         ref={listRef}

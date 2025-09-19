@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Linking, Alert, Animated } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Linking, Alert, Animated, Modal, Dimensions, SafeAreaView, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import { restaurantData, Restaurant } from "../constants/restaurantData";
@@ -13,6 +13,11 @@ export default function RestaurantDetailScreen() {
   const [isLiked, setIsLiked] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const [isViewerVisible, setIsViewerVisible] = useState(false);
+  const [viewerStartIndex, setViewerStartIndex] = useState(0);
+  const [viewerData, setViewerData] = useState<{ id: number; url: string; category: string; caption?: string }[]>([]);
+  const [currentViewerIndex, setCurrentViewerIndex] = useState(0);
+  const viewerListRef = useRef<FlatList<any>>(null);
 
   // Get restaurant data from params or use first restaurant as default
   const restaurant: Restaurant = useMemo(() => {
@@ -70,17 +75,39 @@ export default function RestaurantDetailScreen() {
   };
 
   const galleryTabs = ['All', 'Ambience', 'Food Images', 'Food Menu'];
-  const galleryImages = [
-    { id: 1, url: require("../assets/default.png"), category: 'Food Images' },
-    { id: 2, url: require("../assets/default.png"), category: 'Ambience' },
-    { id: 3, url: require("../assets/default.png"), category: 'Food Images' },
-    { id: 4, url: require("../assets/default.png"), category: 'Food Menu' },
-    { id: 5, url: require("../assets/default.png"), category: 'Ambience' },
+  const galleryImages: { id: number; url: string; category: string; caption?: string }[] = [
+    // Ambience
+    { id: 1, url: 'https://images.unsplash.com/photo-1683318528692-6cfe0ae76817?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Zm9vZCUyMGFtYmllbmNlfGVufDB8fDB8fHww', category: 'Ambience', caption: 'Warm ambience with cozy seating' },
+    { id: 2, url: 'https://images.unsplash.com/photo-1578231177134-f1bbe379b054?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDV8fHxlbnwwfHx8fHw%3D', category: 'Ambience', caption: 'Modern decor and lighting' },
+    // Food Images
+    { id: 3, url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Zm9vZHxlbnwwfHwwfHx8MA%3D%3D', category: 'Food Images', caption: 'Signature dish presentation' },
+    { id: 4, url: 'https://images.unsplash.com/photo-1701579231305-d84d8af9a3fd?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmlyeWFuaXxlbnwwfHwwfHx8MA%3D%3D', category: 'Food Images', caption: 'Delicious biryani bowl' },
+    // Food Menu
+    { id: 5, url: 'https://images.unsplash.com/photo-1515697320591-f3eb3566bc3c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fG1lbnV8ZW58MHx8MHx8fDA%3D', category: 'Food Menu', caption: 'Restaurant menu' },
   ];
 
   const filteredImages = selectedGalleryTab === 'All' 
     ? galleryImages 
     : galleryImages.filter(img => img.category === selectedGalleryTab);
+
+  const openImageViewer = (indexInFiltered: number) => {
+    const dataForViewer = filteredImages;
+    setViewerData(dataForViewer);
+    setViewerStartIndex(indexInFiltered);
+    setCurrentViewerIndex(indexInFiltered);
+    setIsViewerVisible(true);
+    // Defer scroll to ensure list rendered
+    requestAnimationFrame(() => {
+      if (viewerListRef.current && indexInFiltered > 0) {
+        viewerListRef.current.scrollToIndex({ index: indexInFiltered, animated: false });
+      }
+    });
+  };
+
+  const getItemLayout = (_: any, index: number) => {
+    const { width } = Dimensions.get('window');
+    return { length: width, offset: width * index, index };
+  };
 
   const reviews = [
     { id: 1, name: 'NarEnder Reddy', rating: 1, comment: 'Worst taste and service', date: '16 Jul 2025' },
@@ -245,8 +272,13 @@ export default function RestaurantDetailScreen() {
               ))}
             </ScrollView>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.galleryImages}>
-              {filteredImages.map((image) => (
-                <Image key={image.id} source={image.url} style={styles.galleryImage} />
+              {filteredImages.map((image, idx) => (
+                <TouchableOpacity key={image.id} activeOpacity={0.8} onPress={() => openImageViewer(idx)}>
+                  <Image 
+                    source={{ uri: image.url }} 
+                    style={styles.galleryImage} 
+                  />
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
@@ -319,6 +351,61 @@ export default function RestaurantDetailScreen() {
           </View>
         </View>
       </ScrollView>
+      {/* Fullscreen Image Viewer */}
+      <Modal
+        visible={isViewerVisible}
+        animationType="fade"
+        transparent={false}
+        onRequestClose={() => setIsViewerVisible(false)}
+      >
+        <SafeAreaView style={styles.viewerContainer}>
+          <View style={styles.viewerHeader}>
+            <TouchableOpacity style={styles.viewerBackButton} onPress={() => setIsViewerVisible(false)}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            <View style={styles.viewerTitleWrap}>
+              <Text style={styles.viewerTitle} numberOfLines={1}>
+                {viewerData[currentViewerIndex]?.category || 'Gallery'}
+              </Text>
+              <Text style={styles.viewerCounter}>
+                {currentViewerIndex + 1} / {viewerData.length}
+              </Text>
+            </View>
+            <View style={{ width: 40 }} />
+          </View>
+
+          <FlatList
+            ref={viewerListRef}
+            data={viewerData}
+            keyExtractor={(item) => String(item.id)}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            initialScrollIndex={viewerStartIndex}
+            getItemLayout={getItemLayout}
+            onMomentumScrollEnd={(e) => {
+              const { width } = Dimensions.get('window');
+              const index = Math.round(e.nativeEvent.contentOffset.x / width);
+              setCurrentViewerIndex(index);
+            }}
+            renderItem={({ item }) => (
+              <View style={styles.viewerSlide}>
+                <Image
+                  source={{ uri: item.url }}
+                  style={styles.viewerImage}
+                  resizeMode="contain"
+                />
+              </View>
+            )}
+          />
+
+          <View style={styles.viewerCaptionWrap}>
+            <Text style={styles.viewerCaption} numberOfLines={1}>
+              {viewerData[currentViewerIndex]?.caption || 'Photo'}
+            </Text>
+          </View>
+        </SafeAreaView>
+      </Modal>
     </View>
   );
 }
@@ -678,6 +765,60 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 12,
     marginRight: 12,
+  },
+  viewerContainer: {
+    flex: 1,
+    backgroundColor: "#000",
+  },
+  viewerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  viewerBackButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  viewerTitleWrap: {
+    flex: 1,
+    marginHorizontal: 12,
+    alignItems: "center",
+  },
+  viewerTitle: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  viewerCounter: {
+    color: "#d1d5db",
+    fontSize: 12,
+    marginTop: 2,
+  },
+  viewerSlide: {
+    width: Dimensions.get('window').width,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  viewerImage: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height - 200,
+  },
+  viewerCaptionWrap: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
+  viewerCaption: {
+    color: "#fff",
+    fontSize: 14,
   },
   addressHeader: {
     flexDirection: "row",

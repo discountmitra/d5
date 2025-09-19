@@ -31,6 +31,7 @@ export default function EventDetailScreen() {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
   const { eventId } = params;
+  const eventIdStr = Array.isArray(eventId) ? (eventId?.[0] ?? '') : (eventId ?? '');
   const headerImage = typeof params.image === 'string' ? (params.image as string) : '';
   
   const [userType, setUserType] = useState<UserType>('normal');
@@ -39,11 +40,15 @@ export default function EventDetailScreen() {
   const [eventDate, setEventDate] = useState('');
   const [eventTime, setEventTime] = useState('');
   const [guestCount, setGuestCount] = useState('');
+  const [budget, setBudget] = useState('');
+  const [selectedServiceName, setSelectedServiceName] = useState('');
   const [specialRequirements, setSpecialRequirements] = useState('');
   const [venue, setVenue] = useState('');
-  const [errors, setErrors] = useState<{ name?: string; phone?: string; date?: string; time?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; date?: string; time?: string; venue?: string; service?: string }>({});
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showServicePicker, setShowServicePicker] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -252,16 +257,21 @@ export default function EventDetailScreen() {
   // Find the specific event data (fallback to first item if not found)
   const currentEvent = eventData.find(event => {
     const eventNameSlug = event.Name.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '');
-    const eventIdSlug = eventId.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '');
+    const eventIdSlug = eventIdStr.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '');
     return eventNameSlug === eventIdSlug;
   }) || eventData[0];
 
   const handleBooking = () => {
-    const newErrors: { name?: string; phone?: string; date?: string; time?: string } = {};
+    const newErrors: { name?: string; phone?: string; date?: string; time?: string; venue?: string; service?: string } = {};
     if (!customerName.trim()) newErrors.name = 'Name is required';
     if (!/^\d{10}$/.test(phoneNumber.trim())) newErrors.phone = 'Enter valid 10-digit phone';
     if (!eventDate.trim()) newErrors.date = 'Event date is required';
     if (!eventTime.trim()) newErrors.time = 'Event time is required';
+    // Venue required for decoration and tent/dj/thadakala groups and generally meaningful
+    const isDecoration = event.category === 'Decoration';
+    const isInfra = event.category === 'Tent House' || event.category === 'DJ & Lighting' || event.category === 'Thadakala Pandiri';
+    if ((isDecoration || isInfra) && !venue.trim()) newErrors.venue = 'Venue/Address is required';
+    if (isInfra && !selectedServiceName.trim()) newErrors.service = 'Please select a service';
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     setShowConfirmModal(true);
@@ -347,13 +357,13 @@ export default function EventDetailScreen() {
   };
 
   const event = useMemo(() => ({
-    id: eventId as string || '',
+    id: eventIdStr || '',
     name: currentEvent.Name,
     category: currentEvent['Sub-Category'],
-    description: currentEvent.description.replace(/[^\w\s\u0C00-\u0C7F₹/-]/g, '').trim(),
+    description: currentEvent.description.replace(/[^\w\s\u0C00-\u0C7F₹\/-]/g, '').trim(),
     rating: 4.8,
     reviews: 234,
-  }), [currentEvent, eventId]);
+  }), [currentEvent, eventIdStr]);
 
   return (
     <View style={styles.container}>
@@ -375,7 +385,7 @@ export default function EventDetailScreen() {
                 <Ionicons name="call" size={20} color="#111827" />
           </TouchableOpacity>
           </View>
-        </View>
+          </View>
       )}
 
       <ScrollView 
@@ -413,7 +423,7 @@ export default function EventDetailScreen() {
                   color="#fff" 
                 />
               </TouchableOpacity>
-            </View>
+          </View>
         </View>
       </View>
 
@@ -426,7 +436,7 @@ export default function EventDetailScreen() {
                 <Ionicons name="calendar" size={24} color="#e91e63" />
               </View>
               <View style={styles.eventInfoMain}>
-                <Text style={styles.eventName}>{event.name}</Text>
+              <Text style={styles.eventName}>{event.name}</Text>
                 <View style={styles.eventLocation}>
                   <Ionicons name="location" size={12} color="#ef4444" />
                   <Text style={styles.eventLocationText}>{event.category}</Text>
@@ -436,8 +446,8 @@ export default function EventDetailScreen() {
                   <View style={styles.eventStatus}>
                     <Text style={styles.eventStatusText}>Available Now</Text>
                     <Ionicons name="chevron-down" size={14} color="#6b7280" />
-                  </View>
-                </View>
+              </View>
+            </View>
                 <View style={styles.eventRating}>
                   <View style={styles.ratingBadge}>
                     <Ionicons name="star" size={12} color="#fbbf24" />
@@ -449,7 +459,7 @@ export default function EventDetailScreen() {
             </View>
             </View>
               </View>
-            </View>
+          </View>
         </View>
 
         {/* User Type Selection */}
@@ -520,52 +530,126 @@ export default function EventDetailScreen() {
 
           <View style={styles.formRow}>
             <Text style={styles.inputLabel}>Event Time</Text>
-            <TextInput 
-              value={eventTime} 
-              onChangeText={setEventTime} 
-              placeholder="e.g., 10:00 AM" 
-              placeholderTextColor="#9ca3af" 
-              style={styles.input} 
-            />
+            <TouchableOpacity activeOpacity={0.85} style={styles.selectInput} onPress={() => setShowTimePicker(true)}>
+              <Text style={[styles.selectText, !eventTime && { color: '#9ca3af' }]}>{eventTime ? (eventTime === 'morning' ? 'Morning' : 'Night') : 'Select time'}</Text>
+              <Ionicons name="chevron-down" size={18} color="#6b7280" />
+            </TouchableOpacity>
             {errors.time ? <Text style={styles.errorText}>{errors.time}</Text> : null}
           </View>
 
-          <View style={styles.formRow}>
-            <Text style={styles.inputLabel}>Number of Guests</Text>
-            <TextInput 
-              value={guestCount} 
-              onChangeText={setGuestCount} 
-              placeholder="Expected number of guests" 
-              placeholderTextColor="#9ca3af" 
-              style={styles.input} 
-              keyboardType="numeric"
-            />
-          </View>
-
-          <View style={styles.formRow}>
-            <Text style={styles.inputLabel}>Venue/Address</Text>
-            <TextInput 
-              value={venue} 
-              onChangeText={setVenue} 
-              placeholder="Event venue or address" 
-              placeholderTextColor="#9ca3af" 
-              style={styles.input} 
-            />
-          </View>
-
-          <View style={styles.formRow}>
-            <Text style={styles.inputLabel}>Special Requirements</Text>
-            <TextInput 
-              value={specialRequirements} 
-              onChangeText={setSpecialRequirements} 
-              placeholder="Any special requirements or notes..." 
-              placeholderTextColor="#9ca3af" 
-              style={[styles.input, styles.textArea]} 
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
-          </View>
+          {event.category === 'Decoration' ? (
+            <>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Venue/Address</Text>
+                <TextInput 
+                  value={venue} 
+                  onChangeText={setVenue} 
+                  placeholder="Event venue or address" 
+                  placeholderTextColor="#9ca3af" 
+                  style={styles.input} 
+                />
+                {errors.venue ? <Text style={styles.errorText}>{errors.venue}</Text> : null}
+              </View>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Budget</Text>
+                <TextInput 
+                  value={budget} 
+                  onChangeText={setBudget} 
+                  placeholder="Approx. budget (₹)" 
+                  placeholderTextColor="#9ca3af" 
+                  style={styles.input} 
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Special Requirements (Optional)</Text>
+                <TextInput 
+                  value={specialRequirements} 
+                  onChangeText={setSpecialRequirements} 
+                  placeholder="Any special requirements or notes..." 
+                  placeholderTextColor="#9ca3af" 
+                  style={[styles.input, styles.textArea]} 
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              </View>
+            </>
+          ) : event.category === 'Tent House' || event.category === 'DJ & Lighting' || event.category === 'Thadakala Pandiri' ? (
+            <>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Venue/Address</Text>
+                <TextInput 
+                  value={venue} 
+                  onChangeText={setVenue} 
+                  placeholder="Event venue or address" 
+                  placeholderTextColor="#9ca3af" 
+                  style={styles.input} 
+                />
+                {errors.venue ? <Text style={styles.errorText}>{errors.venue}</Text> : null}
+              </View>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Service</Text>
+                <TouchableOpacity activeOpacity={0.85} style={styles.selectInput} onPress={() => setShowServicePicker(true)}>
+                  <Text style={[styles.selectText, !selectedServiceName && { color: '#9ca3af' }]}>
+                    {selectedServiceName || 'Select service'}
+                  </Text>
+                  <Ionicons name="chevron-down" size={18} color="#6b7280" />
+                </TouchableOpacity>
+                {errors.service ? <Text style={styles.errorText}>{errors.service}</Text> : null}
+              </View>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Special Requirements</Text>
+                <TextInput 
+                  value={specialRequirements} 
+                  onChangeText={setSpecialRequirements} 
+                  placeholder="Describe your specific needs..." 
+                  placeholderTextColor="#9ca3af" 
+                  style={[styles.input, styles.textArea]} 
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Number of Guests</Text>
+                <TextInput 
+                  value={guestCount} 
+                  onChangeText={setGuestCount} 
+                  placeholder="Expected number of guests" 
+                  placeholderTextColor="#9ca3af" 
+                  style={styles.input} 
+                  keyboardType="numeric"
+                />
+              </View>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Venue/Address</Text>
+                <TextInput 
+                  value={venue} 
+                  onChangeText={setVenue} 
+                  placeholder="Event venue or address" 
+                  placeholderTextColor="#9ca3af" 
+                  style={styles.input} 
+                />
+              </View>
+              <View style={styles.formRow}>
+                <Text style={styles.inputLabel}>Special Requirements</Text>
+                <TextInput 
+                  value={specialRequirements} 
+                  onChangeText={setSpecialRequirements} 
+                  placeholder="Any special requirements or notes..." 
+                  placeholderTextColor="#9ca3af" 
+                  style={[styles.input, styles.textArea]} 
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              </View>
+            </>
+          )}
 
           <TouchableOpacity 
             activeOpacity={0.9} 
@@ -717,6 +801,32 @@ export default function EventDetailScreen() {
                 <Text style={styles.calendarConfirmText}>Done</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Time Picker Modal */}
+      <Modal visible={showTimePicker} transparent animationType="fade" onRequestClose={() => setShowTimePicker(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.pickerCard}>
+            {['morning','night'].map(opt => (
+              <TouchableOpacity key={opt} style={styles.pickerItem} activeOpacity={0.85} onPress={() => { setEventTime(opt); setErrors(prev => ({ ...prev, time: undefined })); setShowTimePicker(false); }}>
+                <Text style={styles.pickerText}>{opt === 'morning' ? 'Morning' : 'Night'}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Service Picker Modal */}
+      <Modal visible={showServicePicker} transparent animationType="fade" onRequestClose={() => setShowServicePicker(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.pickerCard}>
+            {[currentEvent.Name, 'Standard Package', 'Custom Requirement'].map(option => (
+              <TouchableOpacity key={option} style={styles.pickerItem} activeOpacity={0.85} onPress={() => { setSelectedServiceName(option); setErrors(prev => ({ ...prev, service: undefined })); setShowServicePicker(false); }}>
+                <Text style={styles.pickerText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
       </Modal>
@@ -986,6 +1096,15 @@ const styles = StyleSheet.create({
   input: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: 8, paddingHorizontal: 16, paddingVertical: 12, fontSize: 16, color: '#111827', backgroundColor: '#ffffff' },
   textArea: { height: 80, paddingTop: 12, textAlignVertical: 'top' },
   errorText: { fontSize: 12, color: '#dc2626', marginTop: 4 },
+  choicePill: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 999, borderWidth: 1, borderColor: '#d1d5db', backgroundColor: '#ffffff' },
+  choicePillActive: { backgroundColor: '#e91e63', borderColor: '#e91e63' },
+  choicePillText: { color: '#374151', fontWeight: '700', fontSize: 13 },
+  choicePillTextActive: { color: '#ffffff' },
+  selectInput: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderWidth: 1, borderColor: '#d1d5db', borderRadius: 8, paddingHorizontal: 16, height: 48, backgroundColor: '#ffffff' },
+  selectText: { fontSize: 16, color: '#111827' },
+  pickerCard: { backgroundColor: '#ffffff', borderRadius: 16, paddingVertical: 8, width: '85%', maxWidth: 340, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 10 },
+  pickerItem: { paddingVertical: 14, paddingHorizontal: 16 },
+  pickerText: { fontSize: 16, color: '#111827', fontWeight: '600' },
   bookButton: { marginTop: 8, height: 52, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e91e63' },
   bookButtonText: { fontSize: 16, fontWeight: '700', color: '#ffffff' },
   faqList: { gap: 12 },

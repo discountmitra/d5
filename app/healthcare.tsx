@@ -2,7 +2,8 @@ import { useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TextInput, FlatList, Image, TouchableOpacity, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, router } from "expo-router";
+import { useNavigation, router, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 
 type CategoryKey = "All" | "Hospitals" | "Clinics" | "Pharmacy" | "Diagnostics" | "Dental" | "Eye" | "ENT";
 
@@ -20,6 +21,7 @@ type Hospital = {
 
 export default function HealthcareScreen() {
   const navigation = useNavigation();
+  const params = useLocalSearchParams();
   const listRef = useRef<FlatList<any>>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey>("All");
@@ -28,13 +30,26 @@ export default function HealthcareScreen() {
   const categories: CategoryKey[] = [
     "All",
     "Hospitals",
-    "Clinics",
     "Diagnostics",
     "Pharmacy",
     "Dental",
     "Eye",
     "ENT",
   ];
+
+  useEffect(() => {
+    const pre = params.preselect as string | undefined;
+    if (pre && (categories as string[]).includes(pre)) {
+      setSelectedCategory(pre as CategoryKey);
+    }
+  }, [params.preselect]);
+
+  // Redirect to types tab if entered without a preselected type
+  useEffect(() => {
+    if (!params.preselect) {
+      router.replace({ pathname: '/category-types', params: { category: 'healthcare' } });
+    }
+  }, []);
 
   const data = useMemo<Hospital[]>(
     () => [
@@ -148,6 +163,22 @@ export default function HealthcareScreen() {
         category: "Dental",
         image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/healthcare/vihaana-dental/1.webp",
       },
+      {
+        id: "sri-siddi-vinayaka-medical",
+        name: "Sri Siddi Vinayaka Medical",
+        location: "near old bustand, vinayaka ortho care pakkana , sircilla",
+        bookingPay: 0,
+        bookingCashback: 0,
+        specialOffers: [
+          "18% Discount on Pharmacy",
+          "5% Discount on General Item",
+          "23% Discount on Pharmacy (Ethical Medicines)",
+          "10% Discount on General Items",
+        ],
+        phone: "",
+        category: "Pharmacy",
+        image: "https://plus.unsplash.com/premium_photo-1682129961512-cec819b87215?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8bWVkaWNhbCUyMHN0b3JlfGVufDB8fDB8fHww",
+      },
     ],
     []
   );
@@ -167,7 +198,12 @@ export default function HealthcareScreen() {
   };
 
   const filtered = useMemo(() => {
-    const byCategory = selectedCategory === "All" ? data : data.filter(h => h.category === selectedCategory);
+    const byCategoryBase = selectedCategory === "All"
+      ? data
+      : selectedCategory === "Hospitals"
+        ? data.filter(h => h.category === "Hospitals" || h.category === "Clinics")
+        : data.filter(h => h.category === selectedCategory);
+    const byCategory = byCategoryBase;
     if (!query.trim()) return byCategory;
     return byCategory.filter(h => matchesOrdered(query, h.name, h.location));
   }, [data, selectedCategory, query]);
@@ -179,7 +215,7 @@ export default function HealthcareScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.8} style={styles.backButton}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Healthcare</Text>
+          <Text style={styles.headerTitle}>{selectedCategory}</Text>
         </View>
         <View style={styles.searchRow}>
           <View style={styles.searchBar}>
@@ -195,18 +231,7 @@ export default function HealthcareScreen() {
         </View>
       </View>
 
-      {/* Category chips outside of the red header */}
-      <View style={styles.categoryChipsContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryChipsOuter}>
-          {categories.map(cat => (
-            <TouchableOpacity key={cat} onPress={() => setSelectedCategory(cat)} activeOpacity={0.9}>
-              <View style={[styles.catChip, selectedCategory === cat && styles.catChipActive]}>
-                <Text style={[styles.catChipText, selectedCategory === cat && styles.catChipTextActive]}>{cat}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      {/* Types are now shown in a dedicated tab; horizontal chips removed */}
 
       <FlatList
         ref={listRef}
@@ -240,7 +265,7 @@ export default function HealthcareScreen() {
                 style={styles.image}
                 resizeMode="cover"
               />
-              <View style={styles.saveRibbon}><Text style={styles.saveText}>Book OP</Text></View>
+              <View style={styles.saveRibbon}><Text style={styles.saveText}>{item.category === 'Pharmacy' ? 'Request' : 'Book OP'}</Text></View>
             </View>
             <View style={styles.cardBody}>
               <View style={styles.titleRow}>

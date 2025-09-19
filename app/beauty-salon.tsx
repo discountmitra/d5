@@ -2,7 +2,8 @@ import { useMemo, useRef, useState } from "react";
 import { View, Text, StyleSheet, TextInput, FlatList, Image, TouchableOpacity, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 
 export interface SalonService {
   id: string;
@@ -59,6 +60,7 @@ type FlatService = SalonService & { locationId: string; locationName: string; ra
 export default function BeautySalonScreen() {
   const navigation = useNavigation();
   const router = useRouter();
+  const params = useLocalSearchParams();
   const listRef = useRef<FlatList<any>>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<SalonCategoryKey>('men');
@@ -101,6 +103,20 @@ export default function BeautySalonScreen() {
     return byCat.filter(s => matchesOrdered(query, s.name, s.description, s.subcategory));
   }, [selectedCategory, query]);
 
+  useEffect(() => {
+    const pre = (params.preselect as string) as SalonCategoryKey | undefined;
+    if (pre && ['men','women','unisex'].includes(pre)) {
+      setSelectedCategory(pre);
+    }
+  }, [params.preselect]);
+
+  // Redirect to types tab if no type preselected
+  useEffect(() => {
+    if (!params.preselect) {
+      router.replace({ pathname: '/category-types', params: { category: 'beauty-salon' } });
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerGradient}>
@@ -124,17 +140,7 @@ export default function BeautySalonScreen() {
         </View>
       </View>
 
-      <View style={styles.categoryChipsContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryChipsOuter}>
-          {salonCategories.map(cat => (
-            <TouchableOpacity key={cat.id} onPress={() => setSelectedCategory(cat.id)} activeOpacity={0.9}>
-              <View style={[styles.catChip, selectedCategory === cat.id && styles.catChipActive]}>
-                <Text style={[styles.catChipText, selectedCategory === cat.id && styles.catChipTextActive]}>{cat.label}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+      {/* Types are now shown in a dedicated tab; horizontal chips removed */}
 
       <FlatList
         ref={listRef}

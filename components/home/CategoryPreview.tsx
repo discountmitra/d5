@@ -6,7 +6,7 @@ import { Spacing, FontSizes, Colors } from "../../theme";
 const categories = [
   { id: "1", title: "Food", subtitle: "Restaurants & Takeaway", icon: "fast-food", color: "#FF6B6B" },
   { id: "2", title: "Healthcare", subtitle: "Hospitals & Clinics", icon: "medkit", color: "#4ECDC4" },
-  { id: "3", title: "Travel", subtitle: "Hotels & Booking", icon: "airplane", color: "#45B7D1" },
+  { id: "8", title: "Events", subtitle: "Event Management", icon: "calendar", color: "#E91E63" },
   { id: "4", title: "Home Services", subtitle: "Repair & Maintenance", icon: "build", color: "#FFA502" },
   { id: "5", title: "Automobiles", subtitle: "Car & Bike Services", icon: "car-sport", color: "#3742FA" },
   { id: "6", title: "Beauty & Salon", subtitle: "Hair & Beauty Care", icon: "color-palette", color: "#B53471" },
@@ -29,6 +29,8 @@ export default function CategoriesPreview() {
               router.push("/healthcare");
             } else if (item.title === "Home Services") {
               router.push("/home-services");
+            } else if (item.title === "Events") {
+              router.push("/events");
             } else {
               router.push("/coming-soon");
             }
