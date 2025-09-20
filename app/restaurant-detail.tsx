@@ -1,5 +1,6 @@
 import { useMemo, useState, useRef } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Linking, Alert, Animated, Modal, Dimensions, SafeAreaView, FlatList } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Linking, Alert, Animated, Modal, Dimensions, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import { restaurantData, Restaurant } from "../constants/restaurantData";

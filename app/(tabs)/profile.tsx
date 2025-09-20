@@ -143,7 +143,7 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => router.push('/vip-subscription')}>
           <View style={styles.settingLeft}>
             <View style={[styles.settingIconContainer, { backgroundColor: "#f59e0b15" }]}>
               <Ionicons name="star-outline" size={20} color="#f59e0b" />

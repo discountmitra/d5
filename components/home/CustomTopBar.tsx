@@ -34,9 +34,6 @@ export default function CustomTopBar() {
           style={styles.input}
           placeholderTextColor="#777"
         />
-        <TouchableOpacity style={styles.mapIcon}>
-          <Ionicons name="map-outline" size={20} color="#000" />
-        </TouchableOpacity>
       </View>
     </View>
   );
