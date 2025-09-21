@@ -1,6 +1,7 @@
-import { View, Text, Image, StyleSheet, Dimensions, ImageSourcePropType } from "react-native";
+import { View, Text, Image, StyleSheet, Dimensions, ImageSourcePropType, TouchableOpacity } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Colors, FontSizes, Spacing } from "../../theme";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -25,6 +26,12 @@ const deals: Deal[] = [
 ];
 
 export default function DealCard() {
+  const router = useRouter();
+
+  const handleDealPress = () => {
+    router.push("/food");
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>🔥 Hot Deals</Text>
@@ -37,9 +44,9 @@ export default function DealCard() {
         data={deals}
         scrollAnimationDuration={800}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={handleDealPress} activeOpacity={0.8}>
             <Image source={item.image} style={styles.image} />
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>

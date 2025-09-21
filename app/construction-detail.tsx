@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Image, Modal, ActivityIndicator, Animated, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+import { useVip } from '../contexts/VipContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type ConstructionData = {
   category: string;
@@ -18,6 +20,7 @@ export default function ConstructionDetailScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { userMode, isVip } = useVip();
   const { constructionId } = params as { constructionId: string };
   const headerImage = typeof params.image === 'string' ? (params.image as string) : '';
 
@@ -30,6 +33,8 @@ export default function ConstructionDetailScreen() {
   const [notes, setNotes] = useState('');
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [showPaymentPopup, setShowPaymentPopup] = useState(false);
+  const [popupAnim] = useState(new Animated.Value(0));
 
   const faqData = [
     {
@@ -86,7 +91,39 @@ export default function ConstructionDetailScreen() {
     if (!/^\d{10}$/.test(phoneNumber.trim())) newErrors.phone = 'Enter valid 10-digit phone';
     setErrors(newErrors);
     if (Object.keys(newErrors).length) return;
+
+    // Show payment popup for normal users, confirmation modal for VIP users
+    if (userMode === 'normal') {
+      setShowPaymentPopup(true);
+      Animated.spring(popupAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        tension: 100,
+        friction: 8,
+      }).start();
+    } else {
+      setShowConfirmModal(true);
+    }
+  };
+
+  const handleClosePaymentPopup = () => {
+    Animated.timing(popupAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      setShowPaymentPopup(false);
+    });
+  };
+
+  const handleContinueWithPayment = () => {
+    handleClosePaymentPopup();
     setShowConfirmModal(true);
+  };
+
+  const handleUpgradeToVip = () => {
+    handleClosePaymentPopup();
+    router.push('/vip-subscription');
   };
 
   const confirmRequest = () => {
@@ -192,7 +229,9 @@ export default function ConstructionDetailScreen() {
               <TextInput value={notes} onChangeText={setNotes} placeholder="Tell us your requirement..." placeholderTextColor="#9ca3af" style={[styles.input, styles.textArea]} multiline numberOfLines={4} />
             </View>
             <TouchableOpacity activeOpacity={0.9} onPress={handleRequest} style={styles.requestButton}>
-              <Text style={styles.requestButtonText}>Request Now</Text>
+              <Text style={styles.requestButtonText}>
+                {userMode === 'vip' ? 'Request Now (Free)' : 'Request Now (₹9)'}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -258,6 +297,79 @@ export default function ConstructionDetailScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Payment Popup for Normal Users */}
+      {showPaymentPopup && (
+        <View style={styles.paymentPopupOverlay}>
+          <TouchableWithoutFeedback onPress={handleClosePaymentPopup}>
+            <View style={StyleSheet.absoluteFill} />
+          </TouchableWithoutFeedback>
+          <Animated.View 
+            style={[
+              styles.paymentPopupContainer,
+              {
+                transform: [
+                  {
+                    scale: popupAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.8, 1],
+                    }),
+                  },
+                ],
+                opacity: popupAnim,
+              },
+            ]}
+          >
+            <View style={styles.paymentPopupHeader}>
+              <TouchableOpacity 
+                style={styles.paymentCloseButton}
+                onPress={handleClosePaymentPopup}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="close" size={24} color="#6b7280" />
+              </TouchableOpacity>
+              <Ionicons name="card" size={32} color="#3b82f6" />
+              <Text style={styles.paymentPopupTitle}>Payment Required</Text>
+              <Text style={styles.paymentPopupSubtitle}>
+                Choose your payment option for request
+              </Text>
+            </View>
+
+            <View style={styles.paymentPricingInfo}>
+              <View style={styles.paymentPriceRow}>
+                <Text style={styles.paymentNormalPrice}>₹9</Text>
+                <View style={styles.paymentVipPriceLocked}>
+                  <Ionicons name="lock-closed" size={12} color="#9ca3af" />
+                  <Text style={styles.paymentVipPriceText}>VIP: Free</Text>
+                  <Text style={styles.paymentSavingsText}>Save ₹9</Text>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.paymentPopupButtons}>
+              <TouchableOpacity 
+                style={styles.paymentContinueButton} 
+                onPress={handleContinueWithPayment}
+              >
+                <Text style={styles.paymentContinueText}>Continue with ₹9</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.paymentUpgradeButton} 
+                onPress={handleUpgradeToVip}
+              >
+                <LinearGradient
+                  colors={['#f59e0b', '#d97706']}
+                  style={styles.paymentUpgradeGradient}
+                >
+                  <Ionicons name="star" size={18} color="#fff" />
+                  <Text style={styles.paymentUpgradeText}>Subscribe</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+        </View>
+      )}
 
       <Modal visible={showSuccessModal} transparent animationType="fade" onRequestClose={() => { setShowSuccessModal(false); router.back(); }}>
         <View style={styles.modalOverlay}>
@@ -351,6 +463,127 @@ const styles = StyleSheet.create({
   successNote: { fontSize: 13, color: '#6b7280', textAlign: 'center', marginBottom: 14 },
   successButton: { paddingVertical: 14, borderRadius: 10, alignItems: 'center', backgroundColor: '#f97316', width: '100%' },
   successButtonText: { fontSize: 15, fontWeight: '700', color: '#ffffff' },
+
+  // Payment Popup Styles
+  paymentPopupOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  paymentPopupContainer: {
+    backgroundColor: '#fff',
+    marginHorizontal: 20,
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    maxWidth: 340,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  paymentPopupHeader: {
+    alignItems: 'center',
+    marginBottom: 20,
+    position: 'relative',
+  },
+  paymentCloseButton: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  paymentPopupTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+    marginTop: 12,
+    marginBottom: 6,
+  },
+  paymentPopupSubtitle: {
+    fontSize: 14,
+    color: '#6b7280',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  paymentPricingInfo: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  paymentPriceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  paymentNormalPrice: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  paymentVipPriceLocked: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 6,
+  },
+  paymentVipPriceText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#9ca3af',
+  },
+  paymentSavingsText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#10b981',
+  },
+  paymentPopupButtons: {
+    gap: 12,
+  },
+  paymentContinueButton: {
+    backgroundColor: '#3b82f6',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  paymentContinueText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  paymentUpgradeButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  paymentUpgradeGradient: {
+    paddingVertical: 14,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  paymentUpgradeText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
 });
 
 

@@ -18,19 +18,19 @@ export default function TabsLayout() {
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
-          height: 70 + insets.bottom,
-          paddingBottom: insets.bottom + 8,
-          paddingTop: 8,
+          height: 55 + insets.bottom,
+          paddingBottom: insets.bottom + 4,
+          paddingTop: 4,
         },
         tabBarActiveTintColor: "#111827",
         tabBarInactiveTintColor: "#9ca3af",
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 10,
           fontWeight: "600",
-          marginTop: 4,
+          marginTop: 2,
         },
         tabBarIconStyle: {
-          marginTop: 4,
+          marginTop: 2,
         },
         tabBarPressColor: "rgba(255, 255, 255, 0.1)",
         tabBarPressOpacity: 0.1,
@@ -40,10 +40,10 @@ export default function TabsLayout() {
         name="index"
         options={{ 
           title: "Home", 
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? "home" : "home-outline"} 
-              size={size} 
+              size={20} 
               color={color} 
             />
           ),
@@ -60,10 +60,10 @@ export default function TabsLayout() {
         name="categories"
         options={{ 
           title: "Categories", 
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? "grid" : "grid-outline"} 
-              size={size} 
+              size={20} 
               color={color} 
             />
           ),
@@ -80,10 +80,10 @@ export default function TabsLayout() {
         name="profile"
         options={{ 
           title: "Profile", 
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons 
               name={focused ? "person" : "person-outline"} 
-              size={size} 
+              size={20} 
               color={color} 
             />
           ),

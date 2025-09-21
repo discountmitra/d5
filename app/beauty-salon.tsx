@@ -274,15 +274,13 @@ const styles = StyleSheet.create({
   priceRow: { marginTop: 8, marginBottom: 8 },
   priceText: { fontSize: 14, fontWeight: "700", color: "#111827" },
   detailsText: { fontSize: 11, color: "#6b7280", marginTop: 2 },
+  scrollTopFab: { position: "absolute", right: 16, bottom: 72, width: 44, height: 44, borderRadius: 22, backgroundColor: "#111827", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.12, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
   actionsRow: { flexDirection: "row", alignItems: "center", marginTop: 12 },
   availabilityRow: { flexDirection: "row", alignItems: "center" },
   availabilityDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#10b981", marginRight: 6 },
   availabilityText: { fontSize: 12, color: "#10b981", fontWeight: "600" },
   ctaContainer: { flexDirection: "row", alignItems: "center" },
   ctaText: { fontSize: 12, color: "#6b7280", fontWeight: "600" },
-  requestNowBtn: { flex: 1, height: 44, borderRadius: 12, alignItems: "center", justifyContent: "center", flexDirection: "row", backgroundColor: "#111827" },
-  requestNowText: { fontWeight: "700", color: "#ffffff", fontSize: 14 },
-  scrollTopFab: { position: "absolute", right: 16, bottom: 72, width: 44, height: 44, borderRadius: 22, backgroundColor: "#111827", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.12, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
 });
 
 

@@ -379,10 +379,8 @@ const styles = StyleSheet.create({
   availabilityRow: { flexDirection: "row", alignItems: "center", marginTop: 8, marginBottom: 12 },
   availabilityDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#10b981", marginRight: 6 },
   availabilityText: { fontSize: 12, color: "#10b981", fontWeight: "600" },
+  scrollTopFab: { position: "absolute", right: 16, bottom: 72, width: 44, height: 44, borderRadius: 22, backgroundColor: "#111827", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.12, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
   actionsRow: { flexDirection: "row", alignItems: "center", marginTop: 12 },
-  viewDetailsBtn: { display: "none" },
-  viewDetailsText: { display: "none" },
   linkContainer: { flexDirection: "row", alignItems: "center" },
   linkText: { color: "grey", fontWeight: "700" },
-  scrollTopFab: { position: "absolute", right: 16, bottom: 72, width: 44, height: 44, borderRadius: 22, backgroundColor: "#111827", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.12, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
 });
