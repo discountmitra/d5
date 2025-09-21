@@ -9,7 +9,7 @@ export default function VipSubscriptionScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const { isVip, subscription, subscribeToPlan, cancelSubscription, getSubscriptionStatus } = useVip();
-  const [expandedId, setExpandedId] = useState<string | null>("quarterly");
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(["quarterly"]));
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
@@ -23,7 +23,15 @@ export default function VipSubscriptionScreen() {
 
   const toggleExpand = (id: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedId(prev => (prev === id ? null : id));
+    setExpandedIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
   };
 
   const handleSubscribe = (plan: SubscriptionPlan) => {
@@ -138,7 +146,7 @@ export default function VipSubscriptionScreen() {
             <Text style={styles.sectionTitle}>Choose Your Plan</Text>
 
             {SUBSCRIPTION_PLANS.map((plan) => {
-              const expanded = expandedId === plan.id;
+              const expanded = expandedIds.has(plan.id);
               return (
                 <View key={plan.id} style={[styles.planCard, expanded && styles.planCardExpanded]}>
                   <TouchableOpacity activeOpacity={0.9} style={styles.planHeader} onPress={() => toggleExpand(plan.id)}>
