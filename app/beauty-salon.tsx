@@ -4,6 +4,7 @@ import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
+import LikeButton from "../components/common/LikeButton";
 
 export interface SalonService {
   id: string;
@@ -169,6 +170,22 @@ export default function BeautySalonScreen() {
               <View style={styles.discountRibbon}>
                 <Text style={styles.discountText}>Popular</Text>
               </View>
+              <LikeButton 
+                item={{
+                  id: item.id,
+                  name: item.name,
+                  category: 'Beauty',
+                  subcategory: item.subcategory,
+                  image: item.image,
+                  description: item.description,
+                  price: item.price,
+                  rating: item.rating,
+                  reviews: item.reviews,
+                  location: item.locationName,
+                  address: item.address,
+                }}
+                style={styles.favoriteButton}
+              />
             </View>
             <View style={styles.cardBody}>
               <View style={styles.titleRow}>
@@ -281,6 +298,7 @@ const styles = StyleSheet.create({
   availabilityText: { fontSize: 12, color: "#10b981", fontWeight: "600" },
   ctaContainer: { flexDirection: "row", alignItems: "center" },
   ctaText: { fontSize: 12, color: "#6b7280", fontWeight: "600" },
+  favoriteButton: { position: "absolute", top: 12, left: 12, width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.85)", alignItems: "center", justifyContent: "center" },
 });
 
 

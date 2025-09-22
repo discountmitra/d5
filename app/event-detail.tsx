@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
+import LikeButton from '../components/common/LikeButton';
 
 type UserType = 'normal' | 'vip';
 
@@ -413,16 +414,22 @@ export default function EventDetailScreen() {
               <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
                 <Ionicons name="call" size={20} color="#111827" />
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.heroLikeButton}
-                onPress={() => {}}
-              >
-                <Ionicons 
-                  name="heart-outline" 
+              <LikeButton 
+                item={{
+                  id: event.id,
+                  name: event.name,
+                  category: 'Events',
+                  subcategory: event.category,
+                  image: headerImage,
+                  description: event.description,
+                  rating: event.rating,
+                  reviews: event.reviews,
+                  location: event.category,
+                  address: event.category,
+                }}
                   size={24} 
-                  color="#fff" 
+                style={[styles.heroLikeButton, { backgroundColor: "rgba(255,255,255,0.2)" }]}
                 />
-              </TouchableOpacity>
           </View>
         </View>
       </View>

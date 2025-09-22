@@ -4,6 +4,7 @@ import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
 import { restaurantData, Restaurant } from "../constants/restaurantData";
+import LikeButton from "@/components/common/LikeButton";
 
 
 export default function FoodScreen() {
@@ -106,9 +107,20 @@ export default function FoodScreen() {
                   <Text style={styles.savePercent}>{item.savePercent}%</Text>
                 </View>
               )}
-              <View style={styles.favoriteButton}>
-                <Ionicons name="heart-outline" size={18} color="#ef4444" />
-              </View>
+              <LikeButton 
+                item={{
+                  id: item.id,
+                  name: item.name,
+                  category: 'Healthcare',
+                  subcategory: item.category,
+                  image: item.image,
+                  description: item.location,
+                  location: item.location,
+                  address: item.location,
+                  phone: item.phone,
+                }}
+                style={styles.favoriteButton}
+              />
             </View>
 
             <View style={styles.cardBody}>

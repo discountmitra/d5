@@ -4,19 +4,18 @@ import { Colors, FontSizes, Spacing } from "../../theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect } from "react";
+import { useFavorites } from "../../contexts/FavoritesContext";
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const navigation = useNavigation();
+  const { favorites } = useFavorites();
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false }); // Hide default header
   }, [navigation]);
 
-  const handleLogout = () => {
-    router.push("/(auth)/login");
-  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -67,57 +66,51 @@ export default function ProfileScreen() {
 
       {/* Feature Cards */}
       <View style={styles.cardsContainer}>
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={() => router.push('/favorites')}>
           <View style={styles.cardIcon}>
             <Ionicons name="heart" size={24} color="#10b981" />
           </View>
           <Text style={styles.cardText}>Favourites</Text>
+          {favorites.length > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{favorites.length}</Text>
+            </View>
+          )}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card}>
-          <View style={styles.cardIcon}>
-            <Ionicons name="wallet" size={24} color="#f59e0b" />
-          </View>
-          <Text style={styles.cardText}>Wallet</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={() => {
+          router.push({
+            pathname: '/orders'
+          });
+        }}>
           <View style={styles.cardIcon}>
             <Ionicons name="bag" size={24} color="#3b82f6" />
           </View>
           <Text style={styles.cardText}>Orders</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.card} onPress={() => {
+          router.push({
+            pathname: '/referrals'
+          });
+        }}>
+          <View style={styles.cardIcon}>
+            <Ionicons name="people-outline" size={24} color="#10b981" />
+          </View>
+          <Text style={styles.cardText}>Referrals</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Account Settings Options */}
       <View style={styles.settingsContainer}>
-        <TouchableOpacity style={styles.settingItem}>
-          <View style={styles.settingLeft}>
-            <View style={[styles.settingIconContainer, { backgroundColor: "#3b82f615" }]}>
-              <Ionicons name="time-outline" size={20} color="#3b82f6" />
-            </View>
-            <View style={styles.settingText}>
-              <Text style={styles.settingTitle}>Order History</Text>
-              <Text style={styles.settingDescription}>View all your transactions</Text>
-            </View>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem}>
-          <View style={styles.settingLeft}>
-            <View style={[styles.settingIconContainer, { backgroundColor: "#10b98115" }]}>
-              <Ionicons name="people-outline" size={20} color="#10b981" />
-            </View>
-            <View style={styles.settingText}>
-              <Text style={styles.settingTitle}>Referrals</Text>
-              <Text style={styles.settingDescription}>Invite friends & earn amazing rewards</Text>
-            </View>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem}>
+
+        <TouchableOpacity style={styles.settingItem} onPress={() => {
+          router.push({
+            pathname: '/notifications'
+          });
+        }}>
           <View style={styles.settingLeft}>
             <View style={[styles.settingIconContainer, { backgroundColor: "#8b5cf615" }]}>
               <Ionicons name="notifications-outline" size={20} color="#8b5cf6" />
@@ -156,7 +149,11 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => {
+          router.push({
+            pathname: '/help-center'
+          });
+        }}>
           <View style={styles.settingLeft}>
             <View style={[styles.settingIconContainer, { backgroundColor: "#f59e0b15" }]}>
               <Ionicons name="help-circle-outline" size={20} color="#f59e0b" />
@@ -169,7 +166,11 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity style={styles.settingItem} onPress={() => {
+          router.push({
+            pathname: '/settings'
+          });
+        }}>
           <View style={styles.settingLeft}>
             <View style={[styles.settingIconContainer, { backgroundColor: "#6b728015" }]}>
               <Ionicons name="settings-outline" size={20} color="#6b7280" />
@@ -200,11 +201,6 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Logout Button */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Ionicons name="log-out-outline" size={20} color="#dc2626" />
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -451,5 +447,21 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#dc2626",
     marginLeft: Spacing.sm,
+  },
+  badge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: "#ef4444",
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
   },
 });

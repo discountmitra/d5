@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import { restaurantData, Restaurant } from "../constants/restaurantData";
+import LikeButton from "../components/common/LikeButton";
 
 export default function RestaurantDetailScreen() {
   const navigation = useNavigation();
@@ -11,7 +12,6 @@ export default function RestaurantDetailScreen() {
   const params = useLocalSearchParams();
   const headerImage = typeof params.image === 'string' ? (params.image as string) : '';
   const [selectedGalleryTab, setSelectedGalleryTab] = useState('All');
-  const [isLiked, setIsLiked] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const [isViewerVisible, setIsViewerVisible] = useState(false);
@@ -61,9 +61,6 @@ export default function RestaurantDetailScreen() {
     });
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
 
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -177,16 +174,22 @@ export default function RestaurantDetailScreen() {
               <TouchableOpacity style={styles.heroCallButton} onPress={handleCall}>
                 <Ionicons name="call" size={20} color="#111827" />
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.heroLikeButton}
-                onPress={handleLike}
-              >
-                <Ionicons 
-                  name={isLiked ? "heart" : "heart-outline"} 
-                  size={24} 
-                  color={isLiked ? "#ef4444" : "#fff"} 
-                />
-              </TouchableOpacity>
+              <LikeButton 
+                item={{
+                  id: restaurant.id,
+                  name: restaurant.name,
+                  category: 'Food',
+                  subcategory: restaurant.specialist.join(", "),
+                  image: headerImage,
+                  description: restaurant.specialist.join(", "),
+                  rating: restaurant.rating,
+                  reviews: restaurant.reviews,
+                  location: restaurant.area,
+                  address: restaurant.area,
+                }}
+                size={24}
+                style={[styles.heroLikeButton, { backgroundColor: "rgba(255,255,255,0.2)" }]}
+              />
             </View>
           </View>
         </View>

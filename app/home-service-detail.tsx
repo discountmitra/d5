@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useVip } from "../contexts/VipContext";
 import { LinearGradient } from "expo-linear-gradient";
+import LikeButton from "../components/common/LikeButton";
 
 export default function HomeServiceDetailScreen() {
   const params = useLocalSearchParams();
@@ -165,16 +166,19 @@ export default function HomeServiceDetailScreen() {
               <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
                 <Ionicons name="call" size={20} color="#111827" />
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.heroLikeButton}
-                onPress={() => {}}
-              >
-                <Ionicons 
-                  name="heart-outline" 
-                  size={24} 
-                  color="#fff" 
-                />
-              </TouchableOpacity>
+              <LikeButton 
+                item={{
+                  id: service.id,
+                  name: service.name,
+                  category: 'Home Services',
+                  subcategory: service.category,
+                  image: service.image,
+                  description: service.desc,
+                  price: service.price,
+                }}
+                size={24}
+                style={[styles.heroLikeButton, { backgroundColor: "rgba(255,255,255,0.2)" }]}
+              />
           </View>
         </View>
       </View>

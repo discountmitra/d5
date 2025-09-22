@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { useVip } from '../contexts/VipContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import LikeButton from '../components/common/LikeButton';
 
 type ConstructionData = {
   category: string;
@@ -170,9 +171,23 @@ export default function ConstructionDetailScreen() {
               <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
                 <Ionicons name="call" size={20} color="#111827" />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.heroLikeButton} onPress={() => {}}>
-                <Ionicons name="heart-outline" size={24} color="#fff" />
-              </TouchableOpacity>
+              <LikeButton 
+                item={{
+                  id: current.name.toLowerCase().replace(/\s+/g, '-'),
+                  name: current.name,
+                  category: 'Construction',
+                  subcategory: current.category,
+                  image: headerImage,
+                  description: current.description,
+                  price: current.price || '',
+                  rating: current.rating,
+                  reviews: current.reviews,
+                  location: current.category,
+                  address: current.category,
+                }}
+                size={24}
+                style={[styles.heroLikeButton, { backgroundColor: "rgba(255,255,255,0.2)" }]}
+              />
             </View>
           </View>
         </View>

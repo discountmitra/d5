@@ -4,6 +4,7 @@ import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
+import LikeButton from "../components/common/LikeButton";
 
 type CategoryKey = "Decoration" | "Tent House" | "DJ & Lighting" | "Thadakala Pandiri" | "Function Halls" | "Catering" | "Mehendi Art";
 
@@ -398,6 +399,22 @@ export default function EventsScreen() {
               <View style={styles.discountRibbon}>
                 <Text style={styles.discountText}>Lowest Price</Text>
               </View>
+              <LikeButton 
+                item={{
+                  id: item.id,
+                  name: item.name,
+                  category: 'Events',
+                  subcategory: item.category,
+                  image: item.image,
+                  description: item.description,
+                  price: item.price,
+                  rating: item.rating,
+                  reviews: item.reviews,
+                  location: item.location || '',
+                  address: item.location || '',
+                }}
+                style={styles.favoriteButton}
+              />
             </View>
             <View style={styles.cardBody}>
               <View style={styles.titleRow}>
@@ -519,4 +536,5 @@ const styles = StyleSheet.create({
   scrollTopFab: { position: "absolute", right: 16, bottom: 72, width: 44, height: 44, borderRadius: 22, backgroundColor: "#111827", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.12, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
   ctaContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 12 },
   ctaText: { fontSize: 14, fontWeight: '600', color: '#e91e63', marginRight: 6 },
+  favoriteButton: { position: "absolute", top: 12, left: 12, width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.85)", alignItems: "center", justifyContent: "center" },
 });

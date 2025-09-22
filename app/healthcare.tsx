@@ -4,6 +4,7 @@ import NoDataIllustration from "../assets/no-data.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
+import LikeButton from "../components/common/LikeButton";
 
 type CategoryKey = "All" | "Hospitals" | "Clinics" | "Pharmacy" | "Diagnostics" | "Dental" | "Eye" | "ENT";
 
@@ -266,6 +267,20 @@ export default function HealthcareScreen() {
                 resizeMode="cover"
               />
               <View style={styles.saveRibbon}><Text style={styles.saveText}>{item.category === 'Pharmacy' ? 'Request' : 'Book OP'}</Text></View>
+              <LikeButton 
+                item={{
+                  id: item.id,
+                  name: item.name,
+                  category: 'Healthcare',
+                  subcategory: item.category,
+                  image: item.image,
+                  description: item.location,
+                  location: item.location,
+                  address: item.location,
+                  phone: item.phone,
+                }}
+                style={styles.favoriteButton}
+              />
             </View>
             <View style={styles.cardBody}>
               <View style={styles.titleRow}>
@@ -351,6 +366,7 @@ const styles = StyleSheet.create({
   bookBtn: { marginLeft: 8, backgroundColor: "#111827" },
   actionText: { fontWeight: "700", marginLeft: 6 },
   scrollTopFab: { position: "absolute", right: 16, bottom: 72, width: 44, height: 44, borderRadius: 22, backgroundColor: "#111827", alignItems: "center", justifyContent: "center", shadowColor: "#000", shadowOpacity: 0.12, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
+  favoriteButton: { position: "absolute", top: 12, left: 12, width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(255,255,255,0.85)", alignItems: "center", justifyContent: "center" },
 });
 
 

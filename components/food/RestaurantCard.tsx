@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import LikeButton from '../common/LikeButton';
 
 type Restaurant = {
   id: string;
@@ -21,8 +22,9 @@ interface RestaurantCardProps {
 
 export default function RestaurantCard({ restaurant, onPress }: RestaurantCardProps) {
   return (
-    <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={onPress}>
-      <View style={{ position: "relative" }}>
+    <View style={styles.card}>
+      {/* Image section with like button - completely separate from navigation */}
+      <View style={styles.imageContainer}>
         <Image source={require("../../assets/default.png")} style={styles.image} resizeMode="cover" />
         <View style={styles.homeDeliveryPill}>
           <Ionicons name="bicycle-outline" size={14} color="#111827" />
@@ -34,12 +36,33 @@ export default function RestaurantCard({ restaurant, onPress }: RestaurantCardPr
             <Text style={styles.savePercent}>{restaurant.savePercent}%</Text>
           </View>
         )}
-        <View style={styles.favoriteButton}>
-          <Ionicons name="heart-outline" size={18} color="#ef4444" />
+        
+        {/* Like button with explicit positioning and touch handling */}
+        <View style={styles.likeButtonContainer}>
+        <LikeButton 
+          item={{
+            id: restaurant.id,
+            name: restaurant.name,
+            category: 'Food',
+            subcategory: restaurant.specialist.join(", "),
+            image: require("../../assets/default.png"),
+            description: restaurant.specialist.join(", "),
+            rating: restaurant.rating,
+            reviews: restaurant.reviews,
+            location: restaurant.area,
+            address: restaurant.area,
+          }}
+          style={styles.favoriteButton}
+        />
         </View>
       </View>
 
-      <View style={styles.cardBody}>
+      {/* Card body - only this area is touchable for navigation */}
+      <TouchableOpacity 
+        activeOpacity={0.9} 
+        style={styles.cardBody} 
+        onPress={onPress}
+      >
         <View style={styles.titleRow}>
           <View style={{ flex: 1 }}>
             <Text style={styles.title}>{restaurant.name}</Text>
@@ -71,8 +94,8 @@ export default function RestaurantCard({ restaurant, onPress }: RestaurantCardPr
             <Ionicons name="chevron-forward" size={16} color="#6b7280" />
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -89,6 +112,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     shadowRadius: 12,
     elevation: 3,
+  },
+  imageContainer: {
+    position: "relative",
+  },
+  likeButtonContainer: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    zIndex: 1000,
   },
   image: {
     width: "100%",
@@ -133,9 +165,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   favoriteButton: {
-    position: "absolute",
-    top: 12,
-    left: 12,
     width: 36,
     height: 36,
     borderRadius: 18,

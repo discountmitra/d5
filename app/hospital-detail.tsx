@@ -18,6 +18,7 @@ import { getHospitalById } from "../constants/hospitalData";
 import { useState, useMemo, useRef } from "react";
 import { useVip } from "../contexts/VipContext";
 import { LinearGradient } from "expo-linear-gradient";
+import LikeButton from "../components/common/LikeButton";
 
 export default function HospitalDetailScreen() {
   const params = useLocalSearchParams();
@@ -312,16 +313,21 @@ export default function HospitalDetailScreen() {
               <TouchableOpacity style={styles.heroCallButton} onPress={handleCall}>
                 <Ionicons name="call" size={20} color="#111827" />
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.heroLikeButton}
-                onPress={handleCall}
-              >
-                <Ionicons 
-                  name="heart-outline" 
-                  size={24} 
-                  color="#fff" 
-                />
-              </TouchableOpacity>
+              <LikeButton 
+                item={{
+                  id: hospital.id,
+                  name: hospital.name,
+                  category: 'Healthcare',
+                  subcategory: hospital.category,
+                  image: headerImage,
+                  description: hospital.description,
+                  location: hospital.description.split("\n")[1] || "",
+                  address: hospital.description.split("\n")[1] || "",
+                  phone: "phone" in hospital ? (hospital as any).phone || "" : "",
+                }}
+                size={24}
+                style={[styles.heroLikeButton, { backgroundColor: "rgba(255,255,255,0.2)" }]}
+              />
             </View>
           </View>
         </View>

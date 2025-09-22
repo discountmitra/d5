@@ -2,6 +2,7 @@ import { useMemo, useState, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Modal, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
+import LikeButton from "../components/common/LikeButton";
 
 type UserType = 'normal' | 'vip';
 
@@ -280,16 +281,22 @@ export default function SalonDetailScreen() {
               <TouchableOpacity style={styles.heroCallButton} onPress={() => {}}>
                 <Ionicons name="call" size={20} color="#111827" />
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.heroLikeButton}
-                onPress={() => {}}
-              >
-                <Ionicons 
-                  name="heart-outline" 
-                  size={24} 
-                  color="#fff" 
-                />
-              </TouchableOpacity>
+              <LikeButton 
+                item={{
+                  id: salon.id,
+                  name: salon.name,
+                  category: 'Beauty',
+                  subcategory: 'Salon',
+                  image: salon.image,
+                  description: salon.address,
+                  rating: salon.rating,
+                  reviews: salon.reviews,
+                  location: salon.address,
+                  address: salon.address,
+                }}
+                size={24}
+                style={[styles.heroLikeButton, { backgroundColor: "rgba(255,255,255,0.2)" }]}
+              />
             </View>
           </View>
         </View>
