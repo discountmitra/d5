@@ -17,6 +17,9 @@ export interface UserSubscription {
   endDate: Date;
   isActive: boolean;
   autoRenew: boolean;
+  originalPrice?: number;
+  pricePaid?: number;
+  couponCode?: string | null;
 }
 
 interface VipContextType {
@@ -25,7 +28,10 @@ interface VipContextType {
   subscription: UserSubscription | null;
   setUserMode: (mode: UserMode) => void;
   toggleMode: () => void;
-  subscribeToPlan: (planId: string) => Promise<boolean>;
+  subscribeToPlan: (
+    planId: string,
+    options?: { couponCode?: string; discountPct?: number; finalPrice?: number }
+  ) => Promise<boolean>;
   cancelSubscription: () => Promise<boolean>;
   getSubscriptionStatus: () => {
     isActive: boolean;
@@ -113,7 +119,10 @@ export function VipProvider({ children }: VipProviderProps) {
     }
   };
 
-  const subscribeToPlan = async (planId: string): Promise<boolean> => {
+  const subscribeToPlan = async (
+    planId: string,
+    options?: { couponCode?: string; discountPct?: number; finalPrice?: number }
+  ): Promise<boolean> => {
     try {
       const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
       if (!plan) return false;
@@ -134,12 +143,20 @@ export function VipProvider({ children }: VipProviderProps) {
           break;
       }
 
+      const normalizedCode = (options?.couponCode || '').trim().toUpperCase();
+      const isCouponValid = normalizedCode === 'MYMLAKTR';
+      const discountPct = isCouponValid ? (options?.discountPct ?? 0.5) : 0;
+      const computedFinalPrice = Math.max(0, Math.round((options?.finalPrice ?? plan.price * (1 - discountPct))));
+
       const newSubscription: UserSubscription = {
         planId,
         startDate,
         endDate,
         isActive: true,
-        autoRenew: true
+        autoRenew: true,
+        originalPrice: plan.price,
+        pricePaid: computedFinalPrice,
+        couponCode: isCouponValid ? normalizedCode : null,
       };
 
       setSubscription(newSubscription);

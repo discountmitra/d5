@@ -7,6 +7,8 @@ export type HospitalDetail = {
   description: string;
   normalUserOffer: string;
   vipUserOffer: string;
+  normalOpPrice?: number; // Structured OP price for normal users (₹)
+  vipOpPrice?: number; // Structured OP price for VIP users (₹)
   reaction: string | null;
   photos: string[];
   phone?: string;
@@ -23,6 +25,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Amrutha Children's Hospital\nNear Vani Nursing Home, Sardar Nagar, Sircilla",
     normalUserOffer: "Book OP for ₹400 (No discount in OP)\nGet 20% Discount on Lab & IP Services",
     vipUserOffer: "OP: ₹100 OFF - Pay only 299\nGet 30% Instant Discount on Lab & IP Services\nPlus 10% Discount on Pharmacy",
+    normalOpPrice: 400,
+    vipOpPrice: 299,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },
@@ -35,6 +39,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Lulu Children's Hospital\nAmbedkar Chowrasta, Beside Amma Hospital, Rajanna Sircilla",
     normalUserOffer: "Book OP for ₹300 (No discount in OP)\nGet 10% Discount on Lab & IP Services",
     vipUserOffer: "OP: ₹100 OFF - Pay only 199\nGet 15% Instant Discount on Lab & IP Services\nPlus 10% Discount on Pharmacy",
+    normalOpPrice: 300,
+    vipOpPrice: 199,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },
@@ -47,6 +53,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Life Hospital\nIn front of Municipal Office, Gandhinagar, Sircilla",
     normalUserOffer: "Book OP for ₹300 (No discount in OP)\nGet 10% Discount on Lab & IP Services",
     vipUserOffer: "OP: ₹100 OFF – Pay Only ₹199\n20% Instant Discount on Lab & IP Services\n10% Discount on Pharmacy",
+    normalOpPrice: 300,
+    vipOpPrice: 199,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },
@@ -59,6 +67,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Vasavi General Hospital\nBeside Amma Hospital, Sircilla",
     normalUserOffer: "Book OP for ₹300 (No discount in OP)\nGet 15% Discount on Lab & IP Services",
     vipUserOffer: "OP: ₹100 OFF - Pay only 199\nGet 25% Instant Discount on Lab & IP Services\nPlus 10% Discount on Pharmacy",
+    normalOpPrice: 300,
+    vipOpPrice: 199,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },
@@ -71,6 +81,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Siddi Vinayaka E.N.T. Hospital\nBeside Vinayaka Ortho Care, Sircilla",
     normalUserOffer: "Book OP for ₹300 (No discount in OP)\nGet 15% Discount on Lab & IP Services",
     vipUserOffer: "OP: ₹100 OFF - Pay only 199\nGet 30% Instant Discount on Lab & IP Services\nPlus 10% Discount on Pharmacy",
+    normalOpPrice: 300,
+    vipOpPrice: 199,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },
@@ -83,6 +95,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Shiva Sai Opticals\nBeside Quality Fast Food, Sircilla",
     normalUserOffer: "Book OP for ₹99 (No discount in OP)\nGet 20% discount on Spectacles and Glass",
     vipUserOffer: "OP: ₹90 OFF - Pay ₹9 Only\nGet 40% Discount on Spectacles & Glass",
+    normalOpPrice: 99,
+    vipOpPrice: 9,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },
@@ -95,6 +109,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Aditya Neuro & Ortho\nSiddulwada, Sircilla",
     normalUserOffer: "Book OP ₹400 (No discount in OP)\nGet 10% discount on Lab & IP",
     vipUserOffer: "OP: Pay ₹399\nGet 20% Instant Discount on Lab & IP\nPlus 10% Discount on Pharmacy",
+    normalOpPrice: 400,
+    vipOpPrice: 399,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },
@@ -107,6 +123,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Chandana Chest Hospital\nBeside Vani Nursing Home, Sircilla",
     normalUserOffer: "Book OP ₹300 (No discount in OP)\nGet 10% Discount on Lab & IP services",
     vipUserOffer: "OP: 100 OFF - Pay ₹199 only\nGet 25% Discount on Lab & IP\nPlus 5% Discount on Pharmacy",
+    normalOpPrice: 300,
+    vipOpPrice: 199,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },
@@ -119,6 +137,8 @@ export const hospitalDetails: HospitalDetail[] = [
     description: "Vihana Multispeciality Dental Care\nKarimnagar – Sircilla Road, Near Old Bus Stand, Sircilla",
     normalUserOffer: "Book OP @ ₹99 (No discount in OP)\nGet 20% Discount on All Dental Services",
     vipUserOffer: "OP: 50 OFF - Pay ₹49 Only\nFree X-Ray\n30% Discount on All Services",
+    normalOpPrice: 99,
+    vipOpPrice: 49,
     reaction: "After making the payment and booking, the user should see a unique code in the app. The booking details along with this code should be sent to us and also to the hospital",
     photos: [],
   },

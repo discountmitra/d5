@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, LayoutAnimation, Modal, ActivityIndicator, Animated, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, LayoutAnimation, Modal, ActivityIndicator, Animated, TouchableWithoutFeedback, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
 import { useVip, SUBSCRIPTION_PLANS, SubscriptionPlan } from "../contexts/VipContext";
-import { LinearGradient } from "expo-linear-gradient";
+// Removed gradient pill usage for price; showing gold text instead
 
 export default function VipSubscriptionScreen() {
   const router = useRouter();
@@ -14,6 +14,9 @@ export default function VipSubscriptionScreen() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   const subscriptionStatus = getSubscriptionStatus();
 
@@ -46,7 +49,16 @@ export default function VipSubscriptionScreen() {
     setIsLoading(true);
 
     try {
-      const success = await subscribeToPlan(selectedPlan.id);
+      const normalized = couponCode.trim().toUpperCase();
+      const isValidCoupon = normalized === 'MYMLAKTR';
+      const discountPct = isValidCoupon ? 0.5 : 0;
+      const finalPrice = Math.max(0, Math.round(selectedPlan.price * (1 - discountPct)));
+
+      const success = await subscribeToPlan(selectedPlan.id, {
+        couponCode: isValidCoupon ? normalized : undefined,
+        discountPct: isValidCoupon ? 0.5 : undefined,
+        finalPrice,
+      });
       if (success) {
         setIsLoading(false);
         // Success popup will be shown by UserModeToggle component
@@ -103,6 +115,12 @@ export default function VipSubscriptionScreen() {
               </View>
               <Text style={styles.heroTitle}>Welcome to VIP!</Text>
               <Text style={styles.heroSubtitle}>You're enjoying premium benefits and exclusive savings.</Text>
+              {subscription?.couponCode ? (
+                <View style={styles.couponAppliedPill}>
+                  <Ionicons name="pricetags" size={14} color="#065f46" />
+                  <Text style={styles.couponAppliedText}>Coupon applied: {subscription.couponCode}</Text>
+                </View>
+              ) : null}
               
               <View style={styles.planDetails}>
                 <View style={styles.planDetailRow}>
@@ -113,6 +131,15 @@ export default function VipSubscriptionScreen() {
                   <Text style={styles.planDetailLabel}>Days Remaining:</Text>
                   <Text style={styles.planDetailValue}>{subscriptionStatus.daysRemaining} days</Text>
                 </View>
+                {subscription?.pricePaid !== undefined && subscription?.originalPrice !== undefined && subscription.pricePaid !== subscription.originalPrice ? (
+                  <View style={[styles.planDetailRow, { marginTop: 4 }]}> 
+                    <Text style={styles.planDetailLabel}>You Paid:</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <Text style={styles.planDetailValue}>₹{subscription.pricePaid}</Text>
+                      <Text style={styles.strikedPriceLight}>₹{subscription.originalPrice}</Text>
+                    </View>
+                  </View>
+                ) : null}
               </View>
             </View>
 
@@ -145,6 +172,69 @@ export default function VipSubscriptionScreen() {
 
             <Text style={styles.sectionTitle}>Choose Your Plan</Text>
 
+            {/* Coupon Box */}
+            <View style={styles.couponCard}>
+              <View style={styles.couponHeader}>
+                <Ionicons name="pricetags" size={16} color="#f59e0b" />
+                <Text style={styles.couponTitle}>Have a coupon?</Text>
+              </View>
+              <View style={styles.couponRow}>
+                <View style={styles.couponInputContainer}>
+                  <TextInput
+                  value={couponCode}
+                  onChangeText={(t) => {
+                    setCouponCode(t);
+                    setCouponError(null);
+                    setCouponApplied(false);
+                  }}
+                  placeholder="Enter code (e.g., MYMLAKTR)"
+                  placeholderTextColor="#9ca3af"
+                  style={[styles.couponInput, (couponApplied || couponCode.trim().length > 0) && { paddingRight: 36 }]}
+                  autoCapitalize="characters"
+                  />
+                  {(couponApplied || couponCode.trim().length > 0) && (
+                    <TouchableOpacity
+                      style={styles.clearBtnInside}
+                      onPress={() => { setCouponCode(''); setCouponApplied(false); setCouponError(null); }}
+                      activeOpacity={0.8}
+                    >
+                      <Ionicons name="close" size={14} color="#6b7280" />
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <TouchableOpacity
+                  style={[styles.applyBtn, couponApplied && { backgroundColor: '#10b981' }]}
+                  onPress={() => {
+                    const code = couponCode.trim().toUpperCase();
+                    if (!code) {
+                      setCouponError('Enter a coupon code');
+                      setCouponApplied(false);
+                      return;
+                    }
+                    if (code === 'MYMLAKTR') {
+                      setCouponApplied(true);
+                      setCouponError(null);
+                    } else {
+                      setCouponApplied(false);
+                      setCouponError('Invalid coupon');
+                    }
+                  }}
+                  activeOpacity={0.85}
+                >
+                  <Text style={styles.applyBtnText}>{couponApplied ? 'Applied' : 'Apply'}</Text>
+                </TouchableOpacity>
+              </View>
+              {couponError ? <Text style={styles.couponError}>{couponError}</Text> : null}
+              {couponApplied ? (
+                <View style={styles.couponSuccessRow}>
+                  <Ionicons name="checkmark-circle" size={16} color="#10b981" />
+                  <Text style={styles.couponSuccessText}>Coupon applied! 50% off on all plans.</Text>
+                </View>
+              ) : (
+                <Text style={styles.couponHint}>Tip: Use code MYMLAKTR for 50% off.</Text>
+              )}
+            </View>
+
             {SUBSCRIPTION_PLANS.map((plan) => {
               const expanded = expandedIds.has(plan.id);
               return (
@@ -155,7 +245,14 @@ export default function VipSubscriptionScreen() {
                       <Text style={styles.planDuration}>{plan.duration}</Text>
                     </View>
                     <View style={styles.planPriceWrap}>
-                      <Text style={styles.planPrice}>₹{plan.price}</Text>
+                      {couponApplied ? (
+                        <View style={styles.priceWrap}>
+                          <Text style={styles.goldPriceTextOnly}>₹{Math.max(0, Math.round(plan.price * 0.5))}</Text>
+                          <Text style={styles.strikedPrice}>₹{plan.price}</Text>
+                        </View>
+                      ) : (
+                        <Text style={styles.planPrice}>₹{plan.price}</Text>
+                      )}
                     </View>
                     <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={18} color="#6b7280" />
                   </TouchableOpacity>
@@ -175,7 +272,7 @@ export default function VipSubscriptionScreen() {
 
                       <TouchableOpacity style={styles.ctaBtn} onPress={() => handleSubscribe(plan)}>
                         <Ionicons name="flash" size={16} color="#fff" />
-                        <Text style={styles.ctaText}>Subscribe Now</Text>
+                        <Text style={styles.ctaText}>{couponApplied ? 'Subscribe with 50% OFF' : 'Subscribe Now'}</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -200,7 +297,12 @@ export default function VipSubscriptionScreen() {
 
             <Text style={styles.modalTitle}>Confirm Subscription</Text>
             <Text style={styles.modalSubtitle}>
-              You're about to subscribe to {selectedPlan?.name} for ₹{selectedPlan?.price}
+              {(() => {
+                if (!selectedPlan) return '' as any;
+                const applied = couponCode.trim().toUpperCase() === 'MYMLAKTR';
+                const finalPrice = applied ? Math.max(0, Math.round(selectedPlan.price * 0.5)) : selectedPlan.price;
+                return `You're about to subscribe to ${selectedPlan.name} for ₹${finalPrice}${applied ? ` (50% OFF applied)` : ''}`;
+              })()}
             </Text>
 
             <View style={styles.modalButtonContainer}>
@@ -307,7 +409,9 @@ const styles = StyleSheet.create({
   planName: { fontSize: 16, fontWeight: "800", color: "#111827" },
   planDuration: { fontSize: 12, color: "#6b7280", marginTop: 2 },
   planPriceWrap: { alignItems: "flex-end", marginRight: 8 },
+  priceWrap: { alignItems: 'flex-end' },
   planPrice: { fontSize: 18, fontWeight: "800", color: "#111827" },
+  strikedPrice: { fontSize: 12, color: "#9ca3af", textDecorationLine: 'line-through', marginTop: 2, textAlign: 'right' },
   ribbon: { position: "absolute", top: -10, left: 16, backgroundColor: "#f59e0b", paddingHorizontal: 10, paddingVertical: 4, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
   ribbonText: { color: "#fff", fontWeight: "800", fontSize: 10 },
   planBody: { paddingHorizontal: 16, paddingBottom: 16 },
@@ -352,6 +456,31 @@ const styles = StyleSheet.create({
   modalButtonPrimary: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: "#f59e0b", alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 6 },
   modalButtonPrimaryText: { fontSize: 15, fontWeight: "700", color: "#ffffff" },
   loadingText: { fontSize: 16, fontWeight: "600", color: "#111827", marginTop: 12, textAlign: "center" },
+
+  // Coupon UI
+  couponCard: { backgroundColor: '#fff', borderRadius: 12, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: '#e5e7eb' },
+  couponHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  couponTitle: { fontSize: 14, fontWeight: '800', color: '#111827' },
+  couponRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  couponInputContainer: { flex: 1, position: 'relative' },
+  couponInput: { flex: 1, height: 44, backgroundColor: '#f9fafb', borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10, paddingHorizontal: 12, color: '#111827', fontWeight: '600' },
+  clearBtnInside: { position: 'absolute', right: 6, top: 6, width: 32, height: 32, borderRadius: 16, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#e5e7eb' },
+  applyBtn: { height: 44, paddingHorizontal: 16, borderRadius: 10, backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center' },
+  applyBtnText: { color: '#fff', fontWeight: '800' },
+  couponError: { marginTop: 8, color: '#ef4444', fontSize: 12, fontWeight: '700' },
+  couponSuccessRow: { marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  couponSuccessText: { color: '#065f46', fontSize: 12, fontWeight: '700' },
+  couponHint: { marginTop: 8, color: '#6b7280', fontSize: 12 },
+
+  // Coupon pill on VIP dashboard
+  couponAppliedPill: { marginTop: 10, alignSelf: 'flex-start', backgroundColor: '#ecfdf5', borderWidth: 1, borderColor: '#bbf7d0', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  couponAppliedText: { color: '#065f46', fontWeight: '800', fontSize: 12 },
+
+  // Light strike for dashboard price
+  strikedPriceLight: { fontSize: 12, color: '#e5e7eb', textDecorationLine: 'line-through' },
+
+  // Gold gradient text for discounted price (no background)
+  goldPriceTextOnly: { fontSize: 18, fontWeight: '900', color: '#b45309' },
 });
 
 

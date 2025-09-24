@@ -9,15 +9,12 @@ import {
   Linking,
   Modal,
   ActivityIndicator,
-  Animated,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { getHospitalById } from "../constants/hospitalData";
 import { useState, useMemo, useRef } from "react";
 import { useVip } from "../contexts/VipContext";
-import { LinearGradient } from "expo-linear-gradient";
 import LikeButton from "../components/common/LikeButton";
 
 export default function HospitalDetailScreen() {
@@ -46,13 +43,12 @@ export default function HospitalDetailScreen() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
-  const [showPaymentPopup, setShowPaymentPopup] = useState(false);
-  const [popupAnim] = useState(new Animated.Value(0));
+  // Removed payment popup flow (₹9). Booking is now free in-app; OP fee is payable at hospital as per mode.
 
   const faqData = [
     {
       question: "How do I book an OP appointment?",
-      answer: "Fill in your details, choose a preferred date, and tap Confirm Booking. You'll receive a unique booking code and our team will contact you to confirm the time.",
+      answer: "Fill in your details, choose a preferred date, and tap Book OP. You'll receive a unique booking code and our team will contact you to confirm the time. Pay the OP fee at the hospital counter as per your mode (Normal/VIP).",
     },
     {
       question: "What should I bring to the hospital?",
@@ -122,39 +118,10 @@ export default function HospitalDetailScreen() {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    // Show payment popup for normal users, confirmation modal for VIP users
-    if (userMode === 'normal') {
-      setShowPaymentPopup(true);
-      Animated.spring(popupAnim, {
-        toValue: 1,
-        useNativeDriver: true,
-        tension: 100,
-        friction: 8,
-      }).start();
-    } else {
-      setShowConfirmModal(true);
-    }
-  };
-
-  const handleClosePaymentPopup = () => {
-    Animated.timing(popupAnim, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => {
-      setShowPaymentPopup(false);
-    });
-  };
-
-  const handleContinueWithPayment = () => {
-    handleClosePaymentPopup();
+    // Directly show confirmation modal (no in-app fee). OP amount is payable at hospital.
     setShowConfirmModal(true);
   };
 
-  const handleUpgradeToVip = () => {
-    handleClosePaymentPopup();
-    router.push('/vip-subscription');
-  };
 
   const confirmBooking = async () => {
     setShowConfirmModal(false);
@@ -380,7 +347,7 @@ export default function HospitalDetailScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Offers & Benefits</Text>
           <View style={styles.offerBody}>
-            {hospital.normalUserOffer.split("\n").map((line, i) => (
+            {(userMode === 'vip' ? hospital.vipUserOffer : hospital.normalUserOffer).split("\n").map((line, i) => (
               <View key={i} style={styles.offerRow}>
                 <View style={styles.bullet} />
                 <Text style={styles.offerText}>{line.trim()}</Text>
@@ -394,9 +361,18 @@ export default function HospitalDetailScreen() {
           <View style={styles.bookingHeader}>
             <Text style={styles.sectionTitle}>{hospital.category === 'Pharmacy' ? 'Request Items' : 'Book OP'}</Text>
             <View style={styles.modeBadge}>
-              <Text style={styles.modeBadgeText}>Normal</Text>
+              <Text style={styles.modeBadgeText}>{userMode === 'vip' ? 'VIP' : 'Normal'}</Text>
             </View>
           </View>
+          {/* Price hint for OP based on mode (payable at hospital) */}
+          {hospital.category !== 'Pharmacy' && (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="pricetag" size={14} color="#6b7280" />
+              <Text style={{ marginLeft: 6, fontSize: 12, color: '#6b7280', fontWeight: '700' }}>
+                {userMode === 'vip' ? (hospital.vipOpPrice ? `OP: ₹${hospital.vipOpPrice} (Pay at hospital)` : 'OP: Pay at hospital') : (hospital.normalOpPrice ? `OP: ₹${hospital.normalOpPrice} (Pay at hospital)` : 'OP: Pay at hospital')}
+              </Text>
+            </View>
+          )}
           <View style={styles.formRow}>
             <Text style={styles.inputLabel}>Patient Name</Text>
             <TextInput
@@ -477,16 +453,15 @@ export default function HospitalDetailScreen() {
             />
           </View>
           <TouchableOpacity style={styles.bookBtn} onPress={handleBook}>
-            <Ionicons name={hospital.category === 'Pharmacy' ? 'cart' : 'calendar'} size={16} color="#fff" />
+            <Ionicons name={hospital.category === 'Pharmacy' ? 'send' : 'calendar'} size={16} color="#fff" />
             <Text style={styles.bookBtnText}>
-              {userMode === 'vip' 
-                ? (hospital.category === 'Pharmacy' ? 'Send Request (Free)' : 'Confirm Booking (Free)')
-                : (hospital.category === 'Pharmacy' ? 'Send Request (₹9)' : 'Confirm Booking (₹9)')
-              }
+              {hospital.category === 'Pharmacy'
+                ? 'Send Request'
+                : `Book OP${userMode === 'vip' ? (hospital.vipOpPrice ? ` – ₹${hospital.vipOpPrice}` : '') : (hospital.normalOpPrice ? ` – ₹${hospital.normalOpPrice}` : '')}`}
             </Text>
           </TouchableOpacity>
           <Text style={styles.noteText}>
-            {hospital.category === 'Pharmacy' ? 'Your request will be sent to the pharmacy team. We will contact you shortly.' : 'A unique booking code will be generated after confirmation.'}
+            {hospital.category === 'Pharmacy' ? 'Your request will be sent to the pharmacy team. We will contact you shortly.' : 'A unique booking code will be generated. Pay OP fee at hospital as per your mode.'}
           </Text>
         </View>
 
@@ -539,7 +514,7 @@ export default function HospitalDetailScreen() {
 
             <Text style={styles.modalTitle}>{hospital.category === 'Pharmacy' ? 'Send Request' : 'Confirm Booking'}</Text>
             <Text style={styles.modalSubtitle}>
-              {hospital.category === 'Pharmacy' ? 'We will forward your request to the pharmacy team.' : 'Are you sure you want to book this appointment?'}
+              {hospital.category === 'Pharmacy' ? 'We will forward your request to the pharmacy team.' : 'Are you sure you want to book this appointment? OP fee is payable at the hospital.'}
             </Text>
 
             <View style={styles.bookingDetailsCard}>
@@ -563,6 +538,15 @@ export default function HospitalDetailScreen() {
                   <Ionicons name="calendar" size={16} color="#6b7280" />
                   <Text style={styles.detailLabel}>Date:</Text>
                   <Text style={styles.detailValue}>{preferredDate}</Text>
+                </View>
+              )}
+              {hospital.category !== 'Pharmacy' && (
+                <View style={styles.detailRow}>
+                  <Ionicons name="cash" size={16} color="#6b7280" />
+                  <Text style={styles.detailLabel}>OP Fee:</Text>
+                  <Text style={styles.detailValue}>
+                    {userMode === 'vip' ? (hospital.vipOpPrice ? `₹${hospital.vipOpPrice}` : 'As per hospital') : (hospital.normalOpPrice ? `₹${hospital.normalOpPrice}` : 'As per hospital')}
+                  </Text>
                 </View>
               )}
             </View>
@@ -652,78 +636,7 @@ export default function HospitalDetailScreen() {
         </View>
       </Modal>
 
-      {/* Payment Popup for Normal Users */}
-      {showPaymentPopup && (
-        <View style={styles.paymentPopupOverlay}>
-          <TouchableWithoutFeedback onPress={handleClosePaymentPopup}>
-            <View style={StyleSheet.absoluteFill} />
-          </TouchableWithoutFeedback>
-          <Animated.View 
-            style={[
-              styles.paymentPopupContainer,
-              {
-                transform: [
-                  {
-                    scale: popupAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.8, 1],
-                    }),
-                  },
-                ],
-                opacity: popupAnim,
-              },
-            ]}
-          >
-            <View style={styles.paymentPopupHeader}>
-              <TouchableOpacity 
-                style={styles.paymentCloseButton}
-                onPress={handleClosePaymentPopup}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="close" size={24} color="#6b7280" />
-              </TouchableOpacity>
-              <Ionicons name="card" size={32} color="#3b82f6" />
-              <Text style={styles.paymentPopupTitle}>Payment Required</Text>
-              <Text style={styles.paymentPopupSubtitle}>
-                Choose your payment option for {hospital.category === 'Pharmacy' ? 'request' : 'booking'}
-              </Text>
-            </View>
-
-            <View style={styles.paymentPricingInfo}>
-              <View style={styles.paymentPriceRow}>
-                <Text style={styles.paymentNormalPrice}>₹9</Text>
-                <View style={styles.paymentVipPriceLocked}>
-                  <Ionicons name="lock-closed" size={12} color="#9ca3af" />
-                  <Text style={styles.paymentVipPriceText}>VIP: Free</Text>
-                  <Text style={styles.paymentSavingsText}>Save ₹9</Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.paymentPopupButtons}>
-              <TouchableOpacity 
-                style={styles.paymentContinueButton} 
-                onPress={handleContinueWithPayment}
-              >
-                <Text style={styles.paymentContinueText}>Continue with ₹9</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={styles.paymentUpgradeButton} 
-                onPress={handleUpgradeToVip}
-              >
-                <LinearGradient
-                  colors={['#f59e0b', '#d97706']}
-                  style={styles.paymentUpgradeGradient}
-                >
-                  <Ionicons name="star" size={18} color="#fff" />
-                  <Text style={styles.paymentUpgradeText}>Subscribe</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </View>
-      )}
+      {/* Payment popup removed */}
 
       {/* Calendar Modal */}
       <Modal
