@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   heading: {
-    fontSize: FontSizes.subtitle,
+    fontSize: FontSizes.small,
     fontWeight: "700",
     color: Colors.primary,
     marginBottom: Spacing.sm,

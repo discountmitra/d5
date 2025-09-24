@@ -5,12 +5,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect } from "react";
 import { useFavorites } from "../../contexts/FavoritesContext";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useVip } from "../../contexts/VipContext";
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const navigation = useNavigation();
   const { favorites } = useFavorites();
+  const { userMode } = useVip();
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false }); // Hide default header
@@ -19,9 +22,23 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <LinearGradient
+        colors={userMode === 'vip' ? ["#ffd88a", "#ffffff", "#f6f9ff"] : ["#cfe4ff", "#ffffff", "#f6f9ff"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1 }}
+      >
       {/* Top Section - User Name and Profile Picture */}
       <View style={[styles.topSection, { paddingTop: insets.top + 20 }]}>
-        <Text style={styles.userName}>Joshua Smith</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={styles.userName}>Joshua Smith</Text>
+          {userMode === 'vip' && (
+            <View style={styles.vipBadge}>
+              <Ionicons name="star" size={12} color="#fff" />
+              <Text style={styles.vipBadgeText}>VIP</Text>
+            </View>
+          )}
+        </View>
         <TouchableOpacity style={styles.profilePicture}>
           <Ionicons name="person" size={40} color="#9ca3af" />
         </TouchableOpacity>
@@ -102,7 +119,12 @@ export default function ProfileScreen() {
       </View>
 
       {/* Account Settings Options */}
-      <View style={styles.settingsContainer}>
+      <LinearGradient
+        colors={userMode === 'vip' ? ["#ffffff", "#f8fafc"] : ["#ffffff", "#f8fafc"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={[styles.settingsContainer, userMode === 'vip' ? styles.vipOutline : undefined]}
+      >
 
 
 
@@ -182,7 +204,7 @@ export default function ProfileScreen() {
           </View>
           <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
         </TouchableOpacity>
-      </View>
+      </LinearGradient>
 
       {/* App Information */}
       <View style={styles.appInfoContainer}>
@@ -201,6 +223,7 @@ export default function ProfileScreen() {
         </View>
       </View>
 
+      </LinearGradient>
     </ScrollView>
   );
 }
@@ -216,7 +239,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.lg,
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
+  },
+  vipBadge: {
+    marginLeft: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: '#d97706',
+  },
+  vipBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
   },
   userName: {
     fontSize: 28,
@@ -341,6 +379,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  vipOutline: {
+    borderWidth: 1,
+    borderColor: '#f59e0b55',
+  },
   settingItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -379,30 +421,17 @@ const styles = StyleSheet.create({
   appInfoContainer: {
     alignItems: "center",
     paddingVertical: Spacing.xl,
-    backgroundColor: "#fff",
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.lg,
-    borderRadius: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 4,
   },
   logoContainer: {
-    backgroundColor: "#f8fafc",
-    borderRadius: 20,
-    padding: Spacing.lg,
+    borderRadius: 0,
+    padding: 0,
     marginBottom: Spacing.md,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 2,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 180,
+    height: 180,
     resizeMode: "contain",
   },
   appVersion: {

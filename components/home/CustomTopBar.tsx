@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.sm,
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
   },
   searchBar: {
     flexDirection: "row",

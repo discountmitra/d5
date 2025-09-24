@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, LayoutAnimation, Modal, ActivityIndicator, Animated, TouchableWithoutFeedback, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
 import { useVip, SUBSCRIPTION_PLANS, SubscriptionPlan } from "../contexts/VipContext";
+import { LinearGradient } from 'expo-linear-gradient';
 // Removed gradient pill usage for price; showing gold text instead
 
 export default function VipSubscriptionScreen() {
@@ -19,6 +20,16 @@ export default function VipSubscriptionScreen() {
   const [couponError, setCouponError] = useState<string | null>(null);
 
   const subscriptionStatus = getSubscriptionStatus();
+  const shimmerAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(shimmerAnim, { toValue: 1, duration: 1800, useNativeDriver: true }),
+        Animated.timing(shimmerAnim, { toValue: 0, duration: 0, useNativeDriver: true }),
+      ])
+    ).start();
+  }, [shimmerAnim]);
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -92,23 +103,30 @@ export default function VipSubscriptionScreen() {
 
 
   return (
-    <View style={styles.container}>
+  <LinearGradient colors={["#0b0b0f", "#111113"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
+    <LinearGradient colors={["#d4af37", "#f5d076"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.headerGradient}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={22} color="#111827" />
+          <Ionicons name="arrow-back" size={20} color="#d4af37" />
         </TouchableOpacity>
         <View style={styles.headerTitleWrap}>
-          <Ionicons name="star" size={18} color="#f59e0b" />
           <Text style={styles.headerTitle}>VIP Subscription</Text>
         </View>
         <View style={{ width: 40 }} />
       </View>
+    </LinearGradient>
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
         {isVip ? (
           // VIP User - Show current subscription details
           <>
-            <View style={styles.currentPlanCard}>
+          <LinearGradient colors={["#1a1a1f", "#0f0f14"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.currentPlanCard}>
+            <Animated.View
+              pointerEvents="none"
+              style={[styles.shimmerOverlay, { transform: [{ translateX: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [-200, 400] }) }] } ]}
+            >
+              <LinearGradient colors={["transparent", "rgba(255,215,0,0.35)", "transparent"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flex: 1 }} />
+            </Animated.View>
               <View style={styles.vipBadge}>
                 <Ionicons name="star" size={14} color="#fff" />
                 <Text style={styles.vipBadgeText}>VIP ACTIVE</Text>
@@ -141,9 +159,9 @@ export default function VipSubscriptionScreen() {
                   </View>
                 ) : null}
               </View>
-            </View>
+          </LinearGradient>
 
-            <View style={styles.benefitsSection}>
+          <View style={styles.benefitsSection}>
               <Text style={styles.sectionTitle}>Your VIP Benefits</Text>
               {SUBSCRIPTION_PLANS.find(p => p.id === subscription?.planId)?.features.map((benefit, index) => (
                 <View key={index} style={styles.benefitRow}>
@@ -161,22 +179,28 @@ export default function VipSubscriptionScreen() {
         ) : (
           // Normal User - Show subscription plans
           <>
-            <View style={styles.heroCard}>
+          <LinearGradient colors={["#1a1a1f", "#0f0f14"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.heroCard}>
+            <Animated.View
+              pointerEvents="none"
+              style={[styles.shimmerOverlay, { transform: [{ translateX: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [-200, 400] }) }] } ]}
+            >
+              <LinearGradient colors={["transparent", "rgba(255,215,0,0.35)", "transparent"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flex: 1 }} />
+            </Animated.View>
               <View style={styles.vipBadge}>
                 <Ionicons name="star" size={14} color="#fff" />
                 <Text style={styles.vipBadgeText}>VIP</Text>
               </View>
               <Text style={styles.heroTitle}>Unlock Premium Savings</Text>
               <Text style={styles.heroSubtitle}>Get unlimited free requests, exclusive deals, and priority support.</Text>
-            </View>
+          </LinearGradient>
 
             <Text style={styles.sectionTitle}>Choose Your Plan</Text>
 
-            {/* Coupon Box */}
-            <View style={styles.couponCard}>
+             {/* Coupon Box - Black/Gold theme */}
+             <LinearGradient colors={["#15151b", "#0d0d12"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.couponCard}>
               <View style={styles.couponHeader}>
-                <Ionicons name="pricetags" size={16} color="#f59e0b" />
-                <Text style={styles.couponTitle}>Have a coupon?</Text>
+                <Ionicons name="pricetags" size={16} color="#d4af37" />
+                <Text style={[styles.couponTitle, { color: '#f8fafc' }]}>Have a coupon?</Text>
               </View>
               <View style={styles.couponRow}>
                 <View style={styles.couponInputContainer}>
@@ -203,7 +227,7 @@ export default function VipSubscriptionScreen() {
                   )}
                 </View>
                 <TouchableOpacity
-                  style={[styles.applyBtn, couponApplied && { backgroundColor: '#10b981' }]}
+                  style={styles.applyBtn}
                   onPress={() => {
                     const code = couponCode.trim().toUpperCase();
                     if (!code) {
@@ -233,7 +257,7 @@ export default function VipSubscriptionScreen() {
               ) : (
                 <Text style={styles.couponHint}>Tip: Use code MYMLAKTR for 50% off.</Text>
               )}
-            </View>
+            </LinearGradient>
 
             {SUBSCRIPTION_PLANS.map((plan) => {
               const expanded = expandedIds.has(plan.id);
@@ -373,56 +397,58 @@ export default function VipSubscriptionScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+  </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
-  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingTop: 56, paddingBottom: 12, backgroundColor: "#fff", borderBottomWidth: 1, borderBottomColor: "#e5e7eb" },
-  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "#f3f4f6" },
+  container: { flex: 1 },
+  headerGradient: { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 },
+  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingTop: 56, paddingBottom: 12, backgroundColor: "transparent" },
+  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: "#ffffff", borderWidth: 1, borderColor: "#d4af37" },
   headerTitleWrap: { flexDirection: "row", alignItems: "center", gap: 8 },
-  headerTitle: { fontSize: 16, fontWeight: "800", color: "#111827" },
+  headerTitle: { fontSize: 16, fontWeight: "900", color: "#0b0b0f" },
 
   // Hero Cards
-  heroCard: { backgroundColor: "#111827", borderRadius: 16, padding: 16, marginTop: 16, marginBottom: 16, shadowColor: "#000", shadowOpacity: 0.15, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
-  currentPlanCard: { backgroundColor: "#10b981", borderRadius: 16, padding: 16, marginTop: 16, marginBottom: 16, shadowColor: "#000", shadowOpacity: 0.15, shadowOffset: { width: 0, height: 6 }, shadowRadius: 12, elevation: 4 },
-  vipBadge: { flexDirection: "row", alignItems: "center", backgroundColor: "#f59e0b", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, alignSelf: "flex-start" },
-  vipBadgeText: { color: "#fff", fontWeight: "800", marginLeft: 6, fontSize: 12 },
-  heroTitle: { color: "#fff", fontSize: 20, fontWeight: "800", marginTop: 10 },
-  heroSubtitle: { color: "#d1d5db", fontSize: 13, marginTop: 6 },
+  heroCard: { borderRadius: 16, padding: 16, marginTop: 16, marginBottom: 16, overflow: 'hidden' },
+  currentPlanCard: { borderRadius: 16, padding: 16, marginTop: 16, marginBottom: 16, overflow: 'hidden' },
+  shimmerOverlay: { position: 'absolute', top: 0, bottom: 0, width: 180, opacity: 0.6 },
+  vipBadge: { flexDirection: "row", alignItems: "center", backgroundColor: "#d4af37", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, alignSelf: "flex-start" },
+  vipBadgeText: { color: "#0b0b0f", fontWeight: "900", marginLeft: 6, fontSize: 12 },
+  heroTitle: { color: "#f8fafc", fontSize: 20, fontWeight: "900", marginTop: 10 },
+  heroSubtitle: { color: "#c7c9d1", fontSize: 13, marginTop: 6 },
 
   // Plan Details
-  planDetails: { marginTop: 16, backgroundColor: "rgba(255,255,255,0.1)", borderRadius: 12, padding: 12 },
+  planDetails: { marginTop: 16, backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 12, padding: 12, borderWidth: 1, borderColor: "#2b2b30" },
   planDetailRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
   planDetailLabel: { color: "#d1d5db", fontSize: 14, fontWeight: "600" },
-  planDetailValue: { color: "#fff", fontSize: 14, fontWeight: "700" },
+  planDetailValue: { color: "#fff", fontSize: 14, fontWeight: "800" },
 
   // Benefits Section
-  benefitsSection: { backgroundColor: "#fff", borderRadius: 16, padding: 16, marginBottom: 16, shadowColor: "#000", shadowOpacity: 0.06, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 2 },
-  sectionTitle: { fontSize: 16, fontWeight: "800", color: "#111827", marginBottom: 10 },
+  benefitsSection: { backgroundColor: "#0f0f13", borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: "#2b2b30" },
+  sectionTitle: { fontSize: 16, fontWeight: "900", color: "#f8fafc", marginBottom: 10 },
 
   // Plan Cards
-  planCard: { backgroundColor: "#fff", borderRadius: 16, borderWidth: 1, borderColor: "#e5e7eb", marginBottom: 12, shadowColor: "#000", shadowOpacity: 0.06, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 2, position: "relative" },
-  planCardExpanded: { borderColor: "#f59e0b" },
+  planCard: { backgroundColor: "#0f0f13", borderRadius: 16, borderWidth: 1, borderColor: "#2b2b30", marginBottom: 12, position: "relative" },
+  planCardExpanded: { borderColor: "#d4af37" },
   planHeader: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
-  planName: { fontSize: 16, fontWeight: "800", color: "#111827" },
-  planDuration: { fontSize: 12, color: "#6b7280", marginTop: 2 },
+  planName: { fontSize: 16, fontWeight: "900", color: "#f8fafc" },
+  planDuration: { fontSize: 12, color: "#a1a1aa", marginTop: 2 },
   planPriceWrap: { alignItems: "flex-end", marginRight: 8 },
   priceWrap: { alignItems: 'flex-end' },
-  planPrice: { fontSize: 18, fontWeight: "800", color: "#111827" },
-  strikedPrice: { fontSize: 12, color: "#9ca3af", textDecorationLine: 'line-through', marginTop: 2, textAlign: 'right' },
+  planPrice: { fontSize: 18, fontWeight: "900", color: "#f8fafc" },
+  strikedPrice: { fontSize: 12, color: "#a1a1aa", textDecorationLine: 'line-through', marginTop: 2, textAlign: 'right' },
   ribbon: { position: "absolute", top: -10, left: 16, backgroundColor: "#f59e0b", paddingHorizontal: 10, paddingVertical: 4, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
   ribbonText: { color: "#fff", fontWeight: "800", fontSize: 10 },
   planBody: { paddingHorizontal: 16, paddingBottom: 16 },
   benefitRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8 },
-  benefitText: { fontSize: 13, color: "#374151" },
-  ctaBtn: { marginTop: 14, height: 48, borderRadius: 12, backgroundColor: "#111827", alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
-  ctaText: { color: "#fff", fontWeight: "800" },
+  benefitText: { fontSize: 13, color: "#d1d5db" },
+  ctaBtn: { marginTop: 14, height: 48, borderRadius: 12, backgroundColor: "#d4af37", alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
+  ctaText: { color: "#0b0b0f", fontWeight: "900" },
 
   // Cancel Button
-  cancelBtn: { marginTop: 16, height: 48, borderRadius: 12, backgroundColor: "#fef2f2", borderWidth: 1, borderColor: "#fecaca", alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
-  cancelBtnText: { color: "#ef4444", fontWeight: "800" },
+  cancelBtn: { marginTop: 16, height: 48, borderRadius: 12, backgroundColor: "#1f2937", borderWidth: 1, borderColor: "#374151", alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
+  cancelBtnText: { color: "#e5e7eb", fontWeight: "800" },
 
   // Modal Styles
   modalOverlay: { flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)", justifyContent: "center", alignItems: "center", padding: 16 },
@@ -458,15 +484,15 @@ const styles = StyleSheet.create({
   loadingText: { fontSize: 16, fontWeight: "600", color: "#111827", marginTop: 12, textAlign: "center" },
 
   // Coupon UI
-  couponCard: { backgroundColor: '#fff', borderRadius: 12, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: '#e5e7eb' },
+  couponCard: { backgroundColor: 'transparent', borderRadius: 12, padding: 12, marginBottom: 12, borderWidth: 0, borderColor: 'transparent' },
   couponHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   couponTitle: { fontSize: 14, fontWeight: '800', color: '#111827' },
   couponRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   couponInputContainer: { flex: 1, position: 'relative' },
   couponInput: { flex: 1, height: 44, backgroundColor: '#f9fafb', borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 10, paddingHorizontal: 12, color: '#111827', fontWeight: '600' },
   clearBtnInside: { position: 'absolute', right: 6, top: 6, width: 32, height: 32, borderRadius: 16, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#e5e7eb' },
-  applyBtn: { height: 44, paddingHorizontal: 16, borderRadius: 10, backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center' },
-  applyBtnText: { color: '#fff', fontWeight: '800' },
+  applyBtn: { height: 44, paddingHorizontal: 16, borderRadius: 10, backgroundColor: '#0b0b0f', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#d4af37' },
+  applyBtnText: { color: '#d4af37', fontWeight: '900' },
   couponError: { marginTop: 8, color: '#ef4444', fontSize: 12, fontWeight: '700' },
   couponSuccessRow: { marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 6 },
   couponSuccessText: { color: '#065f46', fontSize: 12, fontWeight: '700' },

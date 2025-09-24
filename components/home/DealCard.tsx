@@ -1,6 +1,6 @@
 import { View, Text, Image, StyleSheet, Dimensions, ImageSourcePropType, TouchableOpacity } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { Colors, FontSizes, Spacing } from "../../theme";
+import { Colors, FontSizes, Spacing, FontWeights } from "../../theme";
 import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
@@ -60,9 +60,9 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: FontSizes.subtitle,
-    fontWeight: "700",
     color: Colors.primary,
     marginBottom: Spacing.sm,
+    fontFamily: FontWeights.semibold,
   },
   card: {
     backgroundColor: "#ffffff",

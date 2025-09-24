@@ -162,22 +162,29 @@ export default function UserModeToggle({ onModeChange }: UserModeToggleProps) {
         </View>
 
         {/* Location Row */}
-        <View style={styles.locationRow}>
-          <View style={styles.locationContent}>
-            <Ionicons name="location-outline" size={20} color="#000" />
-            <Text style={styles.locationText}>1226 University Dr</Text>
-            <Ionicons name="chevron-down" size={18} color="#000" />
-          </View>
+        <LinearGradient
+          colors={["#ffffff", "#f8fafc"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.locationGradient}
+        >
+          <View style={styles.locationRow}>
+            <View style={styles.locationContent}>
+              <Ionicons name="location-outline" size={20} color="#000" />
+              <Text style={styles.locationText}>1226 University Dr</Text>
+              <Ionicons name="chevron-down" size={18} color="#000" />
+            </View>
 
-          <View style={styles.iconRow}>
-            <TouchableOpacity>
-              <Ionicons name="notifications-outline" size={22} color="#000" />
-            </TouchableOpacity>
-            <TouchableOpacity style={{ marginLeft: 16 }}>
-              <Ionicons name="cart-outline" size={22} color="#000" />
-            </TouchableOpacity>
+            <View style={styles.iconRow}>
+              <TouchableOpacity>
+                <Ionicons name="notifications-outline" size={22} color="#000" />
+              </TouchableOpacity>
+              <TouchableOpacity style={{ marginLeft: 16 }}>
+                <Ionicons name="cart-outline" size={22} color="#000" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </LinearGradient>
       </View>
 
       {/* Upgrade Confirmation Popup */}
@@ -328,7 +335,7 @@ export default function UserModeToggle({ onModeChange }: UserModeToggleProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
     paddingHorizontal: 20,
     paddingBottom: 16,
   },
@@ -361,7 +368,7 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     flex: 1,
-    paddingVertical: 8,
+    paddingVertical: 7,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 17,
@@ -374,7 +381,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   toggleText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '500',
     color: '#64748b',
     letterSpacing: 0.3,
@@ -407,6 +414,19 @@ const styles = StyleSheet.create({
   iconRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  locationGradient: {
+    marginTop: 16,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#eef2ff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   benefitsList: {
     backgroundColor: '#f8fafc',

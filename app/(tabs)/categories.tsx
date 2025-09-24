@@ -5,6 +5,8 @@ import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useVip } from "../../contexts/VipContext";
 
 const categories = [
   // Primary order
@@ -32,6 +34,7 @@ export default function CategoriesScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCategories, setFilteredCategories] = useState(categories);
+  const { userMode } = useVip();
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false }); // Hide default header
@@ -50,9 +53,19 @@ export default function CategoriesScreen() {
   }, [searchQuery]);
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={userMode === 'vip' ? ["#ffd88a", "#ffffff", "#f6f9ff"] : ["#cfe4ff", "#ffffff", "#f6f9ff"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
       {/* Search Bar */}
-      <View style={[styles.searchContainer, { paddingTop: insets.top + 20 }]}>
+      <LinearGradient
+        colors={userMode === 'vip' ? ["#ffe1a6", "#ffffff"] : ["#d9ebff", "#ffffff"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.searchContainer, { paddingTop: insets.top + 20 }]}
+      >
         <View style={styles.searchBar}>
           <Ionicons name="search-outline" size={18} color="#555" style={{ marginRight: 8 }} />
           <TextInput
@@ -63,11 +76,17 @@ export default function CategoriesScreen() {
             onChangeText={setSearchQuery}
           />
         </View>
-      </View>
+      </LinearGradient>
 
-      <FlatList
-        data={filteredCategories}
-        renderItem={({ item }) => {
+      <LinearGradient
+        colors={userMode === 'vip' ? ["#ffffff", "#f8fafc"] : ["#ffffff", "#f8fafc"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{ flex: 1, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingTop: 8 }}
+      >
+        <FlatList
+          data={filteredCategories}
+          renderItem={({ item }) => {
           const handlePress = () => {
             if (item.title === "Food") {
               router.push("/food");
@@ -101,25 +120,26 @@ export default function CategoriesScreen() {
             }
           };
 
-          return (
-            <View style={{ width: "50%" }}>
-              <CategoryCard
-                icon={item.icon as any}
-                title={item.title}
-                color={item.color}
-                onPress={handlePress}
-                comingSoon={item.comingSoon}
-              />
-            </View>
-          );
-        }}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.list}
-        columnWrapperStyle={{ justifyContent: "space-between" }}
-      />
-    </View>
+            return (
+              <View style={{ width: "50%" }}>
+                <CategoryCard
+                  icon={item.icon as any}
+                  title={item.title}
+                  color={item.color}
+                  onPress={handlePress}
+                  comingSoon={item.comingSoon}
+                />
+              </View>
+            );
+          }}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.list}
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+        />
+      </LinearGradient>
+    </LinearGradient>
   );
 }
 
@@ -131,7 +151,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
   },
   searchBar: {
     flexDirection: "row",
@@ -143,7 +163,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14,
     color: "#000",
   },
   list: {

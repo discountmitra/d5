@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import LikeButton from '../common/LikeButton';
+import { FontSizes, FontWeights } from '../../theme';
 
 type Restaurant = {
   id: string;
@@ -140,9 +141,9 @@ const styles = StyleSheet.create({
   homeDeliveryText: {
     marginLeft: 6,
     fontSize: 12,
-    fontWeight: "700",
     color: "#111827",
     textTransform: "lowercase",
+    fontFamily: FontWeights.semibold,
   },
   saveRibbon: {
     position: "absolute",
@@ -182,12 +183,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: FontSizes.subtitle,
     color: "#111827",
+    fontFamily: FontWeights.semibold,
   },
   subtitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#4b5563",
     marginTop: 2,
   },
@@ -202,8 +203,8 @@ const styles = StyleSheet.create({
   ratingText: {
     marginLeft: 4,
     fontSize: 12,
-    fontWeight: "700",
     color: "#111827",
+    fontFamily: FontWeights.semibold,
   },
   reviewsText: {
     marginLeft: 4,

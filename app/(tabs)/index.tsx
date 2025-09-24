@@ -1,4 +1,5 @@
 import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 import Header from "@/components/home/Header";
 import DealCard from "../../components/home/DealCard";
 import CategoryPreview from "../../components/home/CategoryPreview";
@@ -13,7 +14,7 @@ import { useVip } from "../../contexts/VipContext";
 export default function HomeScreen() {
   const navigation = useNavigation();
   const router = useRouter();
-  const { isVip } = useVip();
+  const { isVip, userMode } = useVip();
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false }); // Hide default header
@@ -25,38 +26,43 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* VIP Toggle - Moved to top */}
-      <UserModeToggle onModeChange={(mode) => {
-        console.log('Mode changed to:', mode);
-      }} />
+      <LinearGradient
+        colors={userMode === 'vip' ? ["#ffd88a", "#ffffff", "#f6f9ff"] : ["#cfe4ff", "#ffffff", "#f6f9ff"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.pageGradient}
+      >
+        {/* VIP Toggle - Moved to top */}
+        <UserModeToggle onModeChange={(mode) => {
+          console.log('Mode changed to:', mode);
+        }} />
 
-      {/* Greeting + Search */}
-      <CustomTopBar />
+        {/* Greeting + Search */}
+        <CustomTopBar />
 
-      {/* VIP Upgrade Section - Below search bar */}
-      {!isVip && (
-        <View style={styles.upgradeSection}>
-          <View style={styles.upgradeBanner}>
-            <View style={styles.bannerContent}>
-              <Ionicons name="flash" size={16} color="#f59e0b" />
-              <Text style={styles.bannerText}>
-                Upgrade to VIP and unlock 2X discounts on all services
-              </Text>
+        {/* VIP Upgrade Section - Below search bar */}
+        {!isVip && (
+          <View style={styles.upgradeSection}>
+            <View style={styles.upgradeBanner}>
+              <View style={styles.bannerContent}>
+                <Ionicons name="flash" size={16} color="#f59e0b" />
+                <Text style={styles.bannerText}>
+                  Upgrade to VIP and unlock 2X discounts on all services
+                </Text>
+              </View>
+              <TouchableOpacity onPress={handleUpgrade} style={styles.subscribeButton}>
+                <Text style={styles.subscribeText}>Subscribe Now</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={handleUpgrade} style={styles.subscribeButton}>
-              <Text style={styles.subscribeText}>Subscribe Now</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      )}
+        )}
 
-      {/* Hot Deal (static for now) */}
-      <DealCard />
+        {/* Hot Deal (static for now) */}
+        <DealCard />
 
-      {/* Categories Preview (only 4 shown here) */}
-      <CategoryPreview />
-
-      {/* Recent Activity */}
+        {/* Categories Preview (only 4 shown here) */}
+        <CategoryPreview />
+      </LinearGradient>
     </ScrollView>
   );
 }
@@ -64,8 +70,14 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: '#f8fafc',
   },
+  pageGradient: {
+    flex: 1,
+    paddingBottom: 16,
+  },
+  topSection: {},
+  sectionBg: {},
   section: {
     marginTop: 16,
   },

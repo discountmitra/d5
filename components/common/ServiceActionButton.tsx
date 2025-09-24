@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { FontWeights } from '../../theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useVip } from '../../contexts/VipContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -203,8 +204,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 16,
+    fontFamily: FontWeights.semibold,
   },
   popupOverlay: {
     position: 'absolute',
@@ -308,8 +309,8 @@ const styles = StyleSheet.create({
   },
   continueText: {
     fontSize: 14,
-    fontWeight: '600',
     color: '#6b7280',
+    fontFamily: FontWeights.semibold,
   },
   upgradeButton: {
     borderRadius: 8,
@@ -325,6 +326,6 @@ const styles = StyleSheet.create({
   upgradeText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: FontWeights.bold,
   },
 });

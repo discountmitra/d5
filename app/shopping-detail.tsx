@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Modal, ActivityIndicator, TextInput, Alert } from "react-native";
+import { FontSizes, FontWeights } from "../theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import LikeButton from "../components/common/LikeButton";
@@ -115,7 +116,7 @@ export default function ShoppingDetailScreen() {
               <Ionicons name="arrow-back" size={24} color="#111827" />
             </TouchableOpacity>
             <View style={styles.stickyHeaderInfo}>
-              <Text style={styles.stickyHeaderTitle} numberOfLines={1}>{item?.name || 'Shopping'}</Text>
+            <Text style={styles.stickyHeaderTitle} numberOfLines={1}>{item?.name || 'Shopping'}</Text>
               <View style={styles.stickyHeaderDetails}>
                 <Text style={styles.stickyHeaderRating}>Shopping</Text>
                 <Text style={styles.stickyHeaderPrice}>{item?.specialist}</Text>
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
   stickyHeader: { position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: '#fff', paddingTop: 50, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: '#e5e7eb', zIndex: 1000, shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 4 },
   stickyHeaderContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16 },
   stickyHeaderInfo: { flex: 1, marginHorizontal: 16 },
-  stickyHeaderTitle: { fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 4 },
+  stickyHeaderTitle: { fontSize: FontSizes.subtitle, color: '#111827', marginBottom: 4, fontFamily: FontWeights.semibold },
   stickyHeaderDetails: { flexDirection: 'row', alignItems: 'center' },
   stickyHeaderRating: { fontSize: 12, color: '#6b7280', marginRight: 12 },
   stickyHeaderPrice: { fontSize: 12, color: '#6b7280' },
@@ -278,53 +279,53 @@ const styles = StyleSheet.create({
   heroRightActions: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   heroLikeButton: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   body: { backgroundColor: '#fff', marginTop: -20, borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 16 },
-  title: { fontSize: 20, fontWeight: '800', color: '#111827' },
+  title: { fontSize: FontSizes.title, color: '#111827', fontFamily: FontWeights.bold },
   subtitle: { fontSize: 13, color: '#6b7280', marginTop: 6 },
   titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   locationRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6 },
   locationText: { marginLeft: 4, fontSize: 12, color: '#6b7280' },
   modeBadge: { backgroundColor: '#f3f4f6', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: '#e5e7eb' },
-  modeBadgeText: { fontSize: 12, fontWeight: '700', color: '#111827' },
+  modeBadgeText: { fontSize: 12, color: '#111827', fontFamily: FontWeights.semibold },
   // Full-width info card like healthcare: stretch to screen edges
   infoCardTop: { backgroundColor: '#fff', borderRadius: 16, padding: 16, marginTop: -40,  borderWidth: 1, borderColor: '#e5e7eb', shadowColor: '#000', shadowOpacity: 0.08, shadowOffset: { width: 0, height: 4 }, shadowRadius: 10, elevation: 3, marginHorizontal: -16 },
   infoHeaderRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   hospitalIcon: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#f5f3ff', alignItems: 'center', justifyContent: 'center' },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
   categoryPill: { backgroundColor: '#f3f4f6', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
-  categoryPillText: { fontSize: 12, color: '#6b7280', fontWeight: '600' },
+  categoryPillText: { fontSize: 12, color: '#6b7280', fontFamily: FontWeights.medium },
   offerCard: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6, paddingHorizontal: 2, borderRadius: 8, marginTop: 16 },
-  offerText: { color: '#4c1d95', fontWeight: '700', flex: 1 },
+  offerText: { color: '#4c1d95', flex: 1, fontFamily: FontWeights.semibold },
   infoNote: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#eff6ff', borderWidth: 1, borderColor: '#bfdbfe', padding: 12, borderRadius: 12, marginTop: 12 },
-  infoText: { color: '#1e40af', fontWeight: '600', flex: 1 },
+  infoText: { color: '#1e40af', flex: 1, fontFamily: FontWeights.medium },
   section: { backgroundColor: '#fff', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: '#e5e7eb', marginTop: 12 },
-  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#111827', marginBottom: 6 },
+  sectionTitle: { fontSize: FontSizes.subtitle, color: '#111827', marginBottom: 6, fontFamily: FontWeights.semibold },
   buyBtn: { marginTop: 16, height: 48, borderRadius: 12, backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
-  buyBtnText: { color: '#fff', fontWeight: '800' },
+  buyBtnText: { color: '#fff', fontFamily: FontWeights.bold },
   // Pay Bill styles are now encapsulated in components/common/PayBillCard
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center', padding: 16 },
   confirmModalCard: { backgroundColor: '#ffffff', borderRadius: 16, padding: 20, width: '100%', maxWidth: 360, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 },
   modalIconContainer: { alignItems: 'center', marginBottom: 16 },
   modalIconCircle: { width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(124,58,237,0.1)', alignItems: 'center', justifyContent: 'center' },
-  modalTitle: { fontSize: 20, fontWeight: '700', color: '#111827', textAlign: 'center', marginBottom: 6 },
+  modalTitle: { fontSize: FontSizes.title, color: '#111827', textAlign: 'center', marginBottom: 6, fontFamily: FontWeights.bold },
   modalSubtitle: { fontSize: 14, color: '#6b7280', textAlign: 'center', marginBottom: 20 },
   modalButtonContainer: { flexDirection: 'row', gap: 10 },
   modalButtonSecondary: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: '#f3f4f6', alignItems: 'center' },
-  modalButtonSecondaryText: { fontSize: 15, fontWeight: '600', color: '#6b7280' },
+  modalButtonSecondaryText: { fontSize: 15, color: '#6b7280', fontFamily: FontWeights.semibold },
   modalButtonPrimary: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: '#7c3aed', alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 6 },
-  modalButtonPrimaryText: { fontSize: 15, fontWeight: '700', color: '#ffffff' },
+  modalButtonPrimaryText: { fontSize: 15, color: '#ffffff', fontFamily: FontWeights.bold },
   loadingModalCard: { backgroundColor: '#ffffff', borderRadius: 16, padding: 28, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 8 },
-  loadingText: { fontSize: 16, fontWeight: '600', color: '#111827', marginTop: 12, textAlign: 'center' },
+  loadingText: { fontSize: 16, color: '#111827', marginTop: 12, textAlign: 'center', fontFamily: FontWeights.semibold },
   loadingSubtext: { fontSize: 13, color: '#6b7280', marginTop: 6, textAlign: 'center' },
   successModalCard: { backgroundColor: '#fff', borderRadius: 16, padding: 20, width: '100%', maxWidth: 360, alignItems: 'center' },
   successIconCircle: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#f0fdf4', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  successModalTitle: { fontSize: 18, fontWeight: '800', color: '#111827' },
+  successModalTitle: { fontSize: 18, color: '#111827', fontFamily: FontWeights.bold },
   successModalSubtitle: { fontSize: 13, color: '#6b7280', marginTop: 4 },
   codeBox: { marginTop: 14, paddingVertical: 12, paddingHorizontal: 20, borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 12, backgroundColor: '#f9fafb' },
-  code: { fontSize: 22, fontWeight: '900', letterSpacing: 1, color: '#7c3aed' },
+  code: { fontSize: 22, letterSpacing: 1, color: '#7c3aed', fontFamily: FontWeights.bold },
   successDetails: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  successDetailsText: { color: '#4c1d95', fontWeight: '700' },
+  successDetailsText: { color: '#4c1d95', fontFamily: FontWeights.semibold },
   successButton: { marginTop: 16, backgroundColor: '#10b981', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12 },
-  successButtonText: { color: '#fff', fontWeight: '800' },
+  successButtonText: { color: '#fff', fontFamily: FontWeights.bold },
 });
 
 

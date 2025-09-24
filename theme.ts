@@ -7,8 +7,10 @@ export const Colors = {
   };
   
   export const FontSizes = {
-    title: 22,
-    subtitle: 14,
+    title: 24,
+    subtitle: 16,
+    body: 15,
+    small: 13,
     button: 16,
     input: 16,
   };
@@ -19,5 +21,12 @@ export const Colors = {
     md: 16,
     lg: 24,
     xl: 32,
+  };
+  
+  export const FontWeights = {
+    regular: 'Inter_400Regular',
+    medium: 'Inter_500Medium',
+    semibold: 'Inter_600SemiBold',
+    bold: 'Inter_700Bold',
   };
   

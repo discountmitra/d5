@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
-import { Spacing, FontSizes } from "../../theme";
+import { Spacing, FontSizes, FontWeights } from "../../theme";
 
 type Props = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -13,16 +14,23 @@ type Props = {
 export default function CategoryCard({ icon, title, color = "#4A90E2", onPress, comingSoon = false }: Props) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
-      <View style={[styles.iconWrapper, { backgroundColor: `${color}15` }]}>
-        <Ionicons name={icon} size={28} color={color} />
-      </View>
-      <Text style={styles.title}>{title}</Text>
-      {comingSoon && (
-        <View style={styles.comingSoonBadge}>
-          <Ionicons name="time" size={12} color="#fff" />
-          <Text style={styles.comingSoonText}>Coming Soon</Text>
+      <LinearGradient
+        colors={[`${color}40`, `${color}1A`]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.cardGradient}
+      >
+        <View style={[styles.iconWrapper, { backgroundColor: `${color}15` }]}>
+          <Ionicons name={icon} size={28} color={color} />
         </View>
-      )}
+        <Text style={styles.title}>{title}</Text>
+        {comingSoon && (
+          <View style={styles.comingSoonBadge}>
+            <Ionicons name="time" size={12} color="#fff" />
+            <Text style={styles.comingSoonText}>Coming Soon</Text>
+          </View>
+        )}
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
@@ -30,39 +38,43 @@ export default function CategoryCard({ icon, title, color = "#4A90E2", onPress, 
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    margin: Spacing.sm,
-    paddingVertical: Spacing.lg,
+    margin: Spacing.sm - 2,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  cardGradient: {
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.sm,
     borderRadius: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#f0f0f0",
+    borderColor: "#e5e7eb",
 
     // Enhanced Shadow for iOS
     shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
+    shadowRadius: 10,
 
     // Enhanced Elevation for Android
-    elevation: 4,
+    elevation: 5,
   },
   iconWrapper: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: Spacing.sm,
   },
   title: {
-    fontSize: FontSizes.subtitle,
-    fontWeight: "600",
+    fontSize: FontSizes.small,
     textAlign: "center",
     color: "#1f2937",
     letterSpacing: 0.2,
+    fontFamily: FontWeights.medium,
   },
   comingSoonBadge: {
     position: "absolute",
@@ -84,7 +96,7 @@ const styles = StyleSheet.create({
   comingSoonText: {
     color: "#fff",
     fontSize: 10,
-    fontWeight: "700",
     letterSpacing: 0.5,
+    fontFamily: FontWeights.semibold,
   },
 });

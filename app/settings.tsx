@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, Alert } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -188,17 +189,21 @@ export default function SettingsScreen() {
   );
 
   return (
-    <ScrollView style={[styles.container, { paddingTop: insets.top }]} showsVerticalScrollIndicator={false}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color="#111827" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Settings</Text>
-        <View style={styles.headerRight} />
+    <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false} stickyHeaderIndices={[0]}>
+      {/* Sticky Header */}
+      <View>
+        <LinearGradient colors={["#f8fafc", "#ffffff"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+          <View style={[styles.header, { paddingTop: insets.top }]}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="arrow-back" size={24} color="#111827" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Settings</Text>
+            <View style={styles.headerRight} />
+          </View>
+        </LinearGradient>
       </View>
 
       {/* Settings Sections */}
