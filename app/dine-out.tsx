@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ScrollView,
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import { restaurantData, Restaurant } from "../constants/restaurantData";
+import PayBillCard from "../components/common/PayBillCard";
 
 export default function DineOutScreen() {
   const navigation = useNavigation();
@@ -65,72 +66,14 @@ export default function DineOutScreen() {
 
 
         {/* Bill Payment Card */}
-        <View style={styles.payBillCard}>
-          <View style={styles.payBillHeader}>
-            <View style={styles.payBillTitleRow}>
-              <View style={styles.payBillIconContainer}>
-                <Ionicons name="receipt" size={24} color="#fff" />
-              </View>
-              <View style={styles.payBillTitleContainer}>
-                <Text style={styles.payBillTitle}>Pay your bill</Text>
-                <Text style={styles.payBillSubtitle}>Get instant discount on your dining bill</Text>
-              </View>
-            </View>
-            <View style={styles.discountBadge}>
-              <Ionicons name="flash" size={12} color="#7c3aed" />
-              <Text style={styles.discountBadgeText}>Save 20%</Text>
-            </View>
-          </View>
-          
-          <View style={styles.billInputSection}>
-            <Text style={styles.billInputLabel}>Enter your bill amount</Text>
-            <View style={styles.billInputRow}>
-              <View style={styles.currencySymbol}>
-                <Text style={styles.currencyText}>₹</Text>
-              </View>
-              <TextInput
-                style={styles.billInput}
-                placeholder="0.00"
-                placeholderTextColor="rgba(255,255,255,0.6)"
-                value={billAmount}
-                onChangeText={setBillAmount}
-                keyboardType="numeric"
-              />
-              <TouchableOpacity style={styles.payButton} onPress={handlePayment}>
-                <Ionicons name="arrow-forward" size={16} color="#7c3aed" />
-                <Text style={styles.payButtonText}>Pay</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          
-          {billAmount && parseFloat(billAmount) > 0 && (
-            <View style={styles.billSummary}>
-              <View style={styles.billSummaryHeader}>
-                <Text style={styles.billSummaryTitle}>Bill Breakdown</Text>
-                <Ionicons name="calculator" size={16} color="rgba(255,255,255,0.8)" />
-              </View>
-              <View style={styles.billSummaryContent}>
-                <View style={styles.billSummaryRow}>
-                  <Text style={styles.billSummaryLabel}>Bill Amount</Text>
-                  <Text style={styles.billSummaryValue}>₹{billAmount}</Text>
-                </View>
-                <View style={styles.billSummaryRow}>
-                  <Text style={styles.billSummaryLabel}>Discount ({discountPercentage}%)</Text>
-                  <Text style={styles.billSummaryDiscount}>-₹{((parseFloat(billAmount) * discountPercentage) / 100).toFixed(2)}</Text>
-                </View>
-                <View style={styles.billSummaryDivider} />
-                <View style={styles.billSummaryRow}>
-                  <Text style={styles.finalAmountLabel}>You Pay</Text>
-                  <Text style={styles.finalAmountValue}>₹{finalAmount.toFixed(2)}</Text>
-                </View>
-                <View style={styles.savingsHighlight}>
-                  <Ionicons name="checkmark-circle" size={14} color="#10b981" />
-                  <Text style={styles.savingsText}>You save ₹{((parseFloat(billAmount) * discountPercentage) / 100).toFixed(2)}</Text>
-                </View>
-              </View>
-            </View>
-          )}
-          </View>
+        <View style={{ marginHorizontal: 16, marginBottom: 20 }}>
+          <PayBillCard
+            billAmount={billAmount}
+            onChangeAmount={setBillAmount}
+            discountPercentage={discountPercentage}
+            onPressPay={handlePayment}
+          />
+        </View>
 
         {/* Benefits Card */}
         <View style={styles.benefitsCard}>

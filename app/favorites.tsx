@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFavorites } from "../contexts/FavoritesContext";
 import LikeButton from "../components/common/LikeButton";
 
-type SortOption = 'all' | 'Food' | 'Healthcare' | 'Home Services' | 'Beauty' | 'Events' | 'Construction';
+type SortOption = 'all' | 'Food' | 'Healthcare' | 'Home Services' | 'Beauty' | 'Events' | 'Construction' | 'Shopping';
 
 export default function FavoritesScreen() {
   const navigation = useNavigation();
@@ -24,6 +24,7 @@ export default function FavoritesScreen() {
     { key: 'Beauty', label: 'Beauty' },
     { key: 'Events', label: 'Events' },
     { key: 'Construction', label: 'Construction' },
+    { key: 'Shopping', label: 'Shopping' },
   ];
 
   const filteredFavorites = useMemo(() => {
