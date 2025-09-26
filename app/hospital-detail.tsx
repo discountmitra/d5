@@ -454,11 +454,27 @@ export default function HospitalDetailScreen() {
           </View>
           <TouchableOpacity style={styles.bookBtn} onPress={handleBook}>
             <Ionicons name={hospital.category === 'Pharmacy' ? 'send' : 'calendar'} size={16} color="#fff" />
-            <Text style={styles.bookBtnText}>
-              {hospital.category === 'Pharmacy'
-                ? 'Send Request'
-                : `Book OP${userMode === 'vip' ? (hospital.vipOpPrice ? ` – ₹${hospital.vipOpPrice}` : '') : (hospital.normalOpPrice ? ` – ₹${hospital.normalOpPrice}` : '')}`}
-            </Text>
+            {hospital.category === 'Pharmacy' ? (
+              <Text style={styles.bookBtnText}>Send Request</Text>
+            ) : (
+              <View style={styles.bookBtnContentRow}>
+                <Text style={styles.bookBtnText}>Book OP</Text>
+                {isVip ? (
+                  <View style={styles.priceRow}>
+                    {!!hospital.normalOpPrice && (
+                      <Text style={styles.originalPrice}>₹{hospital.normalOpPrice}</Text>
+                    )}
+                    {!!hospital.vipOpPrice && (
+                      <Text style={styles.vipGlowPrice}>₹{hospital.vipOpPrice}</Text>
+                    )}
+                  </View>
+                ) : (
+                  !!hospital.normalOpPrice && (
+                    <Text style={styles.normalPriceInline}>– ₹{hospital.normalOpPrice}</Text>
+                  )
+                )}
+              </View>
+            )}
           </TouchableOpacity>
           <Text style={styles.noteText}>
             {hospital.category === 'Pharmacy' ? 'Your request will be sent to the pharmacy team. We will contact you shortly.' : 'A unique booking code will be generated. Pay OP fee at hospital as per your mode.'}
@@ -516,6 +532,16 @@ export default function HospitalDetailScreen() {
             <Text style={styles.modalSubtitle}>
               {hospital.category === 'Pharmacy' ? 'We will forward your request to the pharmacy team.' : 'Are you sure you want to book this appointment? OP fee is payable at the hospital.'}
             </Text>
+            
+            {/* VIP promotion for normal users in confirmation modal */}
+            {!isVip && hospital.category !== 'Pharmacy' && (
+              <View style={styles.vipPromotionCard}>
+                <Ionicons name="star" size={16} color="#fbbf24" />
+                <Text style={styles.vipPromotionCardText}>
+                  You can get this for free using VIP
+                </Text>
+              </View>
+            )}
 
             <View style={styles.bookingDetailsCard}>
               <View style={styles.detailRow}>
@@ -1070,8 +1096,70 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
+    position: "relative",
   },
   bookBtnText: { color: "#fff", fontWeight: "800", marginLeft: 8 },
+  bookBtnContentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginLeft: 6,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  originalPrice: {
+    color: 'rgba(255,255,255,0.8)',
+    textDecorationLine: 'line-through',
+    fontWeight: '700',
+  },
+  vipGlowPrice: {
+    color: '#fbbf24',
+    fontWeight: '900',
+    textShadowColor: 'rgba(251,191,36,0.6)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 6,
+  },
+  normalPriceInline: {
+    color: '#fff',
+    fontWeight: '800',
+  },
+  vipPromotionBadge: {
+    position: "absolute",
+    right: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(251,191,36,0.2)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 4,
+  },
+  vipPromotionText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#fbbf24",
+  },
+  vipPromotionCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(251,191,36,0.1)",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "rgba(251,191,36,0.3)",
+  },
+  vipPromotionCardText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#fbbf24",
+    marginLeft: 8,
+    flex: 1,
+  },
   noteText: { marginTop: 10, fontSize: 12, color: "#6b7280" },
   faqList: { gap: 12 },
   faqItem: { borderBottomWidth: 1, borderBottomColor: "#f3f4f6", paddingBottom: 12, marginBottom: 12 },
