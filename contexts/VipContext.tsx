@@ -28,6 +28,8 @@ interface VipContextType {
   subscription: UserSubscription | null;
   setUserMode: (mode: UserMode) => void;
   toggleMode: () => void;
+  toggleVipStatus: () => void;
+  resetToNormal: () => void;
   subscribeToPlan: (
     planId: string,
     options?: { couponCode?: string; discountPct?: number; finalPrice?: number }
@@ -93,12 +95,12 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
 export function VipProvider({ children }: VipProviderProps) {
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
   const [isVip, setIsVip] = useState(false);
-  const [userMode, setUserMode] = useState<UserMode>('normal');
+  
+  // Derive userMode from isVip to ensure they're always in sync
+  const userMode: UserMode = isVip ? 'vip' : 'normal';
+  
 
-  // Set default mode based on VIP status
-  useEffect(() => {
-    setUserMode(isVip ? 'vip' : 'normal');
-  }, [isVip]);
+  // No complex state sync needed - userMode is derived from isVip
 
   // Check subscription status on mount
   useEffect(() => {
@@ -113,10 +115,22 @@ export function VipProvider({ children }: VipProviderProps) {
     }
   }, []);
 
+  const setUserMode = (mode: UserMode) => {
+    setIsVip(mode === 'vip');
+  };
+
   const toggleMode = () => {
     if (isVip) {
-      setUserMode(prev => prev === 'normal' ? 'vip' : 'normal');
+      setIsVip(false);
     }
+  };
+
+  const toggleVipStatus = () => {
+    setIsVip(!isVip);
+  };
+
+  const resetToNormal = () => {
+    setIsVip(false);
   };
 
   const subscribeToPlan = async (
@@ -178,7 +192,6 @@ export function VipProvider({ children }: VipProviderProps) {
         const updatedSubscription = { ...subscription, isActive: false, autoRenew: false };
         setSubscription(updatedSubscription);
         setIsVip(false);
-        setUserMode('normal');
         
         // In a real app, this would update backend/AsyncStorage
       }
@@ -212,6 +225,8 @@ export function VipProvider({ children }: VipProviderProps) {
     subscription,
     setUserMode,
     toggleMode,
+    toggleVipStatus,
+    resetToNormal,
     subscribeToPlan,
     cancelSubscription,
     getSubscriptionStatus,

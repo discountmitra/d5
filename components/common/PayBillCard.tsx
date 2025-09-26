@@ -7,13 +7,20 @@ type Props = {
   billAmount: string;
   onChangeAmount: (text: string) => void;
   discountPercentage: number;
+  vipDiscountPercentage?: number;
+  isVip?: boolean;
   onPressPay: () => void;
 };
 
-export default function PayBillCard({ billAmount, onChangeAmount, discountPercentage, onPressPay }: Props) {
+export default function PayBillCard({ billAmount, onChangeAmount, discountPercentage, vipDiscountPercentage, isVip, onPressPay }: Props) {
   const amount = parseFloat(billAmount) || 0;
   const discount = (amount * discountPercentage) / 100;
   const finalAmount = Math.max(0, amount - discount);
+  
+  // Calculate VIP discount for display
+  const vipDiscount = vipDiscountPercentage ? (amount * vipDiscountPercentage) / 100 : 0;
+  const vipFinalAmount = vipDiscountPercentage ? Math.max(0, amount - vipDiscount) : 0;
+  
 
   return (
     <View style={styles.payBillCard}>
@@ -24,12 +31,16 @@ export default function PayBillCard({ billAmount, onChangeAmount, discountPercen
           </View>
           <View style={styles.payBillTitleContainer}>
             <Text style={styles.payBillTitle}>Pay your bill</Text>
-            <Text style={styles.payBillSubtitle}>Get instant {discountPercentage}% discount at billing counter</Text>
+            <Text style={styles.payBillSubtitle}>
+              Get instant {isVip ? `${discountPercentage}% VIP discount` : `${discountPercentage}% discount`} at billing counter
+            </Text>
           </View>
         </View>
         <View style={styles.discountBadge}>
-          <Ionicons name="flash" size={12} color="#7c3aed" />
-          <Text style={styles.discountBadgeText}>Save {discountPercentage}%</Text>
+          <Ionicons name={isVip ? "star" : "flash"} size={12} color="#7c3aed" />
+          <Text style={styles.discountBadgeText}>
+            {isVip ? `VIP ${discountPercentage}%` : `Save ${discountPercentage}%`}
+          </Text>
         </View>
       </View>
 
@@ -60,9 +71,30 @@ export default function PayBillCard({ billAmount, onChangeAmount, discountPercen
           </View>
           <View style={styles.billSummaryContent}>
             <View style={styles.billSummaryRow}><Text style={styles.billSummaryLabel}>Bill Amount</Text><Text style={styles.billSummaryValue}>₹{amount.toFixed(2)}</Text></View>
-            <View style={styles.billSummaryRow}><Text style={styles.billSummaryLabel}>Discount ({discountPercentage}%)</Text><Text style={styles.billSummaryDiscount}>-₹{discount.toFixed(2)}</Text></View>
+            <View style={styles.billSummaryRow}>
+              <Text style={styles.billSummaryLabel}>
+                {isVip ? `VIP Discount (${discountPercentage}%)` : `Discount (${discountPercentage}%)`}
+              </Text>
+              <Text style={[styles.billSummaryDiscount, isVip && styles.vipDiscountAmount]}>
+                -₹{discount.toFixed(2)}
+              </Text>
+            </View>
             <View style={styles.billSummaryDivider} />
             <View style={styles.billSummaryRow}><Text style={styles.finalAmountLabel}>You Pay</Text><Text style={styles.finalAmountValue}>₹{finalAmount.toFixed(2)}</Text></View>
+            
+            {/* VIP Discount Preview for Normal Users - Show inside bill summary */}
+            {!isVip && vipDiscountPercentage && amount > 0 && (
+              <View style={styles.vipDiscountPreview}>
+                <Ionicons name="lock-closed" size={14} color="rgba(255,255,255,0.6)" />
+                <Text style={styles.vipDiscountText}>
+                  Pay only ₹{vipFinalAmount.toFixed(2)} with VIP
+                </Text>
+                <View style={styles.vipBadge}>
+                  <Ionicons name="star" size={10} color="#fbbf24" />
+                  <Text style={styles.vipBadgeText}>VIP</Text>
+                </View>
+              </View>
+            )}
           </View>
         </View>
       )}
@@ -105,9 +137,45 @@ const styles = StyleSheet.create({
   billSummaryLabel: { fontSize: 14, color: "rgba(255,255,255,0.8)", fontFamily: FontWeights.medium },
   billSummaryValue: { fontSize: 14, color: "#fff", fontFamily: FontWeights.semibold },
   billSummaryDiscount: { fontSize: 14, color: "#10b981", fontFamily: FontWeights.semibold },
+  vipDiscountAmount: { color: "#fbbf24", fontFamily: FontWeights.bold },
   billSummaryDivider: { height: 1, backgroundColor: "rgba(255,255,255,0.2)", marginVertical: 12 },
   finalAmountLabel: { fontSize: 16, color: "#fff", fontFamily: FontWeights.bold },
   finalAmountValue: { fontSize: 20, color: "#fff", fontFamily: FontWeights.bold },
+  
+  // VIP Discount Preview Styles
+  vipDiscountPreview: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(251,191,36,0.15)",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginTop: 8,
+    borderWidth: 2,
+    borderColor: "rgba(251,191,36,0.4)",
+    borderStyle: "dashed",
+  },
+  vipDiscountText: {
+    flex: 1,
+    fontSize: 14,
+    color: "#fbbf24",
+    fontFamily: FontWeights.semibold,
+    marginLeft: 8,
+  },
+  vipBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(251,191,36,0.3)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  vipBadgeText: {
+    fontSize: 10,
+    color: "#fbbf24",
+    fontFamily: FontWeights.bold,
+    marginLeft: 3,
+  },
 });
 
 

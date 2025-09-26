@@ -4,11 +4,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useLocalSearchParams, useRouter } from "expo-router";
 import { restaurantData, Restaurant } from "../constants/restaurantData";
 import PayBillCard from "../components/common/PayBillCard";
+import { useVip } from "../contexts/VipContext";
 
 export default function DineOutScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { isVip, userMode } = useVip();
   const [billAmount, setBillAmount] = useState('');
 
   // Get restaurant data from params
@@ -17,12 +19,19 @@ export default function DineOutScreen() {
     return restaurantData.find(r => r.id === restaurantId) || restaurantData[0];
   }, [params.restaurantId]);
 
-  const discountPercentage = 20; // 20% discount for dine out
+  // Define discount percentages for normal and VIP users
+  const normalDiscountPercentage = 15; // 15% discount for normal users
+  const vipDiscountPercentage = 25; // 25% discount for VIP users
+  
+  // Get current discount based on user status
+  const currentDiscountPercentage = isVip ? vipDiscountPercentage : normalDiscountPercentage;
+  
+  
   const finalAmount = useMemo(() => {
     const amount = parseFloat(billAmount) || 0;
-    const discount = (amount * discountPercentage) / 100;
+    const discount = (amount * currentDiscountPercentage) / 100;
     return amount - discount;
-  }, [billAmount]);
+  }, [billAmount, currentDiscountPercentage]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [showProcessing, setShowProcessing] = useState(false);
@@ -70,7 +79,9 @@ export default function DineOutScreen() {
           <PayBillCard
             billAmount={billAmount}
             onChangeAmount={setBillAmount}
-            discountPercentage={discountPercentage}
+            discountPercentage={currentDiscountPercentage}
+            vipDiscountPercentage={vipDiscountPercentage}
+            isVip={isVip}
             onPressPay={handlePayment}
           />
         </View>
@@ -80,7 +91,7 @@ export default function DineOutScreen() {
           <View style={styles.benefitsList}>
             <View style={styles.benefitItem}>
               <Ionicons name="checkmark-circle" size={16} color="#10b981" />
-              <Text style={styles.benefitText}>Instant 20% discount</Text>
+              <Text style={styles.benefitText}>Instant discount</Text>
             </View>
             <View style={styles.benefitItem}>
               <Ionicons name="checkmark-circle" size={16} color="#10b981" />
@@ -116,7 +127,7 @@ export default function DineOutScreen() {
               </View>
             </View>
             <Text style={styles.modalTitle}>Confirm Payment</Text>
-            <Text style={styles.modalSubtitle}>Pay ₹{finalAmount.toFixed(2)} after {discountPercentage}% off?</Text>
+            <Text style={styles.modalSubtitle}>Pay ₹{finalAmount.toFixed(2)} after {currentDiscountPercentage}% off?</Text>
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity style={styles.modalButtonSecondary} onPress={() => setShowConfirm(false)}>
                 <Text style={styles.modalButtonSecondaryText}>Cancel</Text>
@@ -200,7 +211,6 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
   },
   headerDineOut: {
     fontSize: 14,
