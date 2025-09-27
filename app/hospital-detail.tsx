@@ -9,13 +9,15 @@ import {
   Linking,
   Modal,
   ActivityIndicator,
+  Animated,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { getHospitalById } from "../constants/hospitalData";
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useVip } from "../contexts/VipContext";
 import LikeButton from "../components/common/LikeButton";
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HospitalDetailScreen() {
   const params = useLocalSearchParams();
@@ -44,6 +46,18 @@ export default function HospitalDetailScreen() {
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   // Removed payment popup flow (₹9). Booking is now free in-app; OP fee is payable at hospital as per mode.
+  
+  // Shimmer animation for VIP card
+  const shimmerAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(shimmerAnim, { toValue: 1, duration: 1800, useNativeDriver: true }),
+        Animated.timing(shimmerAnim, { toValue: 0, duration: 0, useNativeDriver: true }),
+      ])
+    ).start();
+  }, [shimmerAnim]);
 
   const faqData = [
     {
@@ -65,6 +79,37 @@ export default function HospitalDetailScreen() {
   };
 
   const hospital = useMemo(() => getHospitalById(hospitalId), [hospitalId]);
+
+  // Function to summarize offer text
+  const summarizeOffer = (offerText: string) => {
+    const lines = offerText.split('\n');
+    return lines.map(line => {
+      const trimmed = line.trim();
+      // Shorten common patterns
+      if (trimmed.includes('Book OP for ₹') && trimmed.includes('(No discount in OP)')) {
+        const price = trimmed.match(/₹(\d+)/)?.[1];
+        return `OP: ₹${price}`;
+      }
+      if (trimmed.includes('OP: ₹') && trimmed.includes('OFF - Pay only')) {
+        const finalPrice = trimmed.match(/Pay only (\d+)/)?.[1];
+        return `OP: ₹${finalPrice}`;
+      }
+      if (trimmed.includes('Get') && trimmed.includes('Discount on Lab & IP Services')) {
+        const discount = trimmed.match(/(\d+)%/)?.[1];
+        return `Lab & IP: ${discount}% off`;
+      }
+      if (trimmed.includes('Plus') && trimmed.includes('Discount on Pharmacy')) {
+        const discount = trimmed.match(/(\d+)%/)?.[1];
+        return `Pharmacy: ${discount}% off`;
+      }
+      if (trimmed.includes('Discount on Spectacles')) {
+        const discount = trimmed.match(/(\d+)%/)?.[1];
+        return `Spectacles: ${discount}% off`;
+      }
+      // Keep original if no pattern matches
+      return trimmed;
+    });
+  };
 
   if (!hospital) {
     return (
@@ -343,16 +388,67 @@ export default function HospitalDetailScreen() {
           </Text>
         </View>
 
-        {/* Offers */}
+        {/* Normal & VIP Offers */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Offers & Benefits</Text>
-          <View style={styles.offerBody}>
-            {(userMode === 'vip' ? hospital.vipUserOffer : hospital.normalUserOffer).split("\n").map((line, i) => (
-              <View key={i} style={styles.offerRow}>
-                <View style={styles.bullet} />
-                <Text style={styles.offerText}>{line.trim()}</Text>
+          <View style={styles.offersContainer}>
+            {/* Normal User Section */}
+            <LinearGradient 
+              colors={["#dbeafe", "#bfdbfe", "#93c5fd"]} 
+              start={{ x: 0, y: 0 }} 
+              end={{ x: 1, y: 1 }} 
+              style={styles.offerCard}
+            >
+              <View style={styles.offerCardHeader}>
+                <View style={styles.normalIconContainer}>
+                  <Ionicons name="person" size={24} color="#1e40af" />
+                </View>
+                <Text style={styles.normalCardTitle}>Normal</Text>
+                <View style={styles.normalBadge}>
+                  <Text style={styles.normalBadgeText}>Standard</Text>
+                </View>
               </View>
-            ))}
+              <View style={styles.offerCardBody}>
+                {summarizeOffer(hospital.normalUserOffer).map((line, i) => (
+                  <View key={i} style={styles.offerRow}>
+                    <View style={styles.normalBullet} />
+                    <Text style={styles.normalOfferText}>{line}</Text>
+                  </View>
+                ))}
+              </View>
+            </LinearGradient>
+
+            {/* VIP User Section */}
+            <LinearGradient 
+              colors={["#1a1a1f", "#0f0f14"]} 
+              start={{ x: 0, y: 0 }} 
+              end={{ x: 1, y: 1 }} 
+              style={styles.offerCard}
+            >
+              <Animated.View
+                pointerEvents="none"
+                style={[styles.shimmerOverlay, { transform: [{ translateX: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [-200, 400] }) }] }]}
+              >
+                <LinearGradient colors={["transparent", "rgba(255,215,0,0.35)", "transparent"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ flex: 1 }} />
+              </Animated.View>
+              <View style={styles.offerCardHeader}>
+                <View style={styles.vipIconContainer}>
+                  <Ionicons name="star" size={24} color="#fbbf24" />
+                </View>
+                <Text style={styles.vipCardTitle}>VIP</Text>
+                <View style={styles.vipBadge}>
+                  <Text style={styles.vipBadgeText}>Premium</Text>
+                </View>
+              </View>
+              <View style={styles.offerCardBody}>
+                {summarizeOffer(hospital.vipUserOffer).map((line, i) => (
+                  <View key={i} style={styles.offerRow}>
+                    <View style={styles.vipBullet} />
+                    <Text style={styles.vipOfferText}>{line}</Text>
+                  </View>
+                ))}
+              </View>
+            </LinearGradient>
           </View>
         </View>
 
@@ -364,15 +460,6 @@ export default function HospitalDetailScreen() {
               <Text style={styles.modeBadgeText}>{userMode === 'vip' ? 'VIP' : 'Normal'}</Text>
             </View>
           </View>
-          {/* Price hint for OP based on mode (payable at hospital) */}
-          {hospital.category !== 'Pharmacy' && (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Ionicons name="pricetag" size={14} color="#6b7280" />
-              <Text style={{ marginLeft: 6, fontSize: 12, color: '#6b7280', fontWeight: '700' }}>
-                {userMode === 'vip' ? (hospital.vipOpPrice ? `OP: ₹${hospital.vipOpPrice} (Pay at hospital)` : 'OP: Pay at hospital') : (hospital.normalOpPrice ? `OP: ₹${hospital.normalOpPrice} (Pay at hospital)` : 'OP: Pay at hospital')}
-              </Text>
-            </View>
-          )}
           <View style={styles.formRow}>
             <Text style={styles.inputLabel}>Patient Name</Text>
             <TextInput
@@ -1036,6 +1123,123 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   offerText: { fontSize: 13, color: "#374151", lineHeight: 18 },
+  
+  // New Normal & VIP Offer Cards Styles
+  offersContainer: {
+    flexDirection: "row",
+    gap: 16,
+    marginTop: 12,
+  },
+  offerCard: {
+    flex: 1,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 12,
+    elevation: 4,
+    overflow: "hidden",
+  },
+  offerCardHeader: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    alignItems: "center",
+  },
+  normalIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: "rgba(255,255,255,0.5)",
+  },
+  vipIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(251,191,36,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: "#fbbf24",
+  },
+  normalCardTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1e40af",
+    marginBottom: 8,
+  },
+  vipCardTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#f8fafc",
+    marginBottom: 8,
+  },
+  normalBadge: {
+    backgroundColor: "#1e40af",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  normalBadgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#fff",
+    letterSpacing: 0.5,
+  },
+  vipBadge: {
+    backgroundColor: "#fbbf24",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  vipBadgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#1f2937",
+    letterSpacing: 0.5,
+  },
+  offerCardBody: {
+    paddingHorizontal: 25,
+    paddingVertical: 16,
+  },
+  normalBullet: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#1e40af",
+    marginRight: 10,
+  },
+  vipBullet: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#fbbf24",
+    marginRight: 10,
+  },
+  normalOfferText: {
+    fontSize: 13,
+    color: "#1e40af",
+    lineHeight: 18,
+    fontWeight: "500",
+  },
+  vipOfferText: {
+    fontSize: 13,
+    color: "#f8fafc",
+    lineHeight: 18,
+    fontWeight: "500",
+  },
+  shimmerOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 180,
+    opacity: 0.6,
+  },
   infoText: { fontSize: 13, color: "#374151", marginTop: 6, lineHeight: 18 },
 
   bookingHeader: {

@@ -13,15 +13,23 @@ type Deal = {
 const deals: Deal[] = [
   {
     id: 1,
-    image: require("../../assets/c1.png"),
+    image: { uri: "https://res.cloudinary.com/dhm5yx35q/image/upload/v1758884717/1_hj0mlp.jpg" },
   },
   {
     id: 2,
-    image: require("../../assets/c2.jpg"),
+    image: { uri: "https://res.cloudinary.com/dhm5yx35q/image/upload/v1758884714/2_bolxxh.jpg" },
   },
   {
     id: 3,
-    image: require("../../assets/c3.jpg"),
+    image: { uri: "https://res.cloudinary.com/dhm5yx35q/image/upload/v1758884719/3_h5xxtl.jpg" },
+  },
+  {
+    id: 4,
+    image: { uri: "https://res.cloudinary.com/dhm5yx35q/image/upload/v1758884736/4_fhom8u.png" },
+  },
+  {
+    id: 5,
+    image: { uri: "https://res.cloudinary.com/dhm5yx35q/image/upload/v1758884771/5_xrcjpv.png" },
   },
 ];
 

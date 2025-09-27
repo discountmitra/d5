@@ -85,13 +85,19 @@ export default function PayBillCard({ billAmount, onChangeAmount, discountPercen
             {/* VIP Discount Preview for Normal Users - Show inside bill summary */}
             {!isVip && vipDiscountPercentage && amount > 0 && (
               <View style={styles.vipDiscountPreview}>
-                <Ionicons name="lock-closed" size={14} color="rgba(255,255,255,0.6)" />
-                <Text style={styles.vipDiscountText}>
-                  Pay only ₹{vipFinalAmount.toFixed(2)} with VIP
-                </Text>
-                <View style={styles.vipBadge}>
-                  <Ionicons name="star" size={10} color="#fbbf24" />
-                  <Text style={styles.vipBadgeText}>VIP</Text>
+                <View style={styles.vipDiscountContent}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.vipDiscountText}>
+                      Pay only <Text style={styles.vipAmountHighlight}>₹{vipFinalAmount.toFixed(2)}</Text> with VIP
+                    </Text>
+                    <Text style={styles.vipDiscountSubtext}>
+                      Save additional ₹{(discount - vipDiscount).toFixed(2)} more!
+                    </Text>
+                  </View>
+                  <View style={styles.vipBadge}>
+                    <Ionicons name="star" size={12} color="#fbbf24" />
+                    <Text style={styles.vipBadgeText}>VIP</Text>
+                  </View>
                 </View>
               </View>
             )}
@@ -119,7 +125,7 @@ const styles = StyleSheet.create({
   payBillTitleContainer: { flex: 1 },
   payBillTitle: { fontSize: FontSizes.title, color: "#fff", marginBottom: 4, fontFamily: FontWeights.bold },
   payBillSubtitle: { fontSize: 14, color: "rgba(255,255,255,0.8)", lineHeight: 18 },
-  discountBadge: { flexDirection: "row", alignItems: "center", backgroundColor: "#fff", paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, shadowColor: "#000", shadowOpacity: 0.1, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2 },
+  discountBadge: { flexDirection: "row", alignItems: "center", backgroundColor: "#fff", paddingHorizontal: 6, paddingVertical: 8, borderRadius: 20, shadowColor: "#000", shadowOpacity: 0.1, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2,width: 80 },
   discountBadgeText: { fontSize: 12, color: "#7c3aed", marginLeft: 4, fontFamily: FontWeights.semibold },
   billInputSection: { marginBottom: 20 },
   billInputLabel: { fontSize: 14, color: "rgba(255,255,255,0.9)", marginBottom: 12, fontFamily: FontWeights.medium },
@@ -144,37 +150,49 @@ const styles = StyleSheet.create({
   
   // VIP Discount Preview Styles
   vipDiscountPreview: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(251,191,36,0.15)",
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    marginTop: 8,
-    borderWidth: 2,
-    borderColor: "rgba(251,191,36,0.4)",
-    borderStyle: "dashed",
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    borderStyle: "solid",
+  },
+  vipDiscountContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   vipDiscountText: {
-    flex: 1,
+    fontSize: 13,
+    color: "rgba(255,255,255,0.9)",
+    fontFamily: FontWeights.medium,
+    marginBottom: 2,
+  },
+  vipAmountHighlight: {
     fontSize: 14,
     color: "#fbbf24",
-    fontFamily: FontWeights.semibold,
-    marginLeft: 8,
+    fontFamily: FontWeights.bold,
+  },
+  vipDiscountSubtext: {
+    fontSize: 11,
+    color: "rgba(255,255,255,0.7)",
+    fontFamily: FontWeights.regular,
   },
   vipBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(251,191,36,0.3)",
+    backgroundColor: "rgba(251,191,36,0.2)",
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 10,
+    borderRadius: 8,
   },
   vipBadgeText: {
     fontSize: 10,
     color: "#fbbf24",
-    fontFamily: FontWeights.bold,
-    marginLeft: 3,
+    fontFamily: FontWeights.semibold,
+    marginLeft: 4,
   },
 });
 

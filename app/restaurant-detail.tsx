@@ -33,9 +33,9 @@ export default function RestaurantDetailScreen() {
     });
   };
 
-  const handleTakeAway = () => {
+  const handleDelivery = () => {
     router.push({
-      pathname: '/take-away',
+      pathname: '/coming-soon',
       params: { restaurantId: restaurant.id }
     });
   };
@@ -244,18 +244,20 @@ export default function RestaurantDetailScreen() {
                 <Ionicons name="restaurant" size={24} color="#f97316" />
               </View>
               <Text style={styles.serviceOptionText}>Dine Out</Text>
-              <Text style={styles.serviceOptionSubtext}>Save 20%</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={styles.serviceOption}
-              onPress={handleTakeAway}
+              onPress={handleDelivery}
             >
               <View style={styles.serviceOptionIcon}>
-                <Ionicons name="bag" size={24} color="#10b981" />
+                <Ionicons name="bicycle" size={24} color="#10b981" />
               </View>
-              <Text style={styles.serviceOptionText}>Take Away</Text>
-              <Text style={styles.serviceOptionSubtext}>Order Now</Text>
+              <Text style={styles.serviceOptionText}>Delivery</Text>
+              <View style={styles.comingSoonBadge}>
+                <Ionicons name="time" size={10} color="#fff" />
+                <Text style={styles.comingSoonText}>Coming Soon</Text>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -717,6 +719,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 2,
+    position: "relative",
   },
   serviceOptionIcon: {
     width: 48,
@@ -984,5 +987,28 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 4,
+  },
+  comingSoonBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: "#f59e0b",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  comingSoonText: {
+    color: "#fff",
+    fontSize: 10,
+    letterSpacing: 0.5,
+    fontWeight: "600",
   },
 });
