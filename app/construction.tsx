@@ -20,6 +20,8 @@ type ConstructionItem = {
   reviews: number;
   availability: string;
   image?: string;
+  normalUserOffer?: string;
+  vipUserOffer?: string;
 };
 
 export default function ConstructionScreen() {
@@ -61,6 +63,8 @@ export default function ConstructionScreen() {
         rating: 4.8,
         reviews: 1200,
         availability: "Available Now",
+        normalUserOffer: "Material supply: 5% off\nLabor charges: Standard rate\nConsultation: ₹500\nProject timeline: As per standard",
+        vipUserOffer: "Premium materials: 15% off\nSkilled labor: 20% off\nFree consultation\nPriority project completion\nFree site supervision",
       },
       {
         id: "birla-cement",
@@ -72,6 +76,8 @@ export default function ConstructionScreen() {
         rating: 4.6,
         reviews: 820,
         availability: "Available Now",
+        normalUserOffer: "Material supply: 8% off\nLabor charges: Standard rate\nConsultation: ₹400\nProject timeline: As per standard",
+        vipUserOffer: "Premium materials: 18% off\nSkilled labor: 25% off\nFree consultation\nPriority project completion\nFree site supervision",
       },
       {
         id: "ambuja-cement",
@@ -319,7 +325,7 @@ export default function ConstructionScreen() {
           <TouchableOpacity activeOpacity={0.9} style={styles.card}
             onPress={() => {
               const constructionId = item.name.toLowerCase().replace(/\s+/g, '-');
-              router.push({ pathname: "/construction-detail", params: { constructionId, image: item.image || "" } });
+              router.push({ pathname: "/construction-detail", params: { constructionId, image: item.image || "", normalUserOffer: item.normalUserOffer || "", vipUserOffer: item.vipUserOffer || "" } });
             }}
           >
             <View style={{ position: "relative" }}>

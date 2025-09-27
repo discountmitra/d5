@@ -13,6 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 import LikeButton from '../components/common/LikeButton';
+import OfferCards from '../components/common/OfferCards';
+import { categoryOffers } from '../constants/offerData';
 
 type UserType = 'normal' | 'vip';
 
@@ -357,6 +359,12 @@ export default function EventDetailScreen() {
     return days;
   };
 
+  // Function to convert individual offers to array format
+  const convertOffersToArray = (offerText: string) => {
+    if (!offerText) return [];
+    return offerText.split('\n').filter(line => line.trim() !== '');
+  };
+
   const event = useMemo(() => ({
     id: eventIdStr || '',
     name: currentEvent.Name,
@@ -364,7 +372,9 @@ export default function EventDetailScreen() {
     description: currentEvent.description.replace(/[^\w\s\u0C00-\u0C7F₹\/-]/g, '').trim(),
     rating: 4.8,
     reviews: 234,
-  }), [currentEvent, eventIdStr]);
+    normalUserOffer: (params.normalUserOffer as string) || "",
+    vipUserOffer: (params.vipUserOffer as string) || "",
+  }), [currentEvent, eventIdStr, params.normalUserOffer, params.vipUserOffer]);
 
   return (
     <View style={styles.container}>
@@ -469,26 +479,16 @@ export default function EventDetailScreen() {
           </View>
         </View>
 
-        {/* User Type Selection */}
+        {/* Normal & VIP Offers */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Select Plan</Text>
-          <View style={styles.userTypeButtons}>
-            <TouchableOpacity 
-              style={[styles.userTypeButton, userType === 'normal' && styles.userTypeButtonActive]}
-              onPress={() => setUserType('normal')}
-            >
-              <Text style={[styles.userTypeText, userType === 'normal' && styles.userTypeTextActive]}>Normal User</Text>
-              <Text style={[styles.discountText, userType === 'normal' && styles.discountTextActive]}>{currentEvent['NORMAL USER']}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.userTypeButton, userType === 'vip' && styles.userTypeButtonActive]}
-              onPress={() => setUserType('vip')}
-            >
-              <Text style={[styles.userTypeText, userType === 'vip' && styles.userTypeTextActive]}>VIP User</Text>
-              <Text style={[styles.discountText, userType === 'vip' && styles.discountTextActive]}>{currentEvent['VIP USER']}</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.sectionTitle}>Offers & Benefits</Text>
+          <OfferCards 
+            normalOffers={event.normalUserOffer ? convertOffersToArray(event.normalUserOffer) : categoryOffers['event'].normal}
+            vipOffers={event.vipUserOffer ? convertOffersToArray(event.vipUserOffer) : categoryOffers['event'].vip}
+            category="event"
+          />
         </View>
+
 
         {/* Booking Form */}
         <View style={styles.section}>

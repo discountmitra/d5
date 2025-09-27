@@ -5,6 +5,8 @@ import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { useVip } from '../contexts/VipContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import LikeButton from '../components/common/LikeButton';
+import OfferCards from '../components/common/OfferCards';
+import { categoryOffers } from '../constants/offerData';
 
 type ConstructionData = {
   category: string;
@@ -81,10 +83,21 @@ export default function ConstructionDetailScreen() {
     { category: 'Machinery', name: 'JCB', description: 'On time & professional drivers', rating: 4.8, reviews: 820, availability: 'Available Now' },
   ];
 
+  // Function to convert individual offers to array format
+  const convertOffersToArray = (offerText: string) => {
+    if (!offerText) return [];
+    return offerText.split('\n').filter(line => line.trim() !== '');
+  };
+
   const current = useMemo(() => {
     const slug = (s: string) => s.toLowerCase().replace(/\s+/g, '-');
-    return items.find(it => slug(it.name) === String(constructionId || '').toLowerCase()) || items[0];
-  }, [constructionId]);
+    const found = items.find(it => slug(it.name) === String(constructionId || '').toLowerCase()) || items[0];
+    return {
+      ...found,
+      normalUserOffer: (params.normalUserOffer as string) || "",
+      vipUserOffer: (params.vipUserOffer as string) || "",
+    };
+  }, [constructionId, params.normalUserOffer, params.vipUserOffer]);
 
   const handleRequest = () => {
     const newErrors: { name?: string; phone?: string } = {};
@@ -225,6 +238,16 @@ export default function ConstructionDetailScreen() {
             </View>
             {current.details && <Text style={styles.descText}>{current.details}</Text>}
             <Text style={styles.descText}>{current.description}</Text>
+          </View>
+
+          {/* Normal & VIP Offers */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Offers & Benefits</Text>
+            <OfferCards 
+              normalOffers={current.normalUserOffer ? convertOffersToArray(current.normalUserOffer) : categoryOffers['construction'].normal}
+              vipOffers={current.vipUserOffer ? convertOffersToArray(current.vipUserOffer) : categoryOffers['construction'].vip}
+              category="construction"
+            />
           </View>
 
           <View style={styles.section}>

@@ -5,6 +5,8 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { useVip } from "../contexts/VipContext";
 import { LinearGradient } from "expo-linear-gradient";
 import LikeButton from "../components/common/LikeButton";
+import OfferCards from "../components/common/OfferCards";
+import { categoryOffers } from "../constants/offerData";
 
 export default function HomeServiceDetailScreen() {
   const params = useLocalSearchParams();
@@ -19,6 +21,8 @@ export default function HomeServiceDetailScreen() {
     price: (params.price as string) || "",
     discount: (params.discount as string) || "",
     image: typeof params.image === 'string' ? (params.image as string) : "",
+    normalUserOffer: (params.normalUserOffer as string) || "",
+    vipUserOffer: (params.vipUserOffer as string) || "",
   }), [params]);
 
   const [userName, setUserName] = useState("");
@@ -35,6 +39,12 @@ export default function HomeServiceDetailScreen() {
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
   const [popupAnim] = useState(new Animated.Value(0));
+
+  // Function to convert individual offers to array format
+  const convertOffersToArray = (offerText: string) => {
+    if (!offerText) return [];
+    return offerText.split('\n').filter(line => line.trim() !== '');
+  };
 
     const faqData = [
     {
@@ -235,6 +245,16 @@ export default function HomeServiceDetailScreen() {
               </View>
             ))}
           </ScrollView>
+        </View>
+
+        {/* Normal & VIP Offers */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Offers & Benefits</Text>
+          <OfferCards 
+            normalOffers={service.normalUserOffer ? convertOffersToArray(service.normalUserOffer) : categoryOffers['home-service'].normal}
+            vipOffers={service.vipUserOffer ? convertOffersToArray(service.vipUserOffer) : categoryOffers['home-service'].vip}
+            category="home-service"
+          />
         </View>
 
         {/* Request Form */}

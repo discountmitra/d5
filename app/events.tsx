@@ -22,6 +22,8 @@ type EventService = {
   reviews: number;
   availability: string;
   image?: string;
+  normalUserOffer?: string;
+  vipUserOffer?: string;
 };
 
 export default function EventsScreen() {
@@ -64,6 +66,8 @@ export default function EventsScreen() {
         reviews: 1200,
         availability: "Available Now",
         image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/bdy/1.jpg",
+        normalUserOffer: "Basic decoration: ₹1,499\nStandard theme: 15% off\nPhotography: ₹2,000\nCatering: 10% off",
+        vipUserOffer: "Premium decoration: 30% off\nLuxury theme: 25% off\nProfessional photography: 20% off\nPremium catering: 20% off\nFree event coordination",
       },
       {
         id: "haldi-decoration",
@@ -77,6 +81,8 @@ export default function EventsScreen() {
         reviews: 980,
         availability: "Available Now",
         image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/haldi/1.jpg",
+        normalUserOffer: "Haldi decoration: ₹2,999\nTraditional theme: 15% off\nPhotography: ₹2,500\nCatering: 10% off",
+        vipUserOffer: "Premium haldi decoration: 30% off\nLuxury traditional theme: 25% off\nProfessional photography: 20% off\nPremium catering: 20% off\nFree event coordination",
       },
       {
         id: "wedding-decoration",
@@ -383,7 +389,7 @@ export default function EventsScreen() {
             style={styles.card}
             onPress={() => {
               const eventId = item.name.toLowerCase().replace(/\s+/g, '-');
-              router.push({ pathname: "/event-detail", params: { eventId, image: item.image || "" } });
+              router.push({ pathname: "/event-detail", params: { eventId, image: item.image || "", normalUserOffer: item.normalUserOffer || "", vipUserOffer: item.vipUserOffer || "" } });
             }}
           >
             <View style={{ position: "relative" }}>

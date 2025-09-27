@@ -20,6 +20,8 @@ type Service = {
   reviews: number;
   availability: string;
   image?: string;
+  normalUserOffer?: string;
+  vipUserOffer?: string;
 };
 
 export default function HomeServicesScreen() {
@@ -65,6 +67,8 @@ export default function HomeServicesScreen() {
         reviews: 1200,
         availability: "Available Now",
         image: "https://plus.unsplash.com/premium_photo-1683141410787-c4dbd2220487?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGx1bWJpbmd8ZW58MHx8MHx8fDA%3D",
+        normalUserOffer: "Service call: ₹200\nPipe repair: 10% off\nEmergency service: ₹300\nWarranty: 30 days",
+        vipUserOffer: "Free service call\nPremium repair: 25% off\nPriority emergency: Free\nExtended warranty: 90 days\nFree maintenance check",
       },
       {
         id: "electrician-services",
@@ -78,6 +82,8 @@ export default function HomeServicesScreen() {
         reviews: 980,
         availability: "Available Now",
         image: "https://plus.unsplash.com/premium_photo-1661911309991-cc81afcce97d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZWxlY3RyaWNpYW58ZW58MHx8MHx8fDA%3D",
+        normalUserOffer: "Service call: ₹250\nWiring repair: 15% off\nAppliance repair: 10% off\nWarranty: 45 days",
+        vipUserOffer: "Free service call\nPremium wiring: 30% off\nPriority appliance repair: 20% off\nExtended warranty: 120 days\nFree safety inspection",
       },
       {
         id: "ac-fridge-repair",
@@ -91,6 +97,8 @@ export default function HomeServicesScreen() {
         reviews: 750,
         availability: "Available Now",
         image: "https://plus.unsplash.com/premium_photo-1682126012378-859ca7a9f4cf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8QUMlMjByZXBhaXJ8ZW58MHx8MHx8fDA%3D",
+        normalUserOffer: "Service call: ₹300\nGas refill: 20% off\nAC cleaning: ₹500\nWarranty: 60 days",
+        vipUserOffer: "Free service call\nPremium gas refill: 35% off\nFree AC cleaning\nExtended warranty: 180 days\nFree seasonal maintenance",
       },
       {
         id: "ro-water-purifier",
@@ -271,7 +279,7 @@ export default function HomeServicesScreen() {
         }}
         scrollEventThrottle={16}
         renderItem={({ item }) => (
-          <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={() => router.push({ pathname: "/home-service-detail", params: { id: item.id, name: item.name, desc: item.description, category: item.category, price: item.price, discount: item.discount, image: item.image || "" } })}>
+          <TouchableOpacity activeOpacity={0.9} style={styles.card} onPress={() => router.push({ pathname: "/home-service-detail", params: { id: item.id, name: item.name, desc: item.description, category: item.category, price: item.price, discount: item.discount, image: item.image || "", normalUserOffer: item.normalUserOffer || "", vipUserOffer: item.vipUserOffer || "" } })}>
             <View style={{ position: "relative" }}>
               <Image
                 source={

@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput,
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import LikeButton from "../components/common/LikeButton";
+import OfferCards from "../components/common/OfferCards";
+import { categoryOffers } from "../constants/offerData";
 
 type UserType = 'normal' | 'vip';
 
@@ -336,29 +338,21 @@ export default function SalonDetailScreen() {
           </View>
         </View>
 
-        {/* User Type Selection */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Select Plan</Text>
-          <View style={styles.userTypeButtons}>
-            <TouchableOpacity 
-              style={[styles.userTypeButton, userType === 'normal' && styles.userTypeButtonActive]}
-              onPress={() => setUserType('normal')}
-            >
-              <Text style={[styles.userTypeText, userType === 'normal' && styles.userTypeTextActive]}>Normal User</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.userTypeButton, userType === 'vip' && styles.userTypeButtonActive]}
-              onPress={() => setUserType('vip')}
-            >
-              <Text style={[styles.userTypeText, userType === 'vip' && styles.userTypeTextActive]}>VIP User</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
         {/* Services */}
         {renderServiceCategory("Haircuts", "cut", serviceCategories.haircuts)}
         {renderServiceCategory("Facial", "flower", serviceCategories.facial)}
         {renderServiceCategory("Tattoo", "brush", serviceCategories.tattoo)}
+
+        {/* Normal & VIP Offers */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Offers & Benefits</Text>
+          <OfferCards 
+            normalOffers={categoryOffers['beauty'].normal}
+            vipOffers={categoryOffers['beauty'].vip}
+            category="beauty"
+          />
+        </View>
 
         {/* Booking Form */}
         <View style={styles.section}>
