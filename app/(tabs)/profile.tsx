@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useFavorites } from "../../contexts/FavoritesContext";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useVip } from "../../contexts/VipContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -14,6 +15,7 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
   const { favorites } = useFavorites();
   const { userMode } = useVip();
+  const { authState } = useAuth();
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false }); // Hide default header
@@ -31,7 +33,7 @@ export default function ProfileScreen() {
       {/* Top Section - User Name and Profile Picture */}
       <View style={[styles.topSection, { paddingTop: insets.top + 20 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={styles.userName}>Joshua Smith</Text>
+          <Text style={styles.userName}>{authState.user?.name || "User"}</Text>
           {userMode === 'vip' && (
             <View style={styles.vipBadge}>
               <Ionicons name="star" size={12} color="#fff" />
@@ -204,6 +206,7 @@ export default function ProfileScreen() {
           </View>
           <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
         </TouchableOpacity>
+
       </LinearGradient>
 
       {/* App Information */}
@@ -453,23 +456,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.secondary,
     marginHorizontal: Spacing.sm,
-  },
-  logoutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.xl,
-    paddingVertical: Spacing.lg,
-    borderWidth: 1,
-    borderColor: "#dc2626",
-    borderRadius: 16,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 4,
   },
   logoutText: {
     fontSize: 16,

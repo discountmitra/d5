@@ -4,10 +4,12 @@ import { Colors, FontSizes, Spacing } from "../../theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function VerifyPhoneScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { login } = useAuth();
   const [otp, setOtp] = useState(["", "", "", ""]);
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -24,7 +26,8 @@ export default function VerifyPhoneScreen() {
         clearTimeout(verifyTimerRef.current);
       }
       verifyTimerRef.current = setTimeout(() => {
-        router.replace("/(tabs)");
+        // Simulate OTP verification and login
+        login("1234567890"); // You can get the actual phone number from route params
         // Safety: reset verifying after navigation attempt in case replace is blocked
         setTimeout(() => setIsVerifying(false), 1200);
       }, 1000);

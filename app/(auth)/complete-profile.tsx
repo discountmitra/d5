@@ -4,10 +4,12 @@ import { Colors, FontSizes, Spacing } from "../../theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function CompleteProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { completeProfile } = useAuth();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -59,8 +61,9 @@ export default function CompleteProfileScreen() {
       return;
     }
 
-    // Navigate to OTP verification screen
-    router.push("/(auth)/verify-phone");
+    // Complete profile and navigate to main app
+    const fullName = `${firstName} ${lastName}`.trim();
+    completeProfile(fullName);
   };
 
   return (

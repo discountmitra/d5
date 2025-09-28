@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useAuth } from "../contexts/AuthContext";
 
 interface SettingItem {
   id: string;
@@ -20,6 +21,7 @@ export default function SettingsScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
   
   const [notifications, setNotifications] = useState(true);
   const [locationServices, setLocationServices] = useState(true);
@@ -34,7 +36,7 @@ export default function SettingsScreen() {
         { 
           text: "Logout", 
           style: "destructive",
-          onPress: () => router.push("/(auth)/login")
+          onPress: logout
         }
       ]
     );
