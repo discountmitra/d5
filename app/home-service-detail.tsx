@@ -251,9 +251,10 @@ export default function HomeServiceDetailScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Offers & Benefits</Text>
           <OfferCards 
-            normalOffers={service.normalUserOffer ? convertOffersToArray(service.normalUserOffer) : categoryOffers['home-service'].normal}
-            vipOffers={service.vipUserOffer ? convertOffersToArray(service.vipUserOffer) : categoryOffers['home-service'].vip}
+            normalOffers={service.normalUserOffer ? convertOffersToArray(service.normalUserOffer) : undefined}
+            vipOffers={service.vipUserOffer ? convertOffersToArray(service.vipUserOffer) : undefined}
             category="home-service"
+            serviceType={service.category}
           />
         </View>
 

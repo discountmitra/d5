@@ -348,9 +348,8 @@ export default function SalonDetailScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Offers & Benefits</Text>
           <OfferCards 
-            normalOffers={categoryOffers['beauty'].normal}
-            vipOffers={categoryOffers['beauty'].vip}
             category="beauty"
+            serviceType="Haircuts"
           />
         </View>
 

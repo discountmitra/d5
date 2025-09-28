@@ -244,9 +244,10 @@ export default function ConstructionDetailScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Offers & Benefits</Text>
             <OfferCards 
-              normalOffers={current.normalUserOffer ? convertOffersToArray(current.normalUserOffer) : categoryOffers['construction'].normal}
-              vipOffers={current.vipUserOffer ? convertOffersToArray(current.vipUserOffer) : categoryOffers['construction'].vip}
+              normalOffers={current.normalUserOffer ? convertOffersToArray(current.normalUserOffer) : undefined}
+              vipOffers={current.vipUserOffer ? convertOffersToArray(current.vipUserOffer) : undefined}
               category="construction"
+              serviceType={current.category}
             />
           </View>
 

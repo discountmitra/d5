@@ -483,9 +483,10 @@ export default function EventDetailScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Offers & Benefits</Text>
           <OfferCards 
-            normalOffers={event.normalUserOffer ? convertOffersToArray(event.normalUserOffer) : categoryOffers['event'].normal}
-            vipOffers={event.vipUserOffer ? convertOffersToArray(event.vipUserOffer) : categoryOffers['event'].vip}
+            normalOffers={event.normalUserOffer ? convertOffersToArray(event.normalUserOffer) : undefined}
+            vipOffers={event.vipUserOffer ? convertOffersToArray(event.vipUserOffer) : undefined}
             category="event"
+            serviceType={event.category}
           />
         </View>
 

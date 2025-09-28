@@ -396,6 +396,7 @@ export default function HospitalDetailScreen() {
             normalOffers={summarizeOffer(hospital.normalUserOffer)}
             vipOffers={summarizeOffer(hospital.vipUserOffer)}
             category="hospital"
+            serviceType={hospital.category}
           />
         </View>
 

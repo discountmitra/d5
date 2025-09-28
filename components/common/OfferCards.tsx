@@ -2,15 +2,32 @@ import React, { useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { serviceOffers, categoryOffers } from '../../constants/offerData';
 
 interface OfferCardsProps {
-  normalOffers: string[];
-  vipOffers: string[];
+  normalOffers?: string[];
+  vipOffers?: string[];
   category: 'hospital' | 'home-service' | 'event' | 'construction' | 'beauty';
+  serviceType?: string;
 }
 
-const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, category }) => {
+const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, category, serviceType }) => {
   const shimmerAnim = useRef(new Animated.Value(0)).current;
+
+  // Get offers based on service type or fallback to category
+  const getOffers = () => {
+    if (normalOffers && vipOffers) {
+      return { normal: normalOffers, vip: vipOffers };
+    }
+    
+    if (serviceType && serviceOffers[category] && serviceOffers[category][serviceType]) {
+      return serviceOffers[category][serviceType];
+    }
+    
+    return categoryOffers[category] || { normal: [], vip: [] };
+  };
+
+  const offers = getOffers();
 
   useEffect(() => {
     Animated.loop(
@@ -47,22 +64,22 @@ const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, catego
         };
       case 'home-service':
         return {
-          normal: ["#dcfce7", "#bbf7d0", "#86efac"],
+          normal: ["#dbeafe", "#bfdbfe", "#93c5fd"],
           vip: ["#1a1a1f", "#0f0f14"]
         };
       case 'event':
         return {
-          normal: ["#fef3c7", "#fde68a", "#fcd34d"],
+          normal: ["#dbeafe", "#bfdbfe", "#93c5fd"],
           vip: ["#1a1a1f", "#0f0f14"]
         };
       case 'construction':
         return {
-          normal: ["#fed7aa", "#fdba74", "#fb923c"],
+          normal: ["#dbeafe", "#bfdbfe", "#93c5fd"],
           vip: ["#1a1a1f", "#0f0f14"]
         };
       case 'beauty':
         return {
-          normal: ["#fce7f3", "#fbcfe8", "#f9a8d4"],
+          normal: ["#dbeafe", "#bfdbfe", "#93c5fd"],
           vip: ["#1a1a1f", "#0f0f14"]
         };
       default:
@@ -78,13 +95,13 @@ const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, catego
       case 'hospital':
         return '#1e40af';
       case 'home-service':
-        return '#166534';
+        return '#1e40af';
       case 'event':
-        return '#d97706';
+        return '#1e40af';
       case 'construction':
-        return '#ea580c';
+        return '#1e40af';
       case 'beauty':
-        return '#be185d';
+        return '#1e40af';
       default:
         return '#1e40af';
     }
@@ -112,7 +129,7 @@ const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, catego
           </View>
         </View>
         <View style={styles.offerCardBody}>
-          {normalOffers.map((offer, i) => (
+          {offers.normal.map((offer, i) => (
             <View key={i} style={styles.offerRow}>
               <View style={[styles.normalBullet, { backgroundColor: textColor }]} />
               <Text style={[styles.normalOfferText, { color: textColor }]}>{offer}</Text>
@@ -144,7 +161,7 @@ const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, catego
           </View>
         </View>
         <View style={styles.offerCardBody}>
-          {vipOffers.map((offer, i) => (
+          {offers.vip.map((offer, i) => (
             <View key={i} style={styles.offerRow}>
               <View style={styles.vipBullet} />
               <Text style={styles.vipOfferText}>{offer}</Text>
