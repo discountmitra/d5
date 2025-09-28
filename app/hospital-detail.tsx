@@ -80,6 +80,9 @@ export default function HospitalDetailScreen() {
   };
 
   const hospital = useMemo(() => getHospitalById(hospitalId), [hospitalId]);
+  
+  // Use hospital's first photo if no headerImage is provided
+  const displayImage = headerImage || (hospital?.photos && hospital.photos.length > 0 ? hospital.photos[0] : "");
 
   // Function to summarize offer text
   const summarizeOffer = (offerText: string) => {
@@ -310,7 +313,7 @@ export default function HospitalDetailScreen() {
         {/* Hero Section with Background */}
         <View style={styles.heroSection}>
           <Image 
-            source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require("../assets/default.png")} 
+            source={displayImage && /^https?:\/\//.test(displayImage) ? { uri: displayImage } : require("../assets/default.png")} 
             style={styles.heroBackgroundImage}
             resizeMode="cover"
           />
@@ -332,7 +335,7 @@ export default function HospitalDetailScreen() {
                   name: hospital.name,
                   category: 'Healthcare',
                   subcategory: hospital.category,
-                  image: headerImage,
+                  image: displayImage,
                   description: hospital.description,
                   location: hospital.description.split("\n")[1] || "",
                   address: hospital.description.split("\n")[1] || "",

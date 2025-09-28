@@ -36,8 +36,51 @@ const deals: Deal[] = [
 export default function DealCard() {
   const router = useRouter();
 
-  const handleDealPress = () => {
-    router.push("/food");
+  const handleDealPress = (dealId: number) => {
+    switch (dealId) {
+      case 1:
+        // Navigate to Vishala shopping mall details page
+        router.push({
+          pathname: "/shopping-detail",
+          params: { id: "vishala-shopping-mall" }
+        });
+        break;
+      case 2:
+        // Navigate to food tab
+        router.push("/food");
+        break;
+      case 3:
+        // Navigate to LULU children's hospital details page
+        router.push({
+          pathname: "/hospital-detail",
+          params: { id: "lulu-children" }
+        });
+        break;
+      case 4:
+        // Navigate to Hairzone makeover details page
+        router.push({
+          pathname: "/salon-detail",
+          params: { 
+            id: "hair-zone-makeover",
+            name: "Hair Zone Makeover",
+            address: "Near Gandhi Nagar, Subash Nagar Road, Sircilla",
+            rating: "4.8",
+            reviews: "234"
+          }
+        });
+        break;
+      case 5:
+        // Navigate to Ultratech cement details page
+        router.push({
+          pathname: "/construction-detail",
+          params: { 
+            constructionId: "ultratech-cement"
+          }
+        });
+        break;
+      default:
+        router.push("/food");
+    }
   };
 
   return (
@@ -52,7 +95,7 @@ export default function DealCard() {
         data={deals}
         scrollAnimationDuration={800}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card} onPress={handleDealPress} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.card} onPress={() => handleDealPress(item.id)} activeOpacity={0.8}>
             <Image source={item.image} style={styles.image} />
           </TouchableOpacity>
         )}

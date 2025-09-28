@@ -17,6 +17,7 @@ type ConstructionData = {
   rating: number;
   reviews: number;
   availability: string;
+  image?: string;
 };
 
 export default function ConstructionDetailScreen() {
@@ -65,7 +66,7 @@ export default function ConstructionDetailScreen() {
 
   // Minimal dataset mirroring list screen; keys must match slugs from construction.tsx
   const items: ConstructionData[] = [
-    { category: 'Cement', name: 'Ultratech Cement', description: 'Ultratech Cement, Ultratech Cement Super', price: undefined, details: undefined, rating: 4.8, reviews: 1200, availability: 'Available Now' },
+    { category: 'Cement', name: 'Ultratech Cement', description: 'Ultratech Cement, Ultratech Cement Super', price: undefined, details: undefined, rating: 4.8, reviews: 1200, availability: 'Available Now', image: 'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/construction/ultratech-cement/2.png' },
     { category: 'Cement', name: 'Birla Cement', description: 'MP Birla Cement', rating: 4.6, reviews: 820, availability: 'Available Now' },
     { category: 'Cement', name: 'Ambuja Cement', description: 'Ambuja Cement, Ambuja Plus, Ambuja Kawachi', rating: 4.7, reviews: 930, availability: 'Available Now' },
     { category: 'Cement', name: 'Bangur Cement', description: 'Bangur Cement', rating: 4.5, reviews: 640, availability: 'Available Now' },
@@ -98,6 +99,9 @@ export default function ConstructionDetailScreen() {
       vipUserOffer: (params.vipUserOffer as string) || "",
     };
   }, [constructionId, params.normalUserOffer, params.vipUserOffer]);
+
+  // Use current item's image if no headerImage is provided
+  const displayImage = headerImage || current.image || "";
 
   const handleRequest = () => {
     const newErrors: { name?: string; phone?: string } = {};
@@ -171,7 +175,7 @@ export default function ConstructionDetailScreen() {
       <ScrollView style={styles.scrollView} onScroll={onScroll} scrollEventThrottle={16} showsVerticalScrollIndicator={false}>
         <View style={styles.heroSection}>
           <Image
-            source={headerImage && /^https?:\/\//.test(headerImage) ? { uri: headerImage } : require('../assets/default.png')}
+            source={displayImage && /^https?:\/\//.test(displayImage) ? { uri: displayImage } : require('../assets/default.png')}
             style={styles.heroBackgroundImage}
             resizeMode="cover"
           />
@@ -190,7 +194,7 @@ export default function ConstructionDetailScreen() {
                   name: current.name,
                   category: 'Construction',
                   subcategory: current.category,
-                  image: headerImage,
+                  image: displayImage,
                   description: current.description,
                   price: current.price || '',
                   rating: current.rating,

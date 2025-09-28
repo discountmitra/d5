@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import LikeButton from "../components/common/LikeButton";
 import OfferCards from "../components/common/OfferCards";
 import { categoryOffers } from "../constants/offerData";
+import { salonServices, SalonLocation } from "./beauty-salon";
 
 type UserType = 'normal' | 'vip';
 
@@ -35,14 +36,19 @@ export default function SalonDetailScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const navigation = useNavigation();
-  const salon = useMemo(() => ({
-    id: (params.id as string) || "",
-    name: (params.name as string) || "Hair Zone Makeover",
-    address: (params.address as string) || "Near Gandhi Nagar, Subash Nagar Road, Sircilla",
-    rating: parseFloat((params.rating as string) || "4.8"),
-    reviews: parseInt((params.reviews as string) || "234"),
-    image: typeof params.image === 'string' ? (params.image as string) : "",
-  }), [params]);
+  const salon = useMemo(() => {
+    const salonId = (params.id as string) || "";
+    const salonData = salonServices.find((s: SalonLocation) => s.id === salonId);
+    
+    return {
+      id: salonId,
+      name: (params.name as string) || salonData?.name || "Hair Zone Makeover",
+      address: (params.address as string) || salonData?.address || "Near Gandhi Nagar, Subash Nagar Road, Sircilla",
+      rating: parseFloat((params.rating as string) || salonData?.rating?.toString() || "4.8"),
+      reviews: parseInt((params.reviews as string) || salonData?.reviews?.toString() || "234"),
+      image: typeof params.image === 'string' ? (params.image as string) : (salonData?.image || ""),
+    };
+  }, [params]);
 
   const [userName, setUserName] = useState("");
   const [userPhone, setUserPhone] = useState("");
