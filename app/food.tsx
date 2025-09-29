@@ -249,8 +249,8 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   list: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: 12,
+    paddingBottom: 24,
   },
   emptyContainer: {
     padding: 24,
@@ -277,20 +277,20 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 16,
+    borderRadius: 14,
     overflow: "hidden",
-    marginBottom: 16,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: "#e5e7eb",
     shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 6 },
-    shadowRadius: 12,
-    elevation: 3,
+    shadowOpacity: 0.06,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+    elevation: 2,
   },
   image: {
     width: "100%",
-    height: 180,
+    height: 168,
   },
   homeDeliveryPill: {
     position: "absolute",
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cardBody: {
-    padding: 16,
+    padding: 14,
   },
   titleRow: {
     flexDirection: "row",
