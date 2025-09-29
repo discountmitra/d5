@@ -9,7 +9,10 @@ import {
   Image,
   Modal,
   ActivityIndicator,
+  FlatList,
+  Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 import LikeButton from '../components/common/LikeButton';
@@ -58,6 +61,10 @@ export default function EventDetailScreen() {
   const [bookingId, setBookingId] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showStickyHeader, setShowStickyHeader] = useState(false);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+  const [viewerData, setViewerData] = useState<{ id: number; url: string }[]>([]);
+  const viewerListRef = useRef<FlatList<any>>(null);
 
   const faqData = [
     {
@@ -375,6 +382,103 @@ export default function EventDetailScreen() {
     normalUserOffer: (params.normalUserOffer as string) || "",
     vipUserOffer: (params.vipUserOffer as string) || "",
   }), [currentEvent, eventIdStr, params.normalUserOffer, params.vipUserOffer]);
+  const isBirthdayDecoration = event.name === 'Birthday Decoration' && event.category === 'Decoration';
+  const birthdayGalleryImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/bdy/2.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/bdy/3.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/bdy/4.jpg',
+  ];
+  const isHaldiDecoration = event.name === 'Haldi Decoration' && event.category === 'Decoration';
+  const haldiGalleryImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/haldi/1.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/haldi/2.webp',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/haldi/3.webp',
+  ];
+  const isWeddingDecoration = event.name === 'Wedding Decoration' && event.category === 'Decoration';
+  const weddingGalleryImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/1.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/2.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/3.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/5.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/6.jpg',
+  ];
+  const isReceptionDecoration = event.name === 'Reception Decoration' && event.category === 'Decoration';
+  const receptionGalleryImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/8.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/8.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/10.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/wedding/11.jpg',
+  ];
+  const isPremiumDecoration = event.name === 'Premium Decorations' && event.category === 'Decoration';
+  const premiumGalleryImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/premium-decoration/1.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/premium-decoration/2.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/premium-decoration/3.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/premium-decoration/4.jpg',
+  ];
+  // New non-decoration galleries
+  const isTentHouse = event.name === 'Tent House Services' && event.category === 'Tent House';
+  const tentHouseImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/tent-house/1.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/tent-house/2.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/tent-house/3.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/tent-house/4.jpg',
+  ];
+  const isDJServices = event.name === 'DJ Services' && event.category === 'DJ & Lighting';
+  const djServicesImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/dj-lighting/dj/2.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/dj-lighting/dj/3.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/dj-lighting/dj/4.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/dj-lighting/dj/5.jpg',
+  ];
+  const isLightingServices = event.name === 'Lighting Services' && event.category === 'DJ & Lighting';
+  const lightingServicesImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/dj-lighting/lighting/1.webp',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/dj-lighting/lighting/3.jpg',
+  ];
+  const isThadakalaPandiri = event.name === 'Thadakala Pandiri' && event.category === 'Thadakala Pandiri';
+  const thadakalaPandiriImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/thadakala-pandiri/1.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/decoration/thadakala-pandiri/2.jpg',
+  ];
+  const isVinayakaCatering = event.name === 'Vinayaka Catering' && event.category === 'Catering';
+  const vinayakaCateringImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/catering/3.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/catering/3.jpg',
+  ];
+  const isCateringStaff = event.name === 'Catering Staff Service' && event.category === 'Catering';
+  const cateringStaffImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/catering/1.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/catering/2.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/catering/5.jpg',
+  ];
+  const isMehendiArt = event.name === 'Mehendi Art' && event.category === 'Mehendi Art';
+  const mehendiArtImages = [
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/mehendi/1.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/mehendi/2.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/mehendi/3.jpg',
+    'https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/events-services/mehendi/4.jpg',
+  ];
+
+  const currentGalleryImages = (
+    isBirthdayDecoration ? birthdayGalleryImages :
+    isHaldiDecoration ? haldiGalleryImages :
+    isWeddingDecoration ? weddingGalleryImages :
+    isReceptionDecoration ? receptionGalleryImages :
+    isPremiumDecoration ? premiumGalleryImages :
+    isTentHouse ? tentHouseImages :
+    isDJServices ? djServicesImages :
+    isLightingServices ? lightingServicesImages :
+    isThadakalaPandiri ? thadakalaPandiriImages :
+    isVinayakaCatering ? vinayakaCateringImages :
+    isCateringStaff ? cateringStaffImages :
+    isMehendiArt ? mehendiArtImages :
+    []
+  );
+  const getItemLayout = (_: any, index: number) => {
+    const width = Dimensions.get('window').width;
+    return { length: width, offset: width * index, index };
+  };
 
   return (
     <View style={styles.container}>
@@ -489,6 +593,36 @@ export default function EventDetailScreen() {
             serviceType={event.category}
           />
         </View>
+
+        {/* Gallery section (for supported event types) */}
+        {currentGalleryImages.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.galleryHeaderRow}>
+              <Text style={styles.sectionTitle}>Our Work Gallery</Text>
+              <View style={styles.galleryBadge}><Text style={styles.galleryBadgeText}>{currentGalleryImages.length} Photos</Text></View>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.galleryRow}>
+              {currentGalleryImages.map((uri, idx) => (
+                <TouchableOpacity
+                  key={`${uri}-${idx}`}
+                  activeOpacity={0.9}
+                  style={styles.galleryCard}
+                  onPress={() => {
+                    setActiveGalleryIndex(idx);
+                    setViewerData(currentGalleryImages.map((u, i) => ({ id: i + 1, url: u })));
+                    setShowGalleryModal(true);
+                  }}
+                >
+                  <Image source={{ uri }} style={styles.galleryImage} resizeMode="cover" />
+                  <View style={styles.galleryOverlay} />
+                  <View style={styles.galleryCornerBadge}>
+                    <Ionicons name="expand" size={14} color="#fff" />
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
 
         {/* Booking Form */}
@@ -723,6 +857,47 @@ export default function EventDetailScreen() {
             </View>
           </View>
         </View>
+      </Modal>
+
+      {/* Gallery Fullscreen Modal */}
+      <Modal visible={showGalleryModal} animationType="fade" transparent={false} onRequestClose={() => setShowGalleryModal(false)}>
+        <SafeAreaView style={styles.viewerContainer}>
+          <View style={styles.viewerHeader}>
+            <TouchableOpacity style={styles.viewerBackButton} onPress={() => setShowGalleryModal(false)}>
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            <View style={styles.viewerTitleWrap}>
+              <Text style={styles.viewerTitle} numberOfLines={1}>Gallery</Text>
+              <Text style={styles.viewerCounter}>{activeGalleryIndex + 1} / {viewerData.length}</Text>
+            </View>
+            <View style={{ width: 40 }} />
+          </View>
+
+          <FlatList
+            ref={viewerListRef}
+            data={viewerData}
+            keyExtractor={(item) => String(item.id)}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            initialScrollIndex={activeGalleryIndex}
+            getItemLayout={getItemLayout}
+            onMomentumScrollEnd={(e) => {
+              const { width } = Dimensions.get('window');
+              const index = Math.round(e.nativeEvent.contentOffset.x / width);
+              setActiveGalleryIndex(index);
+            }}
+            renderItem={({ item }) => (
+              <View style={styles.viewerSlide}>
+                <Image source={{ uri: item.url }} style={styles.viewerImage} resizeMode="contain" />
+              </View>
+            )}
+          />
+
+          <View style={styles.viewerCaptionWrap}>
+            <Text style={styles.viewerCaption} numberOfLines={1}>Photo</Text>
+          </View>
+        </SafeAreaView>
       </Modal>
 
       {/* Loading Modal */}
@@ -1081,17 +1256,17 @@ const styles = StyleSheet.create({
   },
   section: {
     backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 16,
-    padding: 20,
+    marginHorizontal: 12,
+    marginBottom: 12,
+    borderRadius: 14,
+    padding: 14,
     shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.03,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 6,
+    elevation: 1,
   },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: '#111827', marginBottom: 16 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#111827', marginBottom: 12 },
   userTypeButtons: { flexDirection: 'row', gap: 12 },
   userTypeButton: { flex: 1, paddingVertical: 16, paddingHorizontal: 16, borderRadius: 12, borderWidth: 2, borderColor: '#e5e7eb', alignItems: 'center' },
   userTypeButtonActive: { borderColor: '#e91e63', backgroundColor: '#e91e63' },
@@ -1177,4 +1352,32 @@ const styles = StyleSheet.create({
   bookingCodeNote: { fontSize: 11, color: '#9ca3af', textAlign: 'center' },
   successButton: { paddingVertical: 14, borderRadius: 10, alignItems: 'center' },
   successButtonText: { fontSize: 15, fontWeight: '700', color: '#ffffff' },
+  // Gallery styles
+  galleryHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 },
+  galleryBadge: { backgroundColor: '#f3f4f6', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
+  galleryBadgeText: { fontSize: 12, fontWeight: '700', color: '#6b7280' },
+  galleryRow: { paddingVertical: 6 },
+  galleryCard: { width: 160, height: 110, borderRadius: 12, overflow: 'hidden', marginRight: 12, backgroundColor: '#e5e7eb' },
+  galleryImage: { width: '100%', height: '100%' },
+  galleryOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.08)' },
+  galleryCornerBadge: { position: 'absolute', right: 8, bottom: 8, backgroundColor: 'rgba(17,24,39,0.7)', paddingHorizontal: 8, paddingVertical: 6, borderRadius: 999 },
+  galleryModalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', paddingTop: 50 },
+  galleryTopBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 8 },
+  galleryCloseBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  galleryCounterWrap: { flexDirection: 'row', alignItems: 'center' },
+  galleryCounterText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  galleryCounterTotal: { color: '#9ca3af', fontSize: 12, marginLeft: 4 },
+  gallerySlide: { width: Dimensions.get('window').width, height: Dimensions.get('window').height - 120, alignItems: 'center', justifyContent: 'center' },
+  gallerySlideImage: { width: '100%', height: '100%' },
+  // Viewer (food-like) styles
+  viewerContainer: { flex: 1, backgroundColor: '#000' },
+  viewerHeader: { height: 56, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  viewerBackButton: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.15)' },
+  viewerTitleWrap: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  viewerTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  viewerCounter: { color: '#9ca3af', fontSize: 12 },
+  viewerSlide: { width: Dimensions.get('window').width, height: Dimensions.get('window').height - 160, alignItems: 'center', justifyContent: 'center' },
+  viewerImage: { width: '100%', height: '100%' },
+  viewerCaptionWrap: { position: 'absolute', left: 0, right: 0, bottom: 24, alignItems: 'center' },
+  viewerCaption: { color: '#e5e7eb', fontSize: 12 },
 });
