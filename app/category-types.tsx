@@ -96,6 +96,8 @@ export default function CategoryTypesScreen() {
           { id: 'Function Halls', label: 'Function Halls', icon: 'business', description: 'Halls & capacity' },
           { id: 'Catering', label: 'Catering', icon: 'restaurant', description: 'Veg & Non-veg catering' },
           { id: 'Mehendi Art', label: 'Mehendi Art', icon: 'brush', description: 'Bridal & party mehendi' },
+          { id: 'Photography', label: 'Photography', icon: 'camera', description: 'Birthday, Saree, Wedding, Photoshoot' },
+          { id: 'Chef', label: 'Chef', icon: 'restaurant', description: 'Home / Function hall, 1-5 days' },
         ];
       case 'construction':
         return [
@@ -143,7 +145,17 @@ export default function CategoryTypesScreen() {
           <TouchableOpacity
             activeOpacity={0.9}
             style={styles.typeCard}
-            onPress={() => router.push({ pathname: PATH_MAP[category], params: { preselect: item.id } })}
+            onPress={() => {
+              if (category === 'events' && item.id === 'Photography') {
+                router.push('/photography-request');
+                return;
+              }
+              if (category === 'events' && item.id === 'Chef') {
+                router.push('/chef-request');
+                return;
+              }
+              router.push({ pathname: PATH_MAP[category], params: { preselect: item.id } });
+            }}
           >
             <View style={styles.iconWrap}>
               <Ionicons name={item.icon} size={22} color="#334155" />

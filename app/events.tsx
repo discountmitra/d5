@@ -6,7 +6,7 @@ import { useNavigation, router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import LikeButton from "../components/common/LikeButton";
 
-type CategoryKey = "Decoration" | "Tent House" | "DJ & Lighting" | "Thadakala Pandiri" | "Function Halls" | "Catering" | "Mehendi Art";
+type CategoryKey = "Decoration" | "Tent House" | "DJ & Lighting" | "Thadakala Pandiri" | "Function Halls" | "Catering" | "Mehendi Art" | "Photography" | "Chef";
 
 type EventService = {
   id: string;
@@ -42,6 +42,8 @@ export default function EventsScreen() {
     "Function Halls",
     "Catering",
     "Mehendi Art",
+    "Photography",
+    "Chef",
   ];
 
   useEffect(() => {
@@ -306,6 +308,34 @@ export default function EventsScreen() {
         availability: "Available Now",
         image: "https://images.unsplash.com/photo-1505932794465-147d1f1b2c97?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVoZW5kaXxlbnwwfHwwfHx8MA%3D%3D",
       },
+      // Photography (New)
+      {
+        id: "photography-service",
+        name: "Professional Photography",
+        description: "Birthday, Wedding, Functions & More",
+        category: "Photography",
+        icon: "camera",
+        price: "Custom Quote",
+        details: "Select event type and submit a request",
+        rating: 4.8,
+        reviews: 540,
+        availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&auto=format&fit=crop&q=60",
+      },
+      // Chef (New)
+      {
+        id: "chef-service",
+        name: "Chef Service",
+        description: "Home or Function Hall – 1 to 5 Days",
+        category: "Chef",
+        icon: "restaurant",
+        price: "Custom Quote",
+        details: "Tell us venue type, days and date",
+        rating: 4.7,
+        reviews: 410,
+        availability: "Available Now",
+        image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800&auto=format&fit=crop&q=60",
+      },
     ],
     []
   );
@@ -388,6 +418,14 @@ export default function EventsScreen() {
             activeOpacity={0.9} 
             style={styles.card}
             onPress={() => {
+              if (item.category === 'Photography') {
+                router.push({ pathname: "/photography-request" });
+                return;
+              }
+              if (item.category === 'Chef') {
+                router.push({ pathname: "/chef-request" });
+                return;
+              }
               const eventId = item.name.toLowerCase().replace(/\s+/g, '-');
               router.push({ pathname: "/event-detail", params: { eventId, image: item.image || "", normalUserOffer: item.normalUserOffer || "", vipUserOffer: item.vipUserOffer || "" } });
             }}
