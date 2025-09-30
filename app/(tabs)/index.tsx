@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import Header from "@/components/home/Header";
 import DealCard from "../../components/home/DealCard";
@@ -40,22 +40,16 @@ export default function HomeScreen() {
         {/* Greeting + Search */}
         <CustomTopBar />
 
-        {/* VIP Upgrade Section - Below search bar */}
-        {!isVip && (
-          <View style={styles.upgradeSection}>
-            <View style={styles.upgradeBanner}>
-              <View style={styles.bannerContent}>
-                <Ionicons name="flash" size={16} color="#f59e0b" />
-                <Text style={styles.bannerText}>
-                  Upgrade to VIP and unlock 2X discounts on all services
-                </Text>
-              </View>
-              <TouchableOpacity onPress={handleUpgrade} style={styles.subscribeButton}>
-                <Text style={styles.subscribeText}>Subscribe Now</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
+        {/* VIP Banner Image - Clickable */}
+        <View style={styles.upgradeSection}>
+          <TouchableOpacity activeOpacity={0.9} onPress={() => router.push('/vip-subscription')}> 
+            <Image
+              source={require('../../assets/vip-banner.png')}
+              style={styles.bannerImage}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        </View>
 
         {/* Hot Deal (static for now) */}
         <DealCard />
@@ -126,5 +120,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: '600',
+  },
+  bannerImage: {
+    width: '100%',
+    height: 120,
+    borderRadius: 12,
   },
 });

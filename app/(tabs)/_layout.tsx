@@ -10,7 +10,9 @@ export default function TabsLayout() {
   return (
     <Tabs 
       screenOptions={{ 
-        headerShown: true,
+        headerShown: false,
+        sceneStyle: { backgroundColor: '#fff' },
+        animation: 'none',
         headerTitleStyle: { fontFamily: FontWeights.semibold },
         tabBarStyle: {
           backgroundColor: "#ffffff",

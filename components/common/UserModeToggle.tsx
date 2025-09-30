@@ -161,30 +161,7 @@ export default function UserModeToggle({ onModeChange }: UserModeToggleProps) {
           </TouchableOpacity>
         </View>
 
-        {/* Location Row */}
-        <LinearGradient
-          colors={["#ffffff", "#f8fafc"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.locationGradient}
-        >
-          <View style={styles.locationRow}>
-            <View style={styles.locationContent}>
-              <Ionicons name="location-outline" size={20} color="#000" />
-              <Text style={styles.locationText}>1226 University Dr</Text>
-              <Ionicons name="chevron-down" size={18} color="#000" />
-            </View>
-
-            <View style={styles.iconRow}>
-              <TouchableOpacity>
-                <Ionicons name="notifications-outline" size={22} color="#000" />
-              </TouchableOpacity>
-              <TouchableOpacity style={{ marginLeft: 16 }}>
-                <Ionicons name="cart-outline" size={22} color="#000" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </LinearGradient>
+        {/* Location Row removed as requested */}
       </View>
 
       {/* Upgrade Confirmation Popup */}
@@ -341,7 +318,7 @@ const styles = StyleSheet.create({
   },
   toggleContainer: {
     flexDirection: 'row',
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#ffffff',
     borderRadius: 20,
     padding: 3,
     position: 'relative',
@@ -415,19 +392,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  locationGradient: {
-    marginTop: 16,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: '#eef2ff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
+  locationGradient: {},
   benefitsList: {
     backgroundColor: '#f8fafc',
     borderRadius: 12,

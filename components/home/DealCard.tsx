@@ -2,6 +2,7 @@ import { View, Text, Image, StyleSheet, Dimensions, ImageSourcePropType, Touchab
 import Carousel from "react-native-reanimated-carousel";
 import { Colors, FontSizes, Spacing, FontWeights } from "../../theme";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 
 const { width } = Dimensions.get("window");
 
@@ -35,6 +36,7 @@ const deals: Deal[] = [
 
 export default function DealCard() {
   const router = useRouter();
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const handleDealPress = (dealId: number) => {
     switch (dealId) {
@@ -94,12 +96,28 @@ export default function DealCard() {
         autoPlayInterval={3000}
         data={deals}
         scrollAnimationDuration={800}
+        onSnapToItem={(index) => setActiveIndex(index)}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card} onPress={() => handleDealPress(item.id)} activeOpacity={0.8}>
             <Image source={item.image} style={styles.image} />
           </TouchableOpacity>
         )}
       />
+
+      {/* Pagination: Dots before + numbered pill (current/total) + dots after */}
+      <View style={styles.paginationWrap}>
+        <View style={styles.dotsRow}>
+          {Array.from({ length: Math.max(0, activeIndex) }).map((_, i) => (
+            <View key={`before-${i}`} style={styles.dot} />
+          ))}
+          <View style={styles.numberDot}>
+            <Text style={styles.numberText}>{activeIndex + 1}/{deals.length}</Text>
+          </View>
+          {Array.from({ length: Math.max(0, deals.length - (activeIndex + 1)) }).map((_, i) => (
+            <View key={`after-${i}`} style={styles.dot} />
+          ))}
+        </View>
+      </View>
     </View>
   );
 }
@@ -133,5 +151,52 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "cover",
+  },
+  paginationWrap: {
+    marginTop: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  counterPill: {
+    backgroundColor: '#e6f7ef',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 6,
+  },
+  counterText: {
+    color: '#15803d',
+    fontSize: 12,
+    fontFamily: FontWeights.bold,
+  },
+  dotsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  numberDot: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 18,
+  },
+  numberText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontFamily: FontWeights.bold,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#e5e7eb',
+  },
+  dotActive: {
+    width: 12,
+    borderRadius: 6,
+    backgroundColor: Colors.primary,
   },
 });

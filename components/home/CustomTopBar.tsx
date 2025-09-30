@@ -32,10 +32,16 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     paddingHorizontal: 12,
     paddingVertical: 6,
+    borderWidth: 0,
+    borderColor: "transparent",
   },
   input: {
     flex: 1,
     fontSize: 14,
     color: "#000",
+    backgroundColor: "#ffffff",
+    borderRadius: 18,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
 });
