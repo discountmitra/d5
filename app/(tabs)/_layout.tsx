@@ -12,7 +12,6 @@ export default function TabsLayout() {
       screenOptions={{ 
         headerShown: false,
         sceneStyle: { backgroundColor: '#fff' },
-        animation: 'none',
         headerTitleStyle: { fontFamily: FontWeights.semibold },
         tabBarStyle: {
           backgroundColor: "#ffffff",
@@ -22,8 +21,8 @@ export default function TabsLayout() {
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.1,
           shadowRadius: 8,
-          height: 55 + insets.bottom,
-          paddingBottom: insets.bottom + 4,
+          height: 58 + insets.bottom,
+          paddingBottom: insets.bottom + 10,
           paddingTop: 4,
         },
         tabBarActiveTintColor: "#111827",
@@ -36,8 +35,6 @@ export default function TabsLayout() {
         tabBarIconStyle: {
           marginTop: 2,
         },
-        tabBarPressColor: "rgba(255, 255, 255, 0.1)",
-        tabBarPressOpacity: 0.1,
       }}
     >
       <Tabs.Screen
@@ -49,13 +46,6 @@ export default function TabsLayout() {
               name={focused ? "home" : "home-outline"} 
               size={20} 
               color={color} 
-            />
-          ),
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              {...props}
-              style={[props.style, { backgroundColor: 'transparent' }]}
-              activeOpacity={0.7}
             />
           )
         }}
@@ -70,13 +60,6 @@ export default function TabsLayout() {
               size={20} 
               color={color} 
             />
-          ),
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              {...props}
-              style={[props.style, { backgroundColor: 'transparent' }]}
-              activeOpacity={0.7}
-            />
           )
         }}
       />
@@ -89,13 +72,6 @@ export default function TabsLayout() {
               name={focused ? "person" : "person-outline"} 
               size={20} 
               color={color} 
-            />
-          ),
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              {...props}
-              style={[props.style, { backgroundColor: 'transparent' }]}
-              activeOpacity={0.7}
             />
           )
         }}
