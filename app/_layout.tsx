@@ -53,7 +53,7 @@ function AppNavigator() {
   return (
     <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
       {authState.isAuthenticated ? (
-        <Stack.Screen name="(main)" />
+        <Stack.Screen name="(tabs)" />
       ) : (
         <Stack.Screen name="(auth)" />
       )}
