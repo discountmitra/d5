@@ -295,7 +295,7 @@ export default function RestaurantDetailScreen() {
               <Text style={styles.sectionTitle}>Address</Text>
               <TouchableOpacity style={styles.directionsButton} onPress={handleDirections}>
                 <Ionicons name="map" size={16} color="#2563eb" />
-                <Text style={styles.directionsText}>Directions</Text>
+                <Text style={styles.directionsText}>Maps</Text>
               </TouchableOpacity>
             </View>
             <Text style={styles.addressText}>{restaurant.area}, {restaurant.distance}</Text>
