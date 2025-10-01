@@ -136,6 +136,89 @@ export const restaurantData: Restaurant[] = [
     savePercent: 20,
   },
   {
+    id: "4",
+    name: "Sithaara Family Restaurant",
+    category: "Food",
+    image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/food/sitaara/1.jpg",
+    specialist: ["South Indian", "North Indian", "Chinese"],
+    menu: {
+      "recommended": [
+        { "item": "Veg Thali", "price": 199 },
+        { "item": "Chicken Biryani", "price": 249 },
+        { "item": "Paneer Butter Masala", "price": 229 }
+      ]
+    },
+    discounts: {
+      normal_users: "5% Discount",
+      vip_users: "10% Discount"
+    },
+    actions: {
+      book_table: "Book Now",
+      takeaway: true
+    },
+    offers: {
+      cashback: "Up to 7% cashback",
+      payment: "Online Payment"
+    },
+    photos: [
+      "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/food/sitaara/2.jpg",
+      "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/food/sitaara/3.jpg",
+      "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/food/sitaara/4.jpg"
+    ],
+    rating: 4.6,
+    reviews: 420,
+    distance: "2.1km",
+    prepTime: "20-30 mins",
+    phone: "+91 98765 40001",
+    openTime: "11:00 AM - 11:00 PM",
+    area: "Gandhi Chowk Beside Radha Madhav Shopping Mall, Sircilla, Telangana 505301",
+    priceForTwo: "₹600 for two",
+    opensIn: "Open Now",
+    savePercent: 15,
+  },
+  {
+    id: "5",
+    name: "Riyan Dhaba",
+    category: "Food",
+    image: "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/food/riyan/1.jpg",
+    specialist: ["Dhaba Style", "Biryani", "Tandoor"],
+    menu: {
+      "best_sellers": [
+        { "item": "Tandoori Chicken", "price": 299 },
+        { "item": "Mutton Curry", "price": 349 },
+        { "item": "Butter Naan", "price": 45 }
+      ]
+    },
+    discounts: {
+      normal_users: "8% Discount",
+      vip_users: "12% Discount"
+    },
+    actions: {
+      book_table: "Book Now",
+      takeaway: true
+    },
+    offers: {
+      cashback: "Up to 10% cashback",
+      payment: "Online Payment"
+    },
+    photos: [
+      "https://ocvlqfitgajfyfgwtrar.supabase.co/storage/v1/object/public/dm-images/food/riyan/2.jpg",
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHJlc3RhdXJhbnR8ZW58MHx8MHx8fDA%3D",
+      "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHJlc3RhdXJhbnR8ZW58MHx8MHx8fDA%3D",
+      "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHJlc3RhdXJhbnR8ZW58MHx8MHx8fDA%3D"
+    ],
+    rating: 4.5,
+    reviews: 310,
+    distance: "6.5km",
+    prepTime: "25-35 mins",
+    phone: "+91 98765 40002",
+    openTime: "12:00 PM - 12:00 AM",
+    area: "Sy No 1139, near Mallikarjuna Temple, Ragudu, Sircilla Rural, Telangana 505302",
+    priceForTwo: "₹700 for two",
+    opensIn: "Open Now",
+    savePercent: 10,
+  },
+  {
     id: "2",
     name: "Shankar Chat",
     image: "https://images.unsplash.com/photo-1596522869169-95231d2b6864?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGFuaSUyMHB1cml8ZW58MHx8MHx8fDA%3D",

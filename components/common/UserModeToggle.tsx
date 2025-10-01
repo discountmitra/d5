@@ -219,6 +219,14 @@ export default function UserModeToggle({ onModeChange }: UserModeToggleProps) {
                 <Ionicons name="checkmark-circle" size={20} color="#10b981" />
                 <Text style={styles.benefitText}>Priority customer support</Text>
               </View>
+              <View style={styles.benefitItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#10b981" />
+                <Text style={styles.benefitText}>Save up to ₹9,999+ every year</Text>
+              </View>
+              <View style={styles.benefitItem}>
+                <Ionicons name="checkmark-circle" size={20} color="#10b981" />
+                <Text style={styles.benefitText}>Save time and money on every request</Text>
+              </View>
             </View>
 
             <View style={styles.popupButtons}>

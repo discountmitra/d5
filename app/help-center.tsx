@@ -210,7 +210,7 @@ export default function HelpCenterScreen() {
             </View>
             <View style={styles.contactContent}>
               <Text style={styles.contactTitle}>Call Us</Text>
-              <Text style={styles.contactSubtitle}>+1 (234) 567-8900</Text>
+              <Text style={styles.contactSubtitle}>+91 8247556470 </Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </TouchableOpacity>
@@ -221,7 +221,7 @@ export default function HelpCenterScreen() {
             </View>
             <View style={styles.contactContent}>
               <Text style={styles.contactTitle}>Email Us</Text>
-              <Text style={styles.contactSubtitle}>support@discountmithra.com</Text>
+              <Text style={styles.contactSubtitle}>admin@discountmithra.com </Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#9ca3af" />
           </TouchableOpacity>

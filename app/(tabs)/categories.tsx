@@ -53,12 +53,12 @@ export default function CategoriesScreen() {
   }, [searchQuery]);
 
   return (
-    <LinearGradient
-      colors={userMode === 'vip' ? ["#ffd88a", "#ffffff", "#f6f9ff"] : ["#cfe4ff", "#ffffff", "#f6f9ff"]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
+      <LinearGradient
+        colors={userMode === 'vip' ? ["#ffd88a", "#ffffff", "#f6f9ff"] : ["#cfe4ff", "#ffffff", "#f6f9ff"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flex: 1 }}
+      >
       {/* Search Bar */}
       <LinearGradient
         colors={userMode === 'vip' ? ["#ffe1a6", "#ffffff"] : ["#d9ebff", "#ffffff"]}

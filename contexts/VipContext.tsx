@@ -158,8 +158,9 @@ export function VipProvider({ children }: VipProviderProps) {
       }
 
       const normalizedCode = (options?.couponCode || '').trim().toUpperCase();
-      const isCouponValid = normalizedCode === 'MYMLAKTR';
-      const discountPct = isCouponValid ? (options?.discountPct ?? 0.5) : 0;
+      const isCouponValid = normalizedCode === 'MYMLAKTR' || normalizedCode === 'MANASRCL';
+      const defaultPct = normalizedCode === 'MYMLAKTR' ? 0.5 : normalizedCode === 'MANASRCL' ? 0.3 : 0;
+      const discountPct = isCouponValid ? (options?.discountPct ?? defaultPct) : 0;
       const computedFinalPrice = Math.max(0, Math.round((options?.finalPrice ?? plan.price * (1 - discountPct))));
 
       const newSubscription: UserSubscription = {

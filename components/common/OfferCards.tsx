@@ -1,8 +1,10 @@
 import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { serviceOffers, categoryOffers } from '../../constants/offerData';
+import { useVip } from '../../contexts/VipContext';
+import { router } from 'expo-router';
 
 interface OfferCardsProps {
   normalOffers?: string[];
@@ -110,6 +112,14 @@ const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, catego
   const colors = getCategoryColors();
   const textColor = getCategoryTextColor();
 
+  const { isVip } = useVip();
+
+  const handleVipPress = () => {
+    if (!isVip) {
+      router.push('/vip-subscription');
+    }
+  };
+
   return (
     <View style={styles.offersContainer}>
       {/* Normal User Section */}
@@ -139,12 +149,13 @@ const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, catego
       </LinearGradient>
 
       {/* VIP User Section */}
-      <LinearGradient 
-        colors={colors.vip} 
-        start={{ x: 0, y: 0 }} 
-        end={{ x: 1, y: 1 }} 
-        style={styles.offerCard}
-      >
+      <TouchableOpacity activeOpacity={0.85} onPress={handleVipPress} style={{ flex: 1 }}>
+        <LinearGradient 
+          colors={colors.vip} 
+          start={{ x: 0, y: 0 }} 
+          end={{ x: 1, y: 1 }} 
+          style={styles.offerCard}
+        >
         <Animated.View
           pointerEvents="none"
           style={[styles.shimmerOverlay, { transform: [{ translateX: shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [-200, 400] }) }] }]}
@@ -160,15 +171,16 @@ const OfferCards: React.FC<OfferCardsProps> = ({ normalOffers, vipOffers, catego
             <Text style={styles.vipBadgeText}>Premium</Text>
           </View>
         </View>
-        <View style={styles.offerCardBody}>
+          <View style={styles.offerCardBody}>
           {offers.vip.map((offer, i) => (
             <View key={i} style={styles.offerRow}>
               <View style={styles.vipBullet} />
               <Text style={styles.vipOfferText}>{offer}</Text>
             </View>
           ))}
-        </View>
-      </LinearGradient>
+          </View>
+        </LinearGradient>
+      </TouchableOpacity>
     </View>
   );
 };

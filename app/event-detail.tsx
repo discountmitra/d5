@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
+import { useVip } from '../contexts/VipContext';
 import LikeButton from '../components/common/LikeButton';
 import OfferCards from '../components/common/OfferCards';
 import { categoryOffers } from '../constants/offerData';
@@ -37,6 +38,7 @@ export default function EventDetailScreen() {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
   const { eventId } = params;
+  const { userMode } = useVip();
   const eventIdStr = Array.isArray(eventId) ? (eventId?.[0] ?? '') : (eventId ?? '');
   const headerImage = typeof params.image === 'string' ? (params.image as string) : '';
   
@@ -798,7 +800,9 @@ export default function EventDetailScreen() {
             onPress={handleBooking} 
             style={styles.bookButton}
           >
-            <Text style={styles.bookButtonText}>{currentEvent.Button}</Text>
+            <Text style={styles.bookButtonText}>
+              {userMode === 'vip' ? 'Request Now (Free)' : 'Request Now (₹9)'}
+            </Text>
           </TouchableOpacity>
         </View>
 

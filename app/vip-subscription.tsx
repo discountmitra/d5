@@ -18,6 +18,7 @@ export default function VipSubscriptionScreen() {
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [couponError, setCouponError] = useState<string | null>(null);
+  const [couponDiscountPct, setCouponDiscountPct] = useState(0);
 
   const subscriptionStatus = getSubscriptionStatus();
   const shimmerAnim = useRef(new Animated.Value(0)).current;
@@ -61,13 +62,14 @@ export default function VipSubscriptionScreen() {
 
     try {
       const normalized = couponCode.trim().toUpperCase();
-      const isValidCoupon = normalized === 'MYMLAKTR';
-      const discountPct = isValidCoupon ? 0.5 : 0;
-      const finalPrice = Math.max(0, Math.round(selectedPlan.price * (1 - discountPct)));
+      const isValidCoupon = normalized === 'MYMLAKTR' || normalized === 'MANASRCL';
+      const pct = normalized === 'MYMLAKTR' ? 0.5 : normalized === 'MANASRCL' ? 0.3 : 0;
+      const appliedPct = couponApplied ? (couponDiscountPct || pct) : 0;
+      const finalPrice = Math.max(0, Math.round(selectedPlan.price * (1 - appliedPct)));
 
       const success = await subscribeToPlan(selectedPlan.id, {
         couponCode: isValidCoupon ? normalized : undefined,
-        discountPct: isValidCoupon ? 0.5 : undefined,
+        discountPct: isValidCoupon ? appliedPct : undefined,
         finalPrice,
       });
       if (success) {
@@ -233,13 +235,20 @@ export default function VipSubscriptionScreen() {
                     if (!code) {
                       setCouponError('Enter a coupon code');
                       setCouponApplied(false);
+                      setCouponDiscountPct(0);
                       return;
                     }
                     if (code === 'MYMLAKTR') {
                       setCouponApplied(true);
+                      setCouponDiscountPct(0.5);
+                      setCouponError(null);
+                    } else if (code === 'MANASRCL') {
+                      setCouponApplied(true);
+                      setCouponDiscountPct(0.3);
                       setCouponError(null);
                     } else {
                       setCouponApplied(false);
+                      setCouponDiscountPct(0);
                       setCouponError('Invalid coupon');
                     }
                   }}
@@ -252,10 +261,10 @@ export default function VipSubscriptionScreen() {
               {couponApplied ? (
                 <View style={styles.couponSuccessRow}>
                   <Ionicons name="checkmark-circle" size={16} color="#10b981" />
-                  <Text style={styles.couponSuccessText}>Coupon applied! 50% off on all plans.</Text>
+                  <Text style={styles.couponSuccessText}>Coupon applied! {Math.round((couponDiscountPct || 0) * 100)}% off on all plans.</Text>
                 </View>
               ) : (
-                <Text style={styles.couponHint}>Tip: Use code MYMLAKTR for 50% off.</Text>
+                <Text style={styles.couponHint}>Tip: Use MYMLAKTR (50% off) or MANASRCL (30% off).</Text>
               )}
             </LinearGradient>
 
@@ -271,7 +280,7 @@ export default function VipSubscriptionScreen() {
                     <View style={styles.planPriceWrap}>
                       {couponApplied ? (
                         <View style={styles.priceWrap}>
-                          <Text style={styles.goldPriceTextOnly}>₹{Math.max(0, Math.round(plan.price * 0.5))}</Text>
+                          <Text style={styles.goldPriceTextOnly}>₹{Math.max(0, Math.round(plan.price * (1 - (couponDiscountPct || 0))))}</Text>
                           <Text style={styles.strikedPrice}>₹{plan.price}</Text>
                         </View>
                       ) : (
@@ -296,7 +305,7 @@ export default function VipSubscriptionScreen() {
 
                       <TouchableOpacity style={styles.ctaBtn} onPress={() => handleSubscribe(plan)}>
                         <Ionicons name="flash" size={16} color="#fff" />
-                        <Text style={styles.ctaText}>{couponApplied ? 'Subscribe with 50% OFF' : 'Subscribe Now'}</Text>
+                        <Text style={styles.ctaText}>{couponApplied ? `Subscribe with ${Math.round((couponDiscountPct || 0) * 100)}% OFF` : 'Subscribe Now'}</Text>
                       </TouchableOpacity>
                     </View>
                   )}
