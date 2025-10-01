@@ -156,10 +156,12 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f1f5f9",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: "#ffffff",
+    borderRadius: 25,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 0,
+    borderColor: "transparent",
   },
   searchInput: {
     flex: 1,

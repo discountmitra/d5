@@ -92,10 +92,10 @@ export default function ProfileScreen() {
             <Text style={styles.userInfoLabel}>Location</Text>
             <Text style={styles.userInfoValue}>New York, NY</Text>
           </View>
-          <TouchableOpacity style={styles.editProfileButton}>
-            <Ionicons name="create-outline" size={16} color="#3b82f6" />
-            <Text style={styles.editProfileText}>Edit Profile</Text>
-          </TouchableOpacity>
+          <View style={styles.userInfoItem}>
+            <Text style={styles.userInfoLabel}>Member Since</Text>
+            <Text style={styles.userInfoValue}>Jan 2024</Text>
+          </View>
         </View>
       </View>
 
@@ -296,10 +296,12 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f1f5f9",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: "#ffffff",
+    borderRadius: 25,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderWidth: 0,
+    borderColor: "transparent",
   },
   searchInput: {
     flex: 1,
@@ -309,50 +311,34 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     backgroundColor: "#fff",
     marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-    borderRadius: 16,
-    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+    borderRadius: 12,
+    padding: Spacing.md,
     shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
   },
   userInfoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   userInfoItem: {
     flex: 1,
-    marginRight: Spacing.md,
+    marginRight: Spacing.sm,
   },
   userInfoLabel: {
-    fontSize: 13,
+    fontSize: 12,
     color: Colors.secondary,
-    marginBottom: 4,
+    marginBottom: 2,
     fontWeight: "500",
   },
   userInfoValue: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: "600",
     color: Colors.primary,
-  },
-  editProfileButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#eff6ff",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#3b82f6",
-  },
-  editProfileText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#3b82f6",
-    marginLeft: 6,
   },
   cardsContainer: {
     flexDirection: "row",
