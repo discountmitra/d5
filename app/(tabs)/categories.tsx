@@ -78,6 +78,8 @@ export default function CategoriesScreen() {
         </View>
       </LinearGradient>
 
+
+
       <LinearGradient
         colors={userMode === 'vip' ? ["#ffffff", "#f8fafc"] : ["#ffffff", "#f8fafc"]}
         start={{ x: 0, y: 0 }}
@@ -152,11 +154,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
     backgroundColor: "transparent",
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    overflow: 'hidden',
+    position: 'relative',
+    zIndex: 2,
   },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#ffffffcc",
     borderRadius: 25,
     paddingHorizontal: 12,
     paddingVertical: 6,
