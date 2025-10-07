@@ -1,110 +1,176 @@
 import { View, Text, Image, StyleSheet, Animated, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const { width, height } = Dimensions.get("window");
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const { authState } = useAuth();
+
+  // Background section reveal animations
+  const bg1Progress = useRef(new Animated.Value(0)).current;
+  const bg2Progress = useRef(new Animated.Value(0)).current;
+  const bg3Progress = useRef(new Animated.Value(0)).current;
+
+  // Logo/brand animations
   const logoScale = useRef(new Animated.Value(0)).current;
   const logoOpacity = useRef(new Animated.Value(0)).current;
-  const logoRotation = useRef(new Animated.Value(0)).current;
-  const backgroundOpacity = useRef(new Animated.Value(0)).current;
+
+  // Text sequences
+  const brandOpacity = useRef(new Animated.Value(0)).current;
+  const brandTranslateX = useRef(new Animated.Value(-30)).current;
+  const taglineOpacity = useRef(new Animated.Value(0)).current;
+  const taglineTranslateY = useRef(new Animated.Value(20)).current;
+  const taglineScale = useRef(new Animated.Value(0.9)).current;
+  // Removed bottom welcome text
+
+  // Subtle pulsing border overlay
+  const borderPulse = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Start animations
-    Animated.parallel([
-      // Background fade in
-      Animated.timing(backgroundOpacity, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      // Logo scale and fade in
-      Animated.timing(logoOpacity, {
-        toValue: 1,
-        duration: 1200,
-        useNativeDriver: true,
-      }),
-      Animated.spring(logoScale, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }),
-      // Logo rotation
-      Animated.timing(logoRotation, {
-        toValue: 1,
-        duration: 1500,
-        useNativeDriver: true,
-      }),
+    // Layered background reveals (approximate polygon clips with rotated views sliding in)
+    Animated.stagger(200, [
+      Animated.timing(bg1Progress, { toValue: 1, duration: 1500, useNativeDriver: true }),
+      Animated.timing(bg2Progress, { toValue: 1, duration: 1500, useNativeDriver: true }),
+      Animated.timing(bg3Progress, { toValue: 1, duration: 1500, useNativeDriver: true }),
     ]).start();
 
-    // Auto navigate to login after 3 seconds
-    const timer = setTimeout(() => {
-      router.replace("/(auth)/login");
-    }, 3000);
+    // Logo entrance (no rotation)
+    Animated.parallel([
+      Animated.timing(logoOpacity, { toValue: 1, duration: 1100, delay: 400, useNativeDriver: true }),
+      Animated.spring(logoScale, { toValue: 1, delay: 400, tension: 60, friction: 8, useNativeDriver: true }),
+    ]).start();
 
+    // Brand text, tagline, welcome sequence
+    Animated.sequence([
+      Animated.delay(1200),
+      Animated.parallel([
+        Animated.timing(brandOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        Animated.timing(brandTranslateX, { toValue: 0, duration: 500, useNativeDriver: true }),
+      ]),
+      Animated.delay(600),
+      Animated.parallel([
+        Animated.timing(taglineOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        Animated.timing(taglineTranslateY, { toValue: 0, duration: 500, useNativeDriver: true }),
+        Animated.spring(taglineScale, { toValue: 1, tension: 80, friction: 8, useNativeDriver: true }),
+      ]),
+      // bottom welcome removed
+    ]).start();
+
+    // Pulse border forever
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(borderPulse, { toValue: 1, duration: 1600, useNativeDriver: false }),
+        Animated.timing(borderPulse, { toValue: 0, duration: 1600, useNativeDriver: false }),
+      ])
+    ).start();
+
+    // Navigate after ~6s based on auth state
+    const timer = setTimeout(() => {
+      if (authState.isAuthenticated) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/(auth)/login");
+      }
+    }, 6000);
     return () => clearTimeout(timer);
   }, []);
 
-  const logoRotationInterpolate = logoRotation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
+  // no logo rotation
+
+  // Background transforms based on progress values
+  const bg1Transform = {
+    transform: [
+      { translateX: bg1Progress.interpolate({ inputRange: [0, 1], outputRange: [-width, 0] }) },
+      { rotate: "-8deg" },
+    ],
+    opacity: bg1Progress.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
+  } as const;
+
+  const bg2Transform = {
+    transform: [
+      { translateY: bg2Progress.interpolate({ inputRange: [0, 1], outputRange: [-height, 0] }) },
+      { rotate: "10deg" },
+    ],
+    opacity: bg2Progress.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
+  } as const;
+
+  const bg3Transform = {
+    transform: [
+      { translateX: bg3Progress.interpolate({ inputRange: [0, 1], outputRange: [width, 0] }) },
+      { rotate: "-15deg" },
+    ],
+    opacity: bg3Progress.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }),
+  } as const;
+
+  // Border pulse style
+  const borderStyle = {
+    borderWidth: borderPulse.interpolate({ inputRange: [0, 1], outputRange: [0, 6] }),
+    borderColor: "rgba(255,255,255,0.6)",
+  } as const;
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.backgroundContainer, { opacity: backgroundOpacity }]}>
-        <View style={styles.gradientLayer1} />
-        <View style={styles.gradientLayer2} />
-        <View style={styles.gradientLayer3} />
-      </Animated.View>
+      {/* Animated background sections */}
+      <Animated.View style={[styles.sectionBase, styles.sectionYellow, bg1Transform]} />
+      <Animated.View style={[styles.sectionBase, styles.sectionBlue, bg2Transform]} />
+      <Animated.View style={[styles.sectionBase, styles.sectionGreen, bg3Transform]} />
 
-      <View style={styles.logoContainer}>
-        <Animated.View
-          style={[
-            styles.logoWrapper,
-            {
-              opacity: logoOpacity,
-              transform: [
-                { scale: logoScale },
-                { rotate: logoRotationInterpolate },
-              ],
-            },
-          ]}
-        >
-          <Image
-            source={require("../../assets/logo.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </Animated.View>
-        
-        <Animated.Text 
-          style={[
-            styles.brandName,
-            { 
-              opacity: logoOpacity,
-              transform: [{ scale: logoScale }]
-            }
-          ]}
-        >
-          discountmithrA
-        </Animated.Text>
-        
-        <Animated.Text 
-          style={[
-            styles.tagline,
-            { 
-              opacity: logoOpacity,
-              transform: [{ scale: logoScale }]
-            }
-          ]}
-        >
-          We bargain, U save
-        </Animated.Text>
+      {/* Content */}
+      <View style={styles.content}>
+        <View style={styles.logoContainer}>
+          <Animated.View
+            style={[
+              styles.logoWrapper,
+              {
+                opacity: logoOpacity,
+                transform: [
+                  { scale: logoScale },
+                ],
+              },
+            ]}
+          >
+            <Image
+              source={require("../../assets/logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </Animated.View>
+
+          <Animated.Text
+            style={[
+              styles.brandName,
+              {
+                opacity: brandOpacity,
+                transform: [{ translateX: brandTranslateX }],
+              },
+            ]}
+          >
+            discountmithrA
+          </Animated.Text>
+
+          <Animated.Text
+            style={[
+              styles.tagline,
+              {
+                opacity: taglineOpacity,
+                transform: [
+                  { translateY: taglineTranslateY },
+                  { scale: taglineScale },
+                ],
+              },
+            ]}
+          >
+            We bargain, U save
+          </Animated.Text>
+        </View>
+        {/* Bottom welcome removed */}
       </View>
+
+      {/* Pulsing border effect */}
+      <Animated.View pointerEvents="none" style={[styles.borderOverlay, borderStyle]} />
     </View>
   );
 }
@@ -112,88 +178,77 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#000",
+    backgroundColor: "#0A0A0A",
   },
-  backgroundContainer: {
+  content: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    justifyContent: "space-between",
+  },
+  // Background sections (rotated, full-bleed)
+  sectionBase: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    top: -height * 0.2,
+    left: -width * 0.2,
+    width: width * 1.4,
+    height: height * 1.4,
+    opacity: 0,
   },
-  gradientLayer1: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#FF6B6B",
-    opacity: 0.8,
-  },
-  gradientLayer2: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#4ECDC4",
-    opacity: 0.6,
-    transform: [{ rotate: "15deg" }],
-  },
-  gradientLayer3: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#45B7D1",
-    opacity: 0.4,
-    transform: [{ rotate: "-15deg" }],
-  },
+  sectionYellow: { backgroundColor: "#FFD300" },
+  sectionBlue: { backgroundColor: "#0096E6" },
+  sectionGreen: { backgroundColor: "#00C851" },
+
   logoContainer: {
+    marginTop: height * 0.18,
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 10,
   },
   logoWrapper: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: 16,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: 24,
+    padding: 28,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
     shadowRadius: 20,
     elevation: 20,
   },
   logo: {
-    width: 120,
-    height: 120,
-    tintColor: "#fff",
+    width: 160,
+    height: 160,
   },
   brandName: {
-    fontSize: 28,
+    fontSize: 36,
     fontWeight: "800",
-    color: "#fff",
+    color: "#FFFFFF",
     textAlign: "center",
     marginBottom: 8,
-    letterSpacing: 1,
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  tagline: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.8)",
-    textAlign: "center",
-    fontWeight: "500",
     letterSpacing: 0.5,
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowColor: "rgba(255, 255, 255, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+  tagline: {
+    fontSize: 18,
+    color: "#FFFFFF",
+    textAlign: "center",
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  // removed bottom area styles
+  borderOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 0,
   },
 });
