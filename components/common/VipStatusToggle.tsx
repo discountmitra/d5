@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useVip } from '../../contexts/VipContext';
 
 export default function VipStatusToggle() {
-  const { isVip, userMode, toggleVipStatus } = useVip();
+  const { isVip, userMode } = useVip();
 
   return (
     <View style={styles.container}>
@@ -22,7 +22,7 @@ export default function VipStatusToggle() {
         </View>
         <Text style={styles.modeText}>Current Mode: {userMode.toUpperCase()}</Text>
       </View>
-      <TouchableOpacity style={styles.toggleButton} onPress={toggleVipStatus}>
+      <TouchableOpacity style={styles.toggleButton} onPress={() => {}}>
         <Text style={styles.toggleText}>
           {isVip ? "Simulate Normal User" : "Simulate VIP User"}
         </Text>

@@ -13,7 +13,7 @@ interface UserModeToggleProps {
 }
 
 export default function UserModeToggle({ onModeChange }: UserModeToggleProps) {
-  const { userMode, isVip, toggleMode } = useVip();
+  const { userMode, isVip } = useVip();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [showUpgradePopup, setShowUpgradePopup] = useState(false);
@@ -48,10 +48,9 @@ export default function UserModeToggle({ onModeChange }: UserModeToggleProps) {
       return;
     }
     
-    if (mode !== userMode) {
-      toggleMode();
-      onModeChange?.(mode);
-    }
+    // VIP status is now controlled by backend authentication
+    // Users can only upgrade through subscription, not toggle
+    onModeChange?.(mode);
   };
 
   const handleUpgrade = () => {

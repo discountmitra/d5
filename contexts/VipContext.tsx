@@ -1,35 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { UserRole, SubscriptionPlan, UserSubscription } from '../types';
+import { subscriptionService } from '../services';
+import { useAuth } from './AuthContext';
 
 export type UserMode = 'normal' | 'vip';
-
-export interface SubscriptionPlan {
-  id: string;
-  name: string;
-  price: number;
-  duration: string;
-  features: string[];
-  popular?: boolean;
-}
-
-export interface UserSubscription {
-  planId: string;
-  startDate: Date;
-  endDate: Date;
-  isActive: boolean;
-  autoRenew: boolean;
-  originalPrice?: number;
-  pricePaid?: number;
-  couponCode?: string | null;
-}
 
 interface VipContextType {
   userMode: UserMode;
   isVip: boolean;
   subscription: UserSubscription | null;
-  setUserMode: (mode: UserMode) => void;
-  toggleMode: () => void;
-  toggleVipStatus: () => void;
-  resetToNormal: () => void;
+  subscriptionPlans: SubscriptionPlan[];
+  loading: boolean;
+  error: string | null;
   subscribeToPlan: (
     planId: string,
     options?: { couponCode?: string; discountPct?: number; finalPrice?: number }
@@ -40,6 +22,7 @@ interface VipContextType {
     daysRemaining: number;
     planName: string;
   };
+  refreshSubscription: () => Promise<void>;
 }
 
 const VipContext = createContext<VipContextType | undefined>(undefined);
@@ -48,8 +31,8 @@ interface VipProviderProps {
   children: ReactNode;
 }
 
-// Available subscription plans
-export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
+// Fallback subscription plans (will be replaced with API data)
+const FALLBACK_SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: 'monthly',
     name: 'Monthly VIP',
@@ -93,44 +76,45 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
 ];
 
 export function VipProvider({ children }: VipProviderProps) {
+  const { authState } = useAuth();
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
-  const [isVip, setIsVip] = useState(false);
+  const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>(FALLBACK_SUBSCRIPTION_PLANS);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
-  // Derive userMode from isVip to ensure they're always in sync
-  const userMode: UserMode = isVip ? 'vip' : 'normal';
-  
+  // Derive userMode and isVip from user role
+  const userMode: UserMode = authState.user?.role === 'vip' ? 'vip' : 'normal';
+  const isVip = authState.user?.role === 'vip';
 
-  // No complex state sync needed - userMode is derived from isVip
-
-  // Check subscription status on mount
+  // Load subscription plans and current subscription on mount
   useEffect(() => {
-    // In a real app, this would check with the backend
-    // For now, we'll use a simple in-memory approach
-    // In production, this would use AsyncStorage or backend API
+    loadSubscriptionData();
+  }, [authState.user]);
+
+  const loadSubscriptionData = async () => {
+    if (!authState.user) return;
+    
     try {
-      // Simulate checking for existing subscription
-      // This would be replaced with actual storage/API call
+      setLoading(true);
+      setError(null);
+      
+      // Load subscription plans
+      const plans = await subscriptionService.getSubscriptionPlans();
+      if (plans.length > 0) {
+        setSubscriptionPlans(plans);
+      }
+      
+      // Load current subscription
+      const currentSubscription = await subscriptionService.getCurrentSubscription();
+      if (currentSubscription) {
+        setSubscription(currentSubscription);
+      }
     } catch (error) {
-      console.error('Error loading subscription:', error);
+      console.error('Error loading subscription data:', error);
+      setError('Failed to load subscription data');
+    } finally {
+      setLoading(false);
     }
-  }, []);
-
-  const setUserMode = (mode: UserMode) => {
-    setIsVip(mode === 'vip');
-  };
-
-  const toggleMode = () => {
-    if (isVip) {
-      setIsVip(false);
-    }
-  };
-
-  const toggleVipStatus = () => {
-    setIsVip(!isVip);
-  };
-
-  const resetToNormal = () => {
-    setIsVip(false);
   };
 
   const subscribeToPlan = async (
@@ -138,68 +122,44 @@ export function VipProvider({ children }: VipProviderProps) {
     options?: { couponCode?: string; discountPct?: number; finalPrice?: number }
   ): Promise<boolean> => {
     try {
-      const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
-      if (!plan) return false;
-
-      const startDate = new Date();
-      const endDate = new Date();
+      setLoading(true);
+      setError(null);
       
-      // Set end date based on plan duration
-      switch (planId) {
-        case 'monthly':
-          endDate.setMonth(endDate.getMonth() + 1);
-          break;
-        case 'quarterly':
-          endDate.setMonth(endDate.getMonth() + 3);
-          break;
-        case 'yearly':
-          endDate.setFullYear(endDate.getFullYear() + 1);
-          break;
+      const result = await subscriptionService.subscribeToPlan(planId, options?.couponCode);
+      
+      if (result) {
+        // Refresh subscription data
+        await loadSubscriptionData();
+        return true;
       }
-
-      const normalizedCode = (options?.couponCode || '').trim().toUpperCase();
-      const isCouponValid = normalizedCode === 'MYMLAKTR' || normalizedCode === 'MANASRCL';
-      const defaultPct = normalizedCode === 'MYMLAKTR' ? 0.5 : normalizedCode === 'MANASRCL' ? 0.3 : 0;
-      const discountPct = isCouponValid ? (options?.discountPct ?? defaultPct) : 0;
-      const computedFinalPrice = Math.max(0, Math.round((options?.finalPrice ?? plan.price * (1 - discountPct))));
-
-      const newSubscription: UserSubscription = {
-        planId,
-        startDate,
-        endDate,
-        isActive: true,
-        autoRenew: true,
-        originalPrice: plan.price,
-        pricePaid: computedFinalPrice,
-        couponCode: isCouponValid ? normalizedCode : null,
-      };
-
-      setSubscription(newSubscription);
-      setIsVip(true);
       
-      // In a real app, this would be saved to backend/AsyncStorage
-      // For now, we'll just update the state
-      
-      return true;
+      return false;
     } catch (error) {
       console.error('Subscription failed:', error);
+      setError('Failed to subscribe to plan');
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
   const cancelSubscription = async (): Promise<boolean> => {
     try {
-      if (subscription) {
-        const updatedSubscription = { ...subscription, isActive: false, autoRenew: false };
-        setSubscription(updatedSubscription);
-        setIsVip(false);
-        
-        // In a real app, this would update backend/AsyncStorage
-      }
+      setLoading(true);
+      setError(null);
+      
+      await subscriptionService.cancelSubscription();
+      
+      // Refresh subscription data
+      await loadSubscriptionData();
+      
       return true;
     } catch (error) {
       console.error('Cancellation failed:', error);
+      setError('Failed to cancel subscription');
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -211,7 +171,7 @@ export function VipProvider({ children }: VipProviderProps) {
     const now = new Date();
     const endDate = new Date(subscription.endDate);
     const daysRemaining = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    const plan = SUBSCRIPTION_PLANS.find(p => p.id === subscription.planId);
+    const plan = subscriptionPlans.find(p => p.id === subscription.planId);
     
     return {
       isActive: daysRemaining > 0,
@@ -220,17 +180,21 @@ export function VipProvider({ children }: VipProviderProps) {
     };
   };
 
+  const refreshSubscription = async () => {
+    await loadSubscriptionData();
+  };
+
   const value: VipContextType = {
     userMode,
     isVip,
     subscription,
-    setUserMode,
-    toggleMode,
-    toggleVipStatus,
-    resetToNormal,
+    subscriptionPlans,
+    loading,
+    error,
     subscribeToPlan,
     cancelSubscription,
     getSubscriptionStatus,
+    refreshSubscription,
   };
 
   return (

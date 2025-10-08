@@ -2,14 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, LayoutAnimation, Modal, ActivityIndicator, Animated, TouchableWithoutFeedback, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
-import { useVip, SUBSCRIPTION_PLANS, SubscriptionPlan } from "../contexts/VipContext";
+import { useVip } from "../contexts/VipContext";
+import { SubscriptionPlan } from "../types";
 import { LinearGradient } from 'expo-linear-gradient';
 // Removed gradient pill usage for price; showing gold text instead
 
 export default function VipSubscriptionScreen() {
   const router = useRouter();
   const navigation = useNavigation();
-  const { isVip, subscription, subscribeToPlan, cancelSubscription, getSubscriptionStatus } = useVip();
+  const { 
+    userMode,
+    isVip, 
+    subscription, 
+    subscriptionPlans,
+    loading: contextLoading,
+    error: contextError,
+    subscribeToPlan, 
+    cancelSubscription, 
+    getSubscriptionStatus 
+  } = useVip();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(["quarterly"]));
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -165,7 +176,7 @@ export default function VipSubscriptionScreen() {
 
           <View style={styles.benefitsSection}>
               <Text style={styles.sectionTitle}>Your VIP Benefits</Text>
-              {SUBSCRIPTION_PLANS.find(p => p.id === subscription?.planId)?.features.map((benefit, index) => (
+              {subscriptionPlans.find((p: SubscriptionPlan) => p.id === subscription?.planId)?.features.map((benefit: string, index: number) => (
                 <View key={index} style={styles.benefitRow}>
                   <Ionicons name="checkmark-circle" size={16} color="#10b981" />
                   <Text style={styles.benefitText}>{benefit}</Text>
@@ -268,7 +279,7 @@ export default function VipSubscriptionScreen() {
               )}
             </LinearGradient>
 
-            {SUBSCRIPTION_PLANS.map((plan) => {
+            {subscriptionPlans.map((plan: SubscriptionPlan) => {
               const expanded = expandedIds.has(plan.id);
               return (
                 <View key={plan.id} style={[styles.planCard, expanded && styles.planCardExpanded]}>
@@ -296,7 +307,7 @@ export default function VipSubscriptionScreen() {
 
                   {expanded && (
                     <View style={styles.planBody}>
-                      {plan.features.map((feature, i) => (
+                      {plan.features.map((feature: string, i: number) => (
                         <View key={i} style={styles.benefitRow}>
                           <Ionicons name="checkmark-circle" size={16} color="#10b981" />
                           <Text style={styles.benefitText}>{feature}</Text>
