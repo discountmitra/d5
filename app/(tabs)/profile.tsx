@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Animated } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, FontSizes, Spacing } from "../../theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -22,24 +22,12 @@ export default function ProfileScreen() {
   }, [navigation]);
 
 
-  const scrollY = new Animated.Value(0);
-  const headerBg = scrollY.interpolate({
-    inputRange: [0, 40],
-    outputRange: ['transparent', '#ffffff'],
-    extrapolate: 'clamp'
-  });
-  const headerBorder = scrollY.interpolate({
-    inputRange: [0, 40],
-    outputRange: ['transparent', '#e5e7eb'],
-    extrapolate: 'clamp'
-  });
+  // Simplified: remove animated header/bg change for a static, clean header
 
   return (
-    <Animated.ScrollView 
+    <ScrollView 
       style={styles.container} 
       showsVerticalScrollIndicator={false}
-      onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}
-      scrollEventThrottle={16}
     >
       <LinearGradient
         colors={userMode === 'vip' ? ["#ffd88a", "#ffffff", "#f6f9ff"] : ["#cfe4ff", "#ffffff", "#f6f9ff"]}
@@ -47,8 +35,8 @@ export default function ProfileScreen() {
         end={{ x: 1, y: 1 }}
         style={{ flex: 1 }}
       >
-      {/* Top Section - User Name and Profile Picture with safe padding and dynamic bg */}
-      <Animated.View style={[styles.topSection, { paddingTop: insets.top + 12, backgroundColor: headerBg, borderBottomColor: headerBorder, borderBottomWidth: 1 }]}>
+      {/* Top Section - User Name and Profile Picture (static) */}
+      <View style={[styles.topSection, { paddingTop: insets.top + 12 }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={styles.userName}>{authState.user?.name || "User"}</Text>
           {userMode === 'vip' && (
@@ -61,7 +49,7 @@ export default function ProfileScreen() {
         <TouchableOpacity style={styles.profilePicture}>
           <Ionicons name="person" size={40} color="#9ca3af" />
         </TouchableOpacity>
-      </Animated.View>
+      </View>
 
       {/* Search Bar */}
       <View style={styles.searchBarContainer}>
@@ -244,7 +232,7 @@ export default function ProfileScreen() {
       </View>
 
       </LinearGradient>
-    </Animated.ScrollView>
+    </ScrollView>
   );
 }
 
